@@ -1,2 +1,14 @@
-// W1에서는 아직 JavaScript 로직 없음.
-// W2부터 화면 전환, 버튼 이벤트, 게임 상태 연결 예정.
+const toggleButtons = document.querySelectorAll(".td-toggle");
+
+toggleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const group = button.closest(".td-toggle-group");
+    const buttonsInGroup = group.querySelectorAll(".td-toggle");
+
+    buttonsInGroup.forEach((item) => {
+      item.classList.remove("is-active");
+    });
+
+    button.classList.add("is-active");
+  });
+});
