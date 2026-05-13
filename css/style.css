@@ -1,0 +1,366 @@
+/* =========================
+   Type Defender Design Tokens
+========================= */
+
+:root {
+  --color-wall-top: #d9cea6;
+  --color-wall-bottom: #cfc196;
+  --color-paper: #fdf9ee;
+  --color-board-mid: #1a5c3a;
+  --color-board-frame: #8b7355;
+  --color-chalk: #f4f4eb;
+  --color-chalk-yellow: #f6d76a;
+  --color-wood-mid: #b98246;
+  --color-wood-dark: #8a6030;
+  --color-accent: #d97706;
+  --color-danger: #c2410c;
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   Base
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(
+    to bottom,
+    var(--color-wall-top),
+    var(--color-wall-bottom)
+  );
+  color: var(--color-board-mid);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+/* =========================
+   Home Page
+========================= */
+
+.home {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.home-card {
+  width: min(720px, 100%);
+  padding: 40px;
+  border-radius: 28px;
+  background: var(--color-paper);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-card h1 {
+  margin: 0 0 12px;
+  font-size: clamp(40px, 8vw, 72px);
+  line-height: 1;
+}
+
+.home-card p {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* =========================
+   Component Demo Page
+========================= */
+
+.component-demo {
+  width: min(960px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.demo-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--color-paper);
+  box-shadow: var(--shadow-soft);
+}
+
+.demo-section h1,
+.demo-section h2 {
+  margin-top: 0;
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* =========================
+   W1 Component - Button
+========================= */
+
+.td-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+.td-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.td-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.td-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.td-btn--primary {
+  background: var(--color-accent);
+  color: var(--color-paper);
+  box-shadow: 0 4px 0 var(--color-wood-dark);
+}
+
+.td-btn--secondary {
+  background: var(--color-board-mid);
+  color: var(--color-chalk);
+  box-shadow: 0 4px 0 var(--color-board-frame);
+}
+
+.td-btn--ghost {
+  background: transparent;
+  color: var(--color-board-mid);
+  border: 2px solid var(--color-board-frame);
+}
+
+.td-btn--sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.td-btn--lg {
+  padding: 16px 32px;
+  font-size: 20px;
+}
+
+/* =========================
+   W1 Component - Toggle
+========================= */
+
+.td-toggle-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  border: 2px solid var(--color-board-frame);
+}
+
+.td-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--color-board-mid);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.td-toggle.is-active {
+  background: var(--color-board-mid);
+  color: var(--color-chalk);
+}
+
+/* =========================
+   W1 Component - Word Chip
+========================= */
+
+.word-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: var(--color-board-mid);
+  color: var(--color-chalk);
+  font-weight: 800;
+  box-shadow: 0 4px 0 var(--color-board-frame);
+}
+
+.word-chip--easy {
+  color: var(--color-chalk);
+}
+
+.word-chip--normal {
+  color: var(--color-chalk-yellow);
+}
+
+.word-chip--hard {
+  border: 2px solid var(--color-chalk-yellow);
+}
+
+.word-chip--boss {
+  background: var(--color-danger);
+  color: var(--color-paper);
+  box-shadow: 0 4px 0 var(--color-wood-dark);
+}
+
+/* =========================
+   W1 Component - HUD Pill
+========================= */
+
+.hud-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  color: var(--color-board-mid);
+  border: 2px solid var(--color-board-frame);
+  font-weight: 700;
+}
+
+.hud-pill strong {
+  color: var(--color-accent);
+}
+
+/* =========================
+   W1 Component - Professor + Desk
+========================= */
+
+.classroom-illustration {
+  display: grid;
+  gap: 32px;
+  justify-items: center;
+  padding: 32px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-wall-top),
+    var(--color-wall-bottom)
+  );
+  border-radius: 24px;
+}
+
+.professor {
+  position: relative;
+  width: 96px;
+  height: 140px;
+}
+
+.professor__head {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--color-paper);
+  border: 3px solid var(--color-wood-dark);
+}
+
+.professor__body {
+  width: 72px;
+  height: 76px;
+  margin: -4px auto 0;
+  border-radius: 24px 24px 12px 12px;
+  background: var(--color-board-frame);
+}
+
+.professor__arm {
+  position: absolute;
+  right: 4px;
+  top: 64px;
+  width: 52px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-wood-dark);
+  transform: rotate(-24deg);
+}
+
+.desk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  justify-content: center;
+}
+
+.student-desk {
+  width: 72px;
+  height: 48px;
+  border-radius: 12px 12px 6px 6px;
+  background: var(--color-wood-mid);
+  border-bottom: 6px solid var(--color-wood-dark);
+}
+
+.student-desk--you {
+  display: grid;
+  place-items: center;
+  height: 60px;
+  color: var(--color-paper);
+  font-weight: 900;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 640px) {
+  .home-card {
+    padding: 28px;
+  }
+
+  .component-demo {
+    width: min(100% - 20px, 960px);
+    padding: 24px 0;
+  }
+
+  .demo-section {
+    padding: 18px;
+  }
+
+  .td-toggle-group {
+    border-radius: 20px;
+  }
+}

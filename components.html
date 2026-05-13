@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Type Defender Components</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body class="component-page">
+  <main class="component-demo">
+    <section class="demo-section">
+      <p class="eyebrow">W1 COMPONENTS</p>
+      <h1>전재형 담당 UI 컴포넌트</h1>
+      <p>Button, Toggle, Word Chip, HUD Pill, Professor + Desk 데모 페이지</p>
+    </section>
+
+    <section class="demo-section">
+      <h2>Button</h2>
+
+      <div class="demo-row">
+        <button class="td-btn td-btn--primary">받아적을게요</button>
+        <button class="td-btn td-btn--secondary">설정</button>
+        <button class="td-btn td-btn--ghost">취소</button>
+        <button class="td-btn td-btn--primary" disabled>비활성</button>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <h2>Button Size</h2>
+
+      <div class="demo-row">
+        <button class="td-btn td-btn--primary td-btn--sm">SM</button>
+        <button class="td-btn td-btn--primary">MD</button>
+        <button class="td-btn td-btn--primary td-btn--lg">LG</button>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <h2>Toggle</h2>
+
+      <div class="td-toggle-group" role="group" aria-label="게임 모드 선택">
+        <button class="td-toggle is-active">CLASSIC</button>
+        <button class="td-toggle">TIME ATTACK</button>
+        <button class="td-toggle">ZEN</button>
+        <button class="td-toggle">DAILY</button>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <h2>Word Chip</h2>
+
+      <div class="demo-row">
+        <span class="word-chip word-chip--easy">break</span>
+        <span class="word-chip word-chip--normal">HashMap</span>
+        <span class="word-chip word-chip--hard">ArrayList</span>
+        <span class="word-chip word-chip--boss">synchronized</span>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <h2>HUD Pill</h2>
+
+      <div class="hud-row">
+        <span class="hud-pill">점수 <strong>2,450</strong></span>
+        <span class="hud-pill">학점 <strong>A-</strong></span>
+        <span class="hud-pill">콤보 <strong>x14</strong></span>
+        <span class="hud-pill">WPM <strong>76</strong></span>
+      </div>
+    </section>
+
+    <section class="demo-section">
+      <h2>Professor + Desk</h2>
+
+      <div class="classroom-illustration">
+        <div class="professor">
+          <div class="professor__head"></div>
+          <div class="professor__body"></div>
+          <div class="professor__arm"></div>
+        </div>
+
+        <div class="desk-row">
+          <div class="student-desk"></div>
+          <div class="student-desk"></div>
+          <div class="student-desk student-desk--you">YOU</div>
+          <div class="student-desk"></div>
+          <div class="student-desk"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
