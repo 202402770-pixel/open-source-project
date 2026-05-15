@@ -34,7 +34,7 @@ export class Game {
     checkAnswer(inputWord) {
         this.levelAttempts++;
         const targetIndex = this.activeWords.indexOf(inputWord);
-        if (targetIndex === -1) {
+        if (targetIndex !== -1) {
             this.handleSuccess(targetIndex, inputWord);
         } else if (inputWord !== "") {
             this.levelMissed++;
