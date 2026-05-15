@@ -12,11 +12,29 @@ export const UI = {
     lastInputLength: 0,
 
 
-    renderTargetWord(targetWord, userInput) {
-        if (!targetWord) return;
+    renderTargetWord(activeWords, userInput) {
+        const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
         this.wordDisplay.innerHTML = '';
         let detectError = false;
-        for (let i = 0; i < targetWord.length; i++) {
+        if (userInput.length === 0) {
+           this.addCursor();
+           this.lastInputLength = 0;
+           return;
+        }
+        let targetWord = wordsList.find(word => word && word.startsWith(userInput[0]));
+        if (!targetWord) {
+            for (let i = 0; i < userInput.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'text-error';
+                span.textContent = userInput[i];
+                this.wordDisplay.appendChild(span);
+            }
+            this.addCursor();
+            Effects.triggerErrorShake();
+            return;
+        }
+        const maxLength = Math.max(userInput.length, targetWord.length);
+        for (let i = 0; i < maxLength; i++) {
             if (i === userInput.length) this.addCursor();
             const span = document.createElement('span');
             const targetChar = targetWord[i];
@@ -24,19 +42,25 @@ export const UI = {
             if (userChar === undefined) {
                 span.className = 'text-untyped';
                 span.textContent = targetChar;
+            } else if (targetChar === undefined) {
+                span.className = 'text-error';
+                span.textContent = userChar;
+                detectError = true;
             } else if (targetChar === userChar) {
                 span.className = 'text-typed';
                 span.textContent = targetChar;
             } else {
                 span.className = 'text-error';
-                span.textContent = targetChar;
+                span.textContent = userChar;
                 if (i === userInput.length - 1 && userInput.length > this.lastInputLength) {
                     detectError = true;
                 }
             }
             this.wordDisplay.appendChild(span);
         }
-        if (userInput.length >= targetWord.length) this.addCursor();
+        if (userInput.length >= maxLength) {
+            this.addCursor();
+        }
         if(detectError){
             Effects.triggerErrorShake();
         }

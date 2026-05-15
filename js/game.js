@@ -11,13 +11,13 @@ export class Game {
         this.missed = 0;
         this.maxHP = 100;
         this.currentHP = 100;
-        this.currentWordIndex = 0;
         this.levelAttempts = 0;
         this.levelMissed = 0;
         this.isGameOver = false;
         this.startTime = Date.now();
         this.totalTypedChars = 0;
         this.wpm = 0;
+        this.activeWords = [...getWordsByLevel(this.level)];
         AchievementManager.init();
         AchievementManager.checkAttendance();
 
@@ -27,16 +27,15 @@ export class Game {
         AchievementManager.check(10, playCount);
     }
 
-    getCurrentWord() {
-        const words = getWordsByLevel(this.level);
-        return words[this.currentWordIndex];
+    getActiveWords() {
+        return this.activeWords;
     }
 
     checkAnswer(inputWord) {
         this.levelAttempts++;
-        const target = this.getCurrentWord();
-        if (inputWord === target) {
-            this.handleSuccess();
+        const targetIndex = this.activeWords.indexOf(inputWord);
+        if (targetIndex === -1) {
+            this.handleSuccess(targetIndex, inputWord);
         } else if (inputWord !== "") {
             this.levelMissed++;
             this.handleFailure();
@@ -44,22 +43,21 @@ export class Game {
         UI.updateHUD(this);
     }
 
-    handleSuccess() {
-        this.totalTypedChars += this.getCurrentWord().length;
+    handleSuccess(targetIndex, word) {
+        this.totalTypedChars += word.length;
         this.score += 10;
         this.combo++;
+        this.activeWords.splice(targetIndex, 1);
         if (this.score === 10) AchievementManager.check(1, 1);
         AchievementManager.check(7, this.combo);
         AchievementManager.check(11, this.score);
-        this.currentWordIndex++;
         if (this.combo >= 10) {
             Effects.toggleGlow(true, 'combo10');
         }
         else if(this.combo >= 5){
             Effects.toggleGlow(true, 'combo5');
         }
-        const words = getWordsByLevel(this.level);
-        if (this.currentWordIndex >= words.length) {
+        if (this.activeWords.length === 0) {
             this.levelUp();
         }
     }
@@ -80,8 +78,13 @@ export class Game {
         }
         this.levelAttempts = 0;
         this.levelMissed = 0;
-        this.currentWordIndex = 0;
         this.level++;
+        const nextWords = getWordsByLevel(this.level);
+        if (nextWords && nextWords.length > 0){
+            this.activeWords = [...nextWords];
+        } else {
+            this.gameClear();
+        }
         AchievementManager.check(2, this.level);
         AchievementManager.check(3, this.level);
     }
@@ -91,7 +94,7 @@ export class Game {
         if (this.currentHP < 0) this.currentHP = 0;
         UI.updateHPBar(this.currentHP, this.maxHP);
         if (this.currentHP === 0) {
-          this.gameOver(isOverflow ? 'overflow' : 'hp_deplated');
+          this.gameOver(isOverflow ? 'overflow' : 'hp_depleted');
         }
     }
 

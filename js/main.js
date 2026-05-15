@@ -10,15 +10,15 @@ async function start() {
     game = new Game();
 
     Input.init(
-        (val) => UI.renderTargetWord(game.getCurrentWord(), val),
+        (val) => UI.renderTargetWord(game.getActiveWords(), val),
         (word) => {
             game.checkAnswer(word);
-            UI.renderTargetWord(game.getCurrentWord(), "");
+            UI.renderTargetWord(game.getActiveWords(), "");
         }
     );
 
     UI.updateHUD(game);
-    UI.renderTargetWord(game.getCurrentWord(), "");
+    UI.renderTargetWord(game.getActiveWords(), "");
     
     gameLoop();
 }
