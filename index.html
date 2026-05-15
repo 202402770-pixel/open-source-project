@@ -47,7 +47,51 @@
     </div>
   </div>
 
-  <div class="game-over"></div>
+  <div class="game-over">
+    <div class="scorecard-wrapper">
+      <div class="scorecard">
+        <h1 class="scorecard-title">성적표</h1>
+        
+        <div id="result-stamp" class="stamp show">
+          <span id="result-grade">F</span>
+        </div>
+        
+        <div id="result-new-record" class="new-record" style="display: none;">★ NEW RECORD! ★</div>
+        
+        <div class="stats-container">
+          <div class="stat-row">
+            <span class="stat-label">점수</span>
+            <span id="result-score" class="stat-value">0</span> </div>
+          <div class="stat-row">
+            <span class="stat-label">최대콤보</span>
+            <span id="result-combo" class="stat-value">x0</span> </div>
+          <div class="stat-row">
+            <span class="stat-label">도달 레벨</span>
+            <span id="result-level" class="stat-value">LV.1</span> </div>
+          
+          <hr class="stat-divider">
+          
+          <div class="stat-row">
+            <span class="stat-label">평균 WPM</span>
+            <span id="result-wpm" class="stat-value">0</span> </div>
+          <div class="stat-row">
+            <span class="stat-label">정확도</span>
+            <span id="result-accuracy" class="stat-value">0%</span> </div>
+          <div class="stat-row">
+            <span class="stat-label">단어수</span>
+            <span id="result-words" class="stat-value">0</span> </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button id="restart-btn" class="btn btn-primary">다시 수강</button>
+          <button class="btn btn-secondary" onclick="alert('준비중입니다.')">순위표</button>
+          <button class="btn btn-secondary" onclick="alert('준비중입니다.')">도전과제</button>
+          <button class="btn btn-text" onclick="alert('준비중입니다.')">공유</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
   <div id="toast-container"></div>
 
   <!-- Scripts (의존성 순서대로 — CONFIG 먼저, main.js 마지막) -->

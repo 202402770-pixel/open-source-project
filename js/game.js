@@ -2,12 +2,15 @@ class Game {
     constructor() {
         this.score = 0;
         this.combo = 0;
+        this.maxCombo = 0;
         this.level = 1;
         this.missed = 0;
         this.maxHP = 100;
         this.currentHP = 100;
         this.levelAttempts = 0;
         this.levelMissed = 0;
+        this.totalWordAttempts = 0;
+        this.successWords = 0;
         this.isGameOver = false;
         this.startTime = Date.now();
         this.totalTypedChars = 0;
@@ -28,6 +31,7 @@ class Game {
     checkAnswer(inputWord) {
         if(!inputWord || inputWord.trim() === "") return;
         this.levelAttempts++;
+        this.totalWordAttempts++
         const targetIndex = this.activeWords.indexOf(inputWord);
         if (targetIndex !== -1) {
             this.handleSuccess(targetIndex, inputWord);
@@ -40,8 +44,10 @@ class Game {
 
     handleSuccess(targetIndex, word) {
         this.totalTypedChars += word.length;
+        this.successWords++;
         this.score += CONFIG.SCORING.WORD_DESTROY_BASE;
         this.combo++;
+        this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.activeWords.splice(targetIndex, 1);
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
@@ -103,12 +109,14 @@ class Game {
         if (this.currentHP <= this.maxHP * 0.2) Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, 1);
         Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
         UI.showToast("게임 클리어!", "모든 단어를 방어했습니다.", "축");
+        UI.showGameOver(this);
     }
 
     gameOver() {
         if (this.isGameOver) return;
         this.isGameOver = true;
         UI.showToast("게임 오버!", "다시 도전해 보세요.", "死");
+        UI.showGameOver(this);
     }
 
     calculateWPM(){
