@@ -110,6 +110,8 @@ body {
   align-items: center;
   gap: 2px; 
   white-space: nowrap;
+  min-height: 4.5rem; 
+  line-height: 1;
 }
 
 .text-untyped { 
