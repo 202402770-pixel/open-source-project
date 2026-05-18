@@ -2,8 +2,10 @@ const hiddenInput = document.getElementById('hidden-input');
 
 export const Input = {
     init(onInput, onEnter) {
-        document.addEventListener('click', () => hiddenInput.focus());
-        
+        const gameArea = document.querySelector('.notebook-input');
+        if(gameArea) {
+            gameArea.addEventListener('click', () => hiddenInput.focus());
+        }
         hiddenInput.addEventListener('input', () => {
             onInput(hiddenInput.value);
         });

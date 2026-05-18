@@ -13,53 +13,47 @@ export const UI = {
 
 
     renderTargetWord(activeWords, userInput) {
-        const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
-        this.wordDisplay.innerHTML = '';
-        let detectError = false;
-        if (userInput.length === 0) {
-           this.addCursor();
-           this.lastInputLength = 0;
-           return;
+        if (!userInput || userInput === "") {
+            this.wordDisplay.innerHTML = '';
+            this.addCursor();
+            this.lastInputLength = 0;
+            return; 
         }
-        let targetWord = wordsList.find(word => word && word.startsWith(userInput[0]));
-        if (!targetWord) {
-            for (let i = 0; i < userInput.length; i++) {
+        const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
+        let targetWord = wordsList.find(word => word && word.startsWith(userInput));
+        let detectError = false;
+        if(!targetWord) {
+            detectError = true;
+            targetWord = wordsList[0];
+        }
+        if(this.wordDisplay.children.length !== targetWord.length + 1){
+            this.wordDisplay.innerHTML = '';
+            for (let i = 0; i < targetWord.length; i++) {
                 const span = document.createElement('span');
-                span.className = 'text-error';
-                span.textContent = userInput[i];
                 this.wordDisplay.appendChild(span);
             }
             this.addCursor();
-            Effects.triggerErrorShake();
-            return;
-        }
-        const maxLength = Math.max(userInput.length, targetWord.length);
-        for (let i = 0; i < maxLength; i++) {
-            if (i === userInput.length) this.addCursor();
-            const span = document.createElement('span');
-            const targetChar = targetWord[i];
-            const userChar = userInput[i];
-            if (userChar === undefined) {
-                span.className = 'text-untyped';
-                span.textContent = targetChar;
-            } else if (targetChar === undefined) {
-                span.className = 'text-error';
-                span.textContent = userChar;
-                detectError = true;
-            } else if (targetChar === userChar) {
-                span.className = 'text-typed';
-                span.textContent = targetChar;
-            } else {
-                span.className = 'text-error';
-                span.textContent = userChar;
-                if (i === userInput.length - 1 && userInput.length > this.lastInputLength) {
-                    detectError = true;
-                }
             }
-            this.wordDisplay.appendChild(span);
-        }
-        if (userInput.length >= maxLength) {
-            this.addCursor();
+        const spans = this.wordDisplay.querySelectorAll('span:not(.cursor)');
+        const cursor = this.wordDisplay.querySelector('.cursor');
+        spans.forEach((span, i) => {
+            if (detectError && i < userInput.length) {
+                span.className = 'text-error';
+                span.textContent = userInput[i] || targetWord[i];
+            } else if (i < userInput.length) {
+                span.className = userInput[i] === targetWord[i] ? 'text-typed' : 'text-error';
+                span.textContent = targetWord[i];
+            } else {
+                span.className = 'text-untyped';
+                span.textContent = targetWord[i];
+            }
+        });
+        if (cursor && spans.length > 0) {
+            if (userInput.length < spans.length) {
+                this.wordDisplay.insertBefore(cursor, spans[userInput.length]);
+            } else {
+                this.wordDisplay.appendChild(cursor);
+            }
         }
         if(detectError){
             Effects.triggerErrorShake();

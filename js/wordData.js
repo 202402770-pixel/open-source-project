@@ -11,7 +11,10 @@ export const wordData = {
   "9": ["algorithm", "complexity", "compiler", "assembly", "memory", "paging"],
   "10": ["cluster", "virtualization", "container", "intelligence", "encryption", "automata"],
   "11": ["middleware", "pipeline", "deployment", "repository", "framework", "endpoint"],
-  "12": ["blockchain", "tensor", "heuristic", "throughput", "latency", "concurrency"]
+  "12": ["blockchain", "tensor", "heuristic", "throughput", "latency", "concurrency"], 
+  "13": ["microservice", "loadbalancer", "idempotency", "sharding", "replication", "telemetry"],
+  "14": ["perceptron", "overfitting", "transformer", "embedding", "regression", "optimization"],
+  "15": ["cryptography", "asynchronous", "immutability", "parallelism", "deterministic", "cybersecurity"]
 };
 
 export async function loadWords() {
