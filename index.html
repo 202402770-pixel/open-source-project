@@ -8,20 +8,162 @@
 
   <link rel="stylesheet" href="./css/style.css" />
 </head>
-<body class="home-page">
-  <main class="home">
-    <section class="home-card">
-      <p class="eyebrow">OPEN SOURCE PROJECT</p>
-      <h1>Type Defender</h1>
-      <p>
-        교수님의 공격 단어를 빠르게 입력해서 막아내는 타이핑 디펜스 게임입니다.
-      </p>
+<body>
+  <main class="game-app">
+    <!-- Start Screen -->
+    <section class="scene start-scene is-active" data-scene="start">
+      <div class="start-card">
+        <p class="eyebrow">TYPE DEFENDER</p>
+        <h1>강의 필기 디펜스</h1>
+        <p class="start-description">
+          교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내세요.
+        </p>
 
-      <div class="home-actions">
-        <a class="td-btn td-btn--primary" href="./components.html">W1 컴포넌트 보기</a>
-        <button class="td-btn td-btn--secondary" type="button">게임 시작 준비중</button>
+        <div class="start-options">
+          <div>
+            <p class="option-label">Game Mode</p>
+            <div class="td-toggle-group" role="group" aria-label="게임 모드 선택">
+              <button class="td-toggle is-active" type="button">CLASSIC</button>
+              <button class="td-toggle" type="button">TIME ATTACK</button>
+              <button class="td-toggle" type="button">ZEN</button>
+              <button class="td-toggle" type="button">DAILY</button>
+            </div>
+          </div>
+
+          <div>
+            <p class="option-label">Difficulty</p>
+            <div class="td-toggle-group" role="group" aria-label="난이도 선택">
+              <button class="td-toggle is-active" type="button">EASY</button>
+              <button class="td-toggle" type="button">NORMAL</button>
+              <button class="td-toggle" type="button">HARD</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-actions">
+          <button class="td-btn td-btn--primary td-btn--lg" type="button" data-go="play">
+            받아적을게요
+          </button>
+          <a class="td-btn td-btn--ghost" href="./components.html">
+            W1 컴포넌트 보기
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Play Screen -->
+    <section class="scene play-scene" data-scene="play">
+      <header class="play-hud">
+        <div class="hud-stats">
+          <span class="hud-pill">점수 <strong>2,450</strong></span>
+          <span class="hud-pill">학점 <strong>A-</strong></span>
+          <span class="hud-pill">콤보 <strong>x14</strong></span>
+          <span class="hud-pill">WPM <strong>76</strong></span>
+        </div>
+
+        <div class="hp-panel" aria-label="체력 3칸 중 3칸 남음">
+          <span class="hp-label">HP</span>
+          <div class="hp-bar">
+            <span class="hp-heart is-active">♥</span>
+            <span class="hp-heart is-active">♥</span>
+            <span class="hp-heart is-active">♥</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="classroom-stage">
+        <div class="blackboard">
+          <div class="blackboard__top">
+            <div>
+              <span class="board-label">LECTURE BOARD</span>
+              <h2>자료구조 핵심 키워드</h2>
+            </div>
+
+            <div class="board-timer">
+              <span>TIME</span>
+              <strong>01:24</strong>
+            </div>
+          </div>
+
+          <div class="word-field" aria-label="떨어지는 단어 영역">
+            <div class="fall-lane fall-lane--top"></div>
+            <div class="fall-lane fall-lane--middle"></div>
+            <div class="fall-lane fall-lane--bottom"></div>
+
+            <span class="word-chip word-chip--easy falling-word falling-word--one">array</span>
+            <span class="word-chip word-chip--normal falling-word falling-word--two">HashMap</span>
+            <span class="word-chip word-chip--hard falling-word falling-word--three">synchronized</span>
+          </div>
+
+          <div class="board-footer">
+            <span>Tip: 정확히 입력하면 콤보가 유지됩니다.</span>
+            <span>MISS 0</span>
+          </div>
+        </div>
+
+        <div class="classroom-illustration play-illustration">
+          <div class="professor">
+            <div class="professor__head"></div>
+            <div class="professor__body"></div>
+            <div class="professor__arm"></div>
+          </div>
+
+          <div class="desk-row">
+            <div class="student-desk"></div>
+            <div class="student-desk"></div>
+            <div class="student-desk student-desk--you">YOU</div>
+            <div class="student-desk"></div>
+            <div class="student-desk"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="notebook-panel">
+        <div class="notebook-header">
+          <div>
+            <span class="notebook-label">NOTEBOOK</span>
+            <label for="typing-input">받아쓰기 입력</label>
+          </div>
+
+          <span class="typing-hint">현재 목표: HashMap</span>
+        </div>
+
+        <div class="notebook-input">
+          <input id="typing-input" type="text" placeholder="떨어지는 단어를 입력하세요" />
+          <button class="td-btn td-btn--secondary" type="button">Enter</button>
+        </div>
+
+        <div class="notebook-lines" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+
+      <div class="play-actions">
+        <button class="td-btn td-btn--ghost" type="button" data-go="gameover">
+          데모 종료
+        </button>
+      </div>
+    </section>
+
+    <!-- Game Over Screen -->
+    <section class="scene gameover-scene" data-scene="gameover">
+      <div class="result-card">
+        <p class="eyebrow">RESULT</p>
+        <h2>성적표</h2>
+
+        <div class="grade-stamp">A-</div>
+
+        <p>최종 점수 2,450점 · 최고 콤보 x14 · WPM 76</p>
+
+        <button class="td-btn td-btn--primary" type="button" data-go="start">
+          다시 시작
+        </button>
       </div>
     </section>
   </main>
+
+  <script src="./js/ui.js"></script>
 </body>
 </html>
