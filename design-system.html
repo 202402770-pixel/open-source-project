@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Type Defender — Design System (Concept E)</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --color-wall-top:#d9cea6; --color-wall-bottom:#cfc196;
+  --color-floor-top:#c4956a; --color-floor-bottom:#b8895e;
+  --color-paper:#fdf9ee; --color-paper-line:#d4c89a;
+  --color-board-top:#2e6b4a; --color-board-mid:#1a5c3a; --color-board-bottom:#225e3f;
+  --color-board-frame:#8b7355; --color-board-tray:#a0916e;
+  --color-chalk:#f4f4eb; --color-chalk-dim:#c8c8b8; --color-chalk-yellow:#f6d76a;
+  --color-wood-light:#b8956b; --color-wood-mid:#a07040; --color-wood-dark:#8a6030;
+  --color-accent:#d97706; --color-accent-deep:#b45309;
+  --color-success:#15803d; --color-warn:#b45309; --color-danger:#c2410c; --color-info:#1e6091;
+  --color-grade-aplus:#15803d; --color-grade-a:#166534; --color-grade-b:#ca8a04; --color-grade-c:#ea580c; --color-grade-f:#c2410c;
+  --color-text:#2b241a; --color-text-soft:#5a4d3a; --color-text-mute:#8a7a62;
+  --color-text-on-board:#f4f4eb; --color-text-on-paper:#2b241a;
+  --color-typed:#15803d; --color-untyped:#f4f4eb; --color-error:#c2410c; --color-cursor:#f6d76a;
+
+  --font-ui:'Pretendard Variable','Pretendard','Noto Sans KR',system-ui,sans-serif;
+  --font-chalk:'Gaegu','Nanum Pen Script',cursive;
+  --font-mono:'JetBrains Mono','D2Coding',monospace;
+  --font-title:'Black Han Sans',sans-serif;
+
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px;
+
+  --radius-sm:4px; --radius-md:8px; --radius-lg:16px; --radius-xl:24px; --radius-pill:999px;
+
+  --shadow-sm:0 1px 2px rgba(43,36,26,.10);
+  --shadow-md:0 4px 8px rgba(43,36,26,.12);
+  --shadow-lg:0 12px 24px rgba(43,36,26,.18);
+  --shadow-board:0 6px 0 #6b573f, 0 12px 24px rgba(0,0,0,.25);
+  --shadow-paper:0 2px 0 #d4c89a, 0 8px 16px rgba(43,36,26,.10);
+}
+
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; }
+body {
+  font-family:var(--font-ui);
+  color:var(--color-text);
+  background:linear-gradient(180deg,var(--color-wall-top) 0%, var(--color-wall-bottom) 100%);
+  min-height:100vh;
+  line-height:1.5;
+}
+
+/* ───────── Layout ───────── */
+.page-header {
+  padding:var(--space-7) var(--space-6) var(--space-6);
+  text-align:center;
+  border-bottom:1px solid rgba(43,36,26,.08);
+}
+.page-header h1 {
+  font-family:var(--font-title);
+  font-size:64px;
+  margin:0 0 var(--space-2);
+  letter-spacing:-1px;
+}
+.page-header .sub {
+  color:var(--color-text-soft);
+  font-size:18px;
+}
+.page-header .meta {
+  margin-top:var(--space-3);
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--color-text-mute);
+}
+.section {
+  max-width:1180px;
+  margin:0 auto;
+  padding:var(--space-8) var(--space-5);
+}
+.section + .section { border-top:1px dashed rgba(43,36,26,.15); }
+.section h2 {
+  font-family:var(--font-title);
+  font-size:36px;
+  margin:0 0 var(--space-2);
+  letter-spacing:-0.5px;
+}
+.section h2 .num {
+  font-family:var(--font-mono);
+  font-size:18px;
+  color:var(--color-accent);
+  margin-right:var(--space-3);
+}
+.section .lead { color:var(--color-text-soft); margin:0 0 var(--space-6); max-width:720px; }
+.section h3 {
+  font-size:20px;
+  margin:var(--space-7) 0 var(--space-4);
+  font-weight:700;
+}
+.section h4 { font-size:14px; color:var(--color-text-mute); margin:var(--space-5) 0 var(--space-2); text-transform:uppercase; letter-spacing:1px; }
+
+.grid { display:grid; gap:var(--space-4); }
+.cols-2 { grid-template-columns:repeat(2,1fr); }
+.cols-3 { grid-template-columns:repeat(3,1fr); }
+.cols-4 { grid-template-columns:repeat(4,1fr); }
+.cols-5 { grid-template-columns:repeat(5,1fr); }
+@media (max-width:900px) {
+  .cols-3,.cols-4,.cols-5 { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:560px) {
+  .cols-2,.cols-3,.cols-4,.cols-5 { grid-template-columns:1fr; }
+}
+
+/* ───────── Tokens — Colors ───────── */
+.swatch {
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  box-shadow:var(--shadow-sm);
+  background:var(--color-paper);
+  border:1px solid var(--color-paper-line);
+}
+.swatch .chip { height:84px; }
+.swatch .meta { padding:var(--space-3); }
+.swatch .name { font-weight:700; font-size:14px; }
+.swatch .var { font-family:var(--font-mono); font-size:12px; color:var(--color-text-mute); margin-top:2px; }
+.swatch .val { font-family:var(--font-mono); font-size:12px; color:var(--color-text-soft); margin-top:2px; }
+
+/* ───────── Tokens — Typography ───────── */
+.type-card {
+  padding:var(--space-4);
+  background:var(--color-paper);
+  border:1px solid var(--color-paper-line);
+  border-radius:var(--radius-md);
+}
+.type-card .label { font-family:var(--font-mono); font-size:12px; color:var(--color-text-mute); margin-bottom:var(--space-2); }
+.type-card .sample { line-height:1.2; }
+.t-title-1 { font-family:var(--font-title); font-size:84px; }
+.t-title-2 { font-family:var(--font-title); font-size:56px; }
+.t-display { font-family:var(--font-ui); font-weight:700; font-size:32px; }
+.t-body { font-family:var(--font-ui); font-size:16px; }
+.t-caption { font-family:var(--font-ui); font-size:14px; color:var(--color-text-soft); }
+.t-chalk-lg { font-family:var(--font-chalk); font-size:36px; color:var(--color-text); }
+.t-chalk-md { font-family:var(--font-chalk); font-size:24px; color:var(--color-text); }
+.t-mono-num { font-family:var(--font-mono); font-size:32px; font-weight:700; }
+
+/* ───────── Spacing ───────── */
+.space-stack > div { background:var(--color-accent); border-radius:var(--radius-sm); margin-bottom:var(--space-2); }
+.space-stack .b1 { width:120px; height:var(--space-1); }
+.space-stack .b2 { width:120px; height:var(--space-2); }
+.space-stack .b3 { width:120px; height:var(--space-3); }
+.space-stack .b4 { width:120px; height:var(--space-4); }
+.space-stack .b5 { width:120px; height:var(--space-5); }
+.space-stack .b6 { width:120px; height:var(--space-6); }
+.space-stack .b7 { width:120px; height:var(--space-7); }
+.space-stack .b8 { width:120px; height:var(--space-8); }
+
+/* ───────── Components — Button ───────── */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:var(--font-ui); font-weight:700; font-size:15px;
+  padding:0 var(--space-5);
+  height:44px; min-width:120px;
+  border-radius:var(--radius-md);
+  border:none; cursor:pointer;
+  transition:transform .12s ease, box-shadow .18s ease, background .18s ease;
+}
+.btn:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }
+.btn-primary { background:var(--color-accent); color:#fff; box-shadow:0 3px 0 var(--color-accent-deep); }
+.btn-primary:hover { transform:translateY(-1px); }
+.btn-primary:active { transform:translateY(2px); box-shadow:0 1px 0 var(--color-accent-deep); }
+.btn-secondary { background:var(--color-paper); color:var(--color-text); border:2px solid var(--color-wood-mid); box-shadow:0 3px 0 var(--color-wood-dark); }
+.btn-secondary:hover { background:#fff8e8; }
+.btn-ghost { background:transparent; color:var(--color-text-soft); }
+.btn-ghost:hover { background:rgba(253,249,238,.6); }
+.btn-toggle { background:var(--color-paper); color:var(--color-text-soft); border:1px solid var(--color-paper-line); height:36px; padding:0 var(--space-4); min-width:auto; font-size:13px; }
+.btn-toggle.active { background:var(--color-accent); color:#fff; border-color:var(--color-accent-deep); }
+.btn-sm { height:32px; min-width:80px; padding:0 var(--space-3); font-size:13px; }
+.btn-lg { height:56px; min-width:200px; font-size:17px; }
+.btn-disabled { opacity:.4; cursor:not-allowed; }
+
+.btn-row { display:flex; flex-wrap:wrap; gap:var(--space-3); align-items:center; }
+
+/* ───────── Components — Word Chip ───────── */
+.word-demo {
+  background:linear-gradient(180deg,#194f33 0%, #143f29 100%);
+  padding:var(--space-7) var(--space-5);
+  border-radius:var(--radius-md);
+  border:6px solid var(--color-board-frame);
+  box-shadow:var(--shadow-board);
+  display:flex; flex-wrap:wrap; gap:var(--space-5) var(--space-6); align-items:center; justify-content:center;
+  position:relative;
+}
+.word-demo::after {
+  content:''; position:absolute; left:0; right:0; bottom:0; height:8px;
+  background:var(--color-board-tray);
+}
+.word { font-family:var(--font-chalk); color:var(--color-untyped); line-height:1.1; }
+.word.easy   { font-size:24px; }
+.word.medium { font-size:30px; color:var(--color-chalk-yellow); }
+.word.hard   { font-size:38px; text-shadow:0 0 1px #fff; }
+.word.boss   { font-size:48px; color:var(--color-error); animation:bossBlink 1s steps(2) infinite; padding:6px 12px; border:3px solid var(--color-error); border-radius:8px; background:rgba(194,65,12,.1); }
+.word .typed   { color:var(--color-typed); }
+.word .cursor  { display:inline-block; width:2px; background:var(--color-cursor); animation:blink 1s steps(2) infinite; vertical-align:baseline; }
+@keyframes blink { 50% { opacity:0; } }
+@keyframes bossBlink { 50% { opacity:.6; } }
+
+/* ───────── Components — Notebook Input ───────── */
+.notebook {
+  background:var(--color-paper);
+  border-top:3px solid var(--color-paper-line);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-paper);
+  padding:var(--space-4) var(--space-5);
+  font-family:var(--font-chalk);
+  font-size:32px;
+  position:relative;
+  background-image:repeating-linear-gradient(180deg,transparent 0, transparent 38px, var(--color-paper-line) 38px, var(--color-paper-line) 39px);
+}
+.notebook .pencil { font-size:24px; margin-right:var(--space-3); }
+.notebook .typed-text { color:var(--color-typed); }
+.notebook .untyped-hint { color:var(--color-text-mute); }
+.notebook .ncursor { display:inline-block; width:3px; height:30px; background:var(--color-text); vertical-align:middle; margin-left:2px; animation:blink 1s steps(2) infinite; }
+.notebook .meta {
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--color-text-mute);
+  margin-top:var(--space-2);
+  display:flex; gap:var(--space-4);
+}
+
+/* ───────── Components — HUD Pill ───────── */
+.hud-pill {
+  display:inline-flex; flex-direction:column;
+  background:rgba(253,249,238,.92);
+  border:1px solid var(--color-paper-line);
+  border-radius:var(--radius-md);
+  padding:var(--space-2) var(--space-4);
+  min-width:90px;
+  box-shadow:var(--shadow-sm);
+}
+.hud-pill .label { font-family:var(--font-mono); font-size:11px; color:var(--color-text-mute); text-transform:uppercase; letter-spacing:.5px; }
+.hud-pill .val { font-family:var(--font-mono); font-weight:700; font-size:18px; color:var(--color-text); }
+.hud-pill .val.accent { color:var(--color-warn); }
+.hud-pill .val.good { color:var(--color-success); }
+.hud-pill .val.bad { color:var(--color-danger); }
+.hud-pill .tag { font-size:12px; color:var(--color-success); font-weight:700; }
+
+/* ───────── Components — HP Bar ───────── */
+.hp-bar-wrap { display:flex; align-items:center; gap:var(--space-3); max-width:520px; }
+.hp-bar-wrap .hp-label { font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--color-text-soft); width:30px; }
+.hp-bar { flex:1; height:14px; background:rgba(43,36,26,.18); border-radius:var(--radius-pill); overflow:hidden; }
+.hp-bar-fill { height:100%; background:linear-gradient(90deg,var(--color-success) 0%, #5b9c50 100%); border-radius:var(--radius-pill); transition:width .3s ease, background .3s ease; }
+.hp-bar-fill.warn { background:linear-gradient(90deg,#ca8a04 0%, var(--color-warn) 100%); }
+.hp-bar-fill.danger { background:linear-gradient(90deg,#dc2626 0%, var(--color-danger) 100%); animation:pulseRed 1s ease infinite; }
+@keyframes pulseRed { 50% { opacity:.6; } }
+.hp-bar-wrap .hp-pct { font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--color-text-soft); width:40px; text-align:right; }
+
+/* ───────── Components — Toast ───────── */
+.toast {
+  background:var(--color-paper);
+  border-left:4px solid var(--color-accent);
+  border-radius:var(--radius-md);
+  padding:var(--space-3) var(--space-4);
+  box-shadow:var(--shadow-paper);
+  display:inline-flex; gap:var(--space-3); align-items:center;
+  max-width:340px;
+}
+.toast .stamp {
+  width:42px; height:42px; border-radius:50%;
+  border:3px solid var(--color-accent);
+  color:var(--color-accent);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-title); font-size:18px;
+  transform:rotate(-8deg);
+}
+.toast .body .title { font-weight:700; font-size:14px; }
+.toast .body .sub { font-size:13px; color:var(--color-text-soft); }
+
+/* ───────── Components — Grade ───────── */
+.grade-stamp {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:120px; height:120px; border-radius:50%;
+  border:5px solid currentColor;
+  font-family:var(--font-title); font-size:64px;
+  transform:rotate(-12deg);
+  background:var(--color-paper);
+}
+.grade-stamp.aplus { color:var(--color-grade-aplus); }
+.grade-stamp.a { color:var(--color-grade-a); }
+.grade-stamp.b { color:var(--color-grade-b); }
+.grade-stamp.c { color:var(--color-grade-c); }
+.grade-stamp.f { color:var(--color-grade-f); }
+
+/* ───────── Illustrations — Professor ───────── */
+.prof {
+  position:relative; width:84px; height:160px;
+}
+.prof .head {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:50px; height:50px; background:#f5d5b8; border-radius:50%;
+}
+.prof .hair {
+  position:absolute; top:-4px; left:50%; transform:translateX(-50%);
+  width:50px; height:18px; background:#3b2b1a; border-radius:25px 25px 0 0;
+}
+.prof .glasses {
+  position:absolute; top:22px; left:50%; transform:translateX(-50%);
+  width:32px; height:8px; border:2px solid #2b241a; border-radius:4px;
+}
+.prof .body {
+  position:absolute; top:50px; left:50%; transform:translateX(-50%);
+  width:46px; height:55px; background:#7f8c8d; border-radius:6px 6px 0 0;
+}
+.prof .arm {
+  position:absolute; top:55px; width:8px; height:38px; background:#7f8c8d; border-radius:4px;
+  transform-origin:top center;
+}
+.prof .arm.left { left:14px; transform:rotate(15deg); }
+.prof .arm.right { right:14px; transform:rotate(-30deg); animation:writeArm 0.8s ease-in-out infinite; }
+@keyframes writeArm { 50% { transform:rotate(-15deg); } }
+.prof .chalk {
+  position:absolute; bottom:-6px; right:-2px; width:5px; height:14px; background:#fff; border-radius:1px;
+}
+.prof .legs { position:absolute; top:104px; left:50%; transform:translateX(-50%); display:flex; gap:8px; }
+.prof .leg { width:14px; height:46px; background:#3b2b1a; border-radius:0 0 4px 4px; }
+
+/* ───────── Illustrations — Student Desk ───────── */
+.desk {
+  position:relative; width:90px; height:130px;
+}
+.desk .student-head { position:absolute; top:0; left:50%; transform:translateX(-50%); width:36px; height:36px; border-radius:50%; }
+.desk .student-body { position:absolute; top:36px; left:50%; transform:translateX(-50%); width:50px; height:35px; border-radius:6px 6px 0 0; }
+.desk .desk-table { position:absolute; top:74px; left:0; width:90px; height:10px; background:var(--color-wood-mid); border-radius:2px; }
+.desk .desk-leg { position:absolute; top:84px; width:6px; height:30px; background:var(--color-wood-dark); }
+.desk .desk-leg.l { left:8px; } .desk .desk-leg.r { right:8px; }
+.desk .chair { position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:50px; height:6px; background:#5a4d3a; border-radius:2px; }
+.desk.player .student-head { background:#2ecc71; color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.desk.player .student-body { background:#27ae60; }
+
+/* ───────── Screen Mockups ───────── */
+.screen {
+  background:linear-gradient(180deg,var(--color-wall-top) 0%, var(--color-wall-bottom) 56%, var(--color-floor-top) 56%, var(--color-floor-bottom) 100%);
+  border-radius:var(--radius-lg);
+  border:1px solid rgba(43,36,26,.12);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+  height:560px;
+}
+.screen .screen-inner { position:absolute; inset:0; padding:var(--space-4); }
+.screen-label {
+  display:inline-block;
+  font-family:var(--font-mono); font-size:12px; color:var(--color-text-mute);
+  margin-bottom:var(--space-3);
+  background:var(--color-paper); padding:var(--space-1) var(--space-3); border-radius:var(--radius-pill);
+}
+
+/* — Start Screen — */
+.scr-start .board-title {
+  position:absolute; top:48px; left:50%; transform:translateX(-50%);
+  width:540px; height:200px;
+  background:linear-gradient(170deg,var(--color-board-top) 0%, var(--color-board-mid) 30%, var(--color-board-bottom) 100%);
+  border:8px solid var(--color-board-frame);
+  border-radius:6px;
+  box-shadow:var(--shadow-board);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.scr-start .board-title h1 {
+  font-family:var(--font-title); font-size:64px; color:var(--color-text-on-board); margin:0; letter-spacing:1px;
+}
+.scr-start .board-title p {
+  font-family:var(--font-chalk); font-size:22px; color:var(--color-chalk-dim); margin:6px 0 0;
+}
+.scr-start .high {
+  position:absolute; top:268px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:13px; color:var(--color-text-soft);
+}
+.scr-start .modes { position:absolute; top:300px; left:50%; transform:translateX(-50%); display:flex; gap:var(--space-2); }
+.scr-start .start-cta { position:absolute; bottom:36px; left:50%; transform:translateX(-50%); }
+
+/* — Play Screen — */
+.scr-play { padding:0; }
+.scr-play .topbar {
+  position:absolute; top:12px; left:12px; right:12px;
+  display:flex; justify-content:space-between; gap:var(--space-2);
+  z-index:10;
+}
+.scr-play .topbar > div { display:flex; gap:var(--space-2); flex-wrap:wrap; }
+.scr-play .hp-row { position:absolute; top:78px; left:12px; right:12px; z-index:10; }
+.scr-play .board-mini {
+  position:absolute; top:120px; left:50%; transform:translateX(-50%);
+  width:380px; height:120px;
+  background:linear-gradient(170deg,var(--color-board-top) 0%, var(--color-board-bottom) 100%);
+  border:6px solid var(--color-board-frame); border-radius:4px;
+  box-shadow:var(--shadow-board);
+  padding:14px 18px;
+  font-family:var(--font-chalk); color:var(--color-text-on-board); font-size:18px; line-height:1.5;
+}
+.scr-play .board-mini .ttl { color:var(--color-chalk-yellow); margin-bottom:6px; font-size:20px; }
+.scr-play .prof-pos { position:absolute; left:30px; top:200px; }
+.scr-play .speech {
+  position:absolute; left:104px; top:178px;
+  background:var(--color-paper); padding:8px 12px; border-radius:14px;
+  font-size:13px; color:var(--color-text); box-shadow:var(--shadow-sm);
+}
+.scr-play .speech::after {
+  content:''; position:absolute; left:-10px; top:14px;
+  border:6px solid transparent; border-right-color:var(--color-paper);
+}
+.scr-play .falling {
+  position:absolute; top:140px; bottom:200px; left:50%; transform:translateX(-50%);
+  width:520px; pointer-events:none;
+}
+.scr-play .falling .word { position:absolute; }
+.scr-play .desks-row {
+  position:absolute; bottom:96px; left:0; right:0;
+  display:flex; justify-content:center; gap:var(--space-3); padding:0 var(--space-5);
+  z-index:5;
+}
+.scr-play .input-pos { position:absolute; bottom:14px; left:14px; right:14px; z-index:10; }
+
+/* — Game Over (Report Card) — */
+.scr-over { background:linear-gradient(180deg,var(--color-wall-top) 0%, var(--color-wall-bottom) 100%); }
+.report-card {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-1deg);
+  width:380px; padding:var(--space-6) var(--space-5);
+  background:var(--color-paper); border:1px solid var(--color-paper-line); border-radius:var(--radius-md);
+  box-shadow:var(--shadow-paper);
+  background-image:repeating-linear-gradient(180deg,transparent 0, transparent 28px, var(--color-paper-line) 28px, var(--color-paper-line) 29px);
+}
+.report-card .rc-title { font-family:var(--font-title); font-size:28px; text-align:center; }
+.report-card .rc-grade { display:flex; justify-content:center; margin:var(--space-3) 0; }
+.report-card .rc-newrec { text-align:center; color:var(--color-accent); font-weight:700; font-size:14px; }
+.report-card .rc-stats { margin-top:var(--space-4); display:grid; gap:var(--space-2); font-family:var(--font-mono); font-size:14px; }
+.report-card .rc-stats .row { display:flex; justify-content:space-between; }
+.report-card .rc-stats .label { color:var(--color-text-mute); }
+.report-card .rc-stats .val { font-weight:700; }
+.report-card .rc-divider { height:1px; background:var(--color-paper-line); margin:var(--space-3) 0; }
+.report-card .rc-actions { margin-top:var(--space-4); display:flex; flex-wrap:wrap; gap:var(--space-2); justify-content:center; }
+
+/* ───────── Footer ───────── */
+footer {
+  text-align:center; padding:var(--space-7) var(--space-4);
+  border-top:1px solid rgba(43,36,26,.08);
+  color:var(--color-text-mute); font-size:13px;
+  font-family:var(--font-mono);
+}
+
+/* TOC */
+.toc {
+  max-width:1180px; margin:var(--space-5) auto 0; padding:var(--space-4) var(--space-5);
+  background:rgba(253,249,238,.6); border-radius:var(--radius-md);
+}
+.toc ol { margin:0; padding-left:var(--space-5); columns:2; gap:var(--space-5); }
+.toc a { color:var(--color-text); text-decoration:none; }
+.toc a:hover { color:var(--color-accent); text-decoration:underline; }
+@media (max-width:560px) { .toc ol { columns:1; } }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Type Defender</h1>
+  <div class="sub">Design System · Concept E "강의 필기"</div>
+  <div class="meta">DESIGN.md 기반 시각 레퍼런스 · v0.1 · 2026-05-04</div>
+</header>
+
+<nav class="toc">
+  <strong>이 문서</strong>
+  <ol>
+    <li><a href="#tokens">디자인 토큰</a></li>
+    <li><a href="#typography">타이포그래피</a></li>
+    <li><a href="#spacing">스페이싱</a></li>
+    <li><a href="#components">컴포넌트</a></li>
+    <li><a href="#illustrations">일러스트</a></li>
+    <li><a href="#screens">화면 모음</a></li>
+  </ol>
+</nav>
+
+<!-- ═══════════════ 1. Tokens — Colors ═══════════════ -->
+<section class="section" id="tokens">
+  <h2><span class="num">01</span>컬러 토큰</h2>
+  <p class="lead">강의실의 따뜻한 톤을 베이스로, 칠판 초록 / 분필 흰색 / 출석부 빨강을 액센트로 사용한다. 모든 색은 CSS 변수로만 참조한다 — 인라인 컬러 금지.</p>
+
+  <h3>Surface</h3>
+  <div class="grid cols-4">
+    <div class="swatch"><div class="chip" style="background:var(--color-wall-top)"></div><div class="meta"><div class="name">Wall Top</div><div class="var">--color-wall-top</div><div class="val">#d9cea6</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-wall-bottom)"></div><div class="meta"><div class="name">Wall Bottom</div><div class="var">--color-wall-bottom</div><div class="val">#cfc196</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-floor-top)"></div><div class="meta"><div class="name">Floor Top</div><div class="var">--color-floor-top</div><div class="val">#c4956a</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-floor-bottom)"></div><div class="meta"><div class="name">Floor Bottom</div><div class="var">--color-floor-bottom</div><div class="val">#b8895e</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-paper)"></div><div class="meta"><div class="name">Paper</div><div class="var">--color-paper</div><div class="val">#fdf9ee</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-paper-line)"></div><div class="meta"><div class="name">Paper Line</div><div class="var">--color-paper-line</div><div class="val">#d4c89a</div></div></div>
+  </div>
+
+  <h3>Chalkboard & Wood</h3>
+  <div class="grid cols-4">
+    <div class="swatch"><div class="chip" style="background:var(--color-board-top)"></div><div class="meta"><div class="name">Board Top</div><div class="var">--color-board-top</div><div class="val">#2e6b4a</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-board-mid)"></div><div class="meta"><div class="name">Board Mid</div><div class="var">--color-board-mid</div><div class="val">#1a5c3a</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-board-frame)"></div><div class="meta"><div class="name">Board Frame</div><div class="var">--color-board-frame</div><div class="val">#8b7355</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-board-tray)"></div><div class="meta"><div class="name">Board Tray</div><div class="var">--color-board-tray</div><div class="val">#a0916e</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-chalk)"></div><div class="meta"><div class="name">Chalk</div><div class="var">--color-chalk</div><div class="val">#f4f4eb</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-chalk-yellow)"></div><div class="meta"><div class="name">Chalk Yellow</div><div class="var">--color-chalk-yellow</div><div class="val">#f6d76a</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-wood-mid)"></div><div class="meta"><div class="name">Wood Mid</div><div class="var">--color-wood-mid</div><div class="val">#a07040</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-wood-dark)"></div><div class="meta"><div class="name">Wood Dark</div><div class="var">--color-wood-dark</div><div class="val">#8a6030</div></div></div>
+  </div>
+
+  <h3>Brand & State</h3>
+  <div class="grid cols-4">
+    <div class="swatch"><div class="chip" style="background:var(--color-accent)"></div><div class="meta"><div class="name">Accent</div><div class="var">--color-accent</div><div class="val">#d97706</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-success)"></div><div class="meta"><div class="name">Success</div><div class="var">--color-success</div><div class="val">#15803d</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-warn)"></div><div class="meta"><div class="name">Warn</div><div class="var">--color-warn</div><div class="val">#b45309</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-danger)"></div><div class="meta"><div class="name">Danger</div><div class="var">--color-danger</div><div class="val">#c2410c</div></div></div>
+  </div>
+
+  <h3>Grade</h3>
+  <div class="grid cols-5">
+    <div class="swatch"><div class="chip" style="background:var(--color-grade-aplus)"></div><div class="meta"><div class="name">A+</div><div class="var">--color-grade-aplus</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-grade-a)"></div><div class="meta"><div class="name">A / A-</div><div class="var">--color-grade-a</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-grade-b)"></div><div class="meta"><div class="name">B</div><div class="var">--color-grade-b</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-grade-c)"></div><div class="meta"><div class="name">C</div><div class="var">--color-grade-c</div></div></div>
+    <div class="swatch"><div class="chip" style="background:var(--color-grade-f)"></div><div class="meta"><div class="name">F</div><div class="var">--color-grade-f</div></div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 2. Typography ═══════════════ -->
+<section class="section" id="typography">
+  <h2><span class="num">02</span>타이포그래피</h2>
+  <p class="lead">Pretendard(UI) · Gaegu(칠판 손글씨) · JetBrains Mono(숫자) · Black Han Sans(타이틀). 4종 한정.</p>
+
+  <div class="grid cols-2">
+    <div class="type-card"><div class="label">title-1 · Black Han Sans 84</div><div class="sample t-title-1">받아적자</div></div>
+    <div class="type-card"><div class="label">title-2 · Black Han Sans 56</div><div class="sample t-title-2">강의 시작</div></div>
+    <div class="type-card"><div class="label">display · Pretendard 700 32</div><div class="sample t-display">Type Defender</div></div>
+    <div class="type-card"><div class="label">body · Pretendard 16</div><div class="sample t-body">교수님이 빠르게 적어 내려가는 필기를 받아적으세요. 노트가 비면 학점이 떨어집니다.</div></div>
+    <div class="type-card"><div class="label">caption · Pretendard 14</div><div class="sample t-caption">CSE2010 자료구조 · 12주차</div></div>
+    <div class="type-card"><div class="label">chalk-lg · Gaegu 36</div><div class="sample t-chalk-lg">12주차: 해시맵 충돌 해결</div></div>
+    <div class="type-card"><div class="label">chalk-md · Gaegu 24</div><div class="sample t-chalk-md">- Chaining<br>- Open Addressing</div></div>
+    <div class="type-card"><div class="label">mono-num · JetBrains Mono 32</div><div class="sample t-mono-num">12,450</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 3. Spacing ═══════════════ -->
+<section class="section" id="spacing">
+  <h2><span class="num">03</span>스페이싱</h2>
+  <p class="lead">8pt 그리드. 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 px.</p>
+  <div class="space-stack">
+    <div class="b1"></div><div class="b2"></div><div class="b3"></div><div class="b4"></div><div class="b5"></div><div class="b6"></div><div class="b7"></div><div class="b8"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ 4. Components ═══════════════ -->
+<section class="section" id="components">
+  <h2><span class="num">04</span>컴포넌트</h2>
+  <p class="lead">화면을 구성하는 재사용 단위. Figma에서 1 컴포넌트 = 1 컴포넌트 셋(Variants 포함)으로 옮긴다.</p>
+
+  <h3>Button</h3>
+  <h4>Variants</h4>
+  <div class="btn-row">
+    <button class="btn btn-primary">받아적을게요</button>
+    <button class="btn btn-secondary">설정</button>
+    <button class="btn btn-ghost">취소</button>
+    <button class="btn btn-primary btn-disabled" disabled>비활성</button>
+  </div>
+  <h4>Sizes</h4>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-sm">SM</button>
+    <button class="btn btn-primary">MD (기본)</button>
+    <button class="btn btn-primary btn-lg">LG · 시작 화면</button>
+  </div>
+  <h4>Toggle (mode / theme / lang / diff)</h4>
+  <div class="btn-row">
+    <button class="btn btn-toggle active">CLASSIC</button>
+    <button class="btn btn-toggle">TIME ATTACK</button>
+    <button class="btn btn-toggle">ZEN</button>
+    <button class="btn btn-toggle">DAILY</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-toggle active">JS</button>
+    <button class="btn btn-toggle">TS</button>
+    <button class="btn btn-toggle">PY</button>
+    <button class="btn btn-toggle">JAVA</button>
+    <button class="btn btn-toggle">KR</button>
+  </div>
+
+  <h3>Word Chip (떨어지는 단어)</h3>
+  <p class="lead">칠판에서 분필로 적힌 글자가 떼어져 내려오는 형태. 난이도별 4 variant.</p>
+  <div class="word-demo">
+    <span class="word easy">break</span>
+    <span class="word easy"><span class="typed">cla</span>ss<span class="cursor">&nbsp;</span></span>
+    <span class="word medium">HashMap</span>
+    <span class="word medium">Stream</span>
+    <span class="word hard">ArrayList</span>
+    <span class="word hard">Override</span>
+    <span class="word boss">synchronized</span>
+  </div>
+
+  <h3>Notebook Input</h3>
+  <p class="lead">화면 하단의 노트 종이. 타이핑된 글자가 누적 표시되고, 콤보 시 글로우.</p>
+  <div class="notebook">
+    <span class="pencil">✏️</span>
+    <span class="typed-text">Hash</span><span class="ncursor"></span>
+    <span class="untyped-hint" style="font-size:18px;margin-left:8px;">Map ← 다음에 칠 글자 힌트(옵션)</span>
+    <div class="meta"><span>JavaScript</span><span>LV.5</span><span>MISSED: 3</span></div>
+  </div>
+
+  <h3>HUD Pill</h3>
+  <div class="btn-row">
+    <div class="hud-pill"><span class="label">교수님</span><span class="tag">칠판보는중</span></div>
+    <div class="hud-pill"><span class="label">점수</span><span class="val">2,450</span></div>
+    <div class="hud-pill"><span class="label">학점</span><span class="val good">A-</span></div>
+    <div class="hud-pill"><span class="label">콤보</span><span class="val accent">x14</span></div>
+    <div class="hud-pill"><span class="label">WPM</span><span class="val">76</span></div>
+    <div class="hud-pill"><span class="label">시간</span><span class="val">04:23</span></div>
+    <div class="hud-pill"><span class="label">HP</span><span class="val bad">12%</span></div>
+  </div>
+
+  <h3>HP Bar</h3>
+  <div class="hp-bar-wrap"><span class="hp-label">HP</span><div class="hp-bar"><div class="hp-bar-fill" style="width:80%"></div></div><span class="hp-pct">80%</span></div>
+  <div style="height:12px"></div>
+  <div class="hp-bar-wrap"><span class="hp-label">HP</span><div class="hp-bar"><div class="hp-bar-fill warn" style="width:45%"></div></div><span class="hp-pct">45%</span></div>
+  <div style="height:12px"></div>
+  <div class="hp-bar-wrap"><span class="hp-label">HP</span><div class="hp-bar"><div class="hp-bar-fill danger" style="width:18%"></div></div><span class="hp-pct">18%</span></div>
+
+  <h3>Toast / Achievement</h3>
+  <div class="btn-row">
+    <div class="toast">
+      <div class="stamp">A+</div>
+      <div class="body">
+        <div class="title">새 학점 달성!</div>
+        <div class="sub">정확도 95% 이상으로 한 강의 통과</div>
+      </div>
+    </div>
+    <div class="toast">
+      <div class="stamp">×50</div>
+      <div class="body">
+        <div class="title">집중력 폭발</div>
+        <div class="sub">콤보 50 달성</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Grade Stamp (성적)</h3>
+  <div class="btn-row">
+    <div class="grade-stamp aplus">A+</div>
+    <div class="grade-stamp a">A</div>
+    <div class="grade-stamp b">B</div>
+    <div class="grade-stamp c">C</div>
+    <div class="grade-stamp f">F</div>
+  </div>
+</section>
+
+<!-- ═══════════════ 5. Illustrations ═══════════════ -->
+<section class="section" id="illustrations">
+  <h2><span class="num">05</span>일러스트</h2>
+  <p class="lead">CSS Box-model 기반 단순 도형. Path 곡선 최소화, 평면 컬러, 외곽선은 통일된 두께.</p>
+
+  <div class="grid cols-2">
+    <div>
+      <h4>Professor (writing)</h4>
+      <div style="height:180px; display:flex; align-items:center;">
+        <div class="prof">
+          <div class="hair"></div><div class="head"></div><div class="glasses"></div>
+          <div class="body"></div>
+          <div class="arm left"></div>
+          <div class="arm right"><div class="chalk"></div></div>
+          <div class="legs"><div class="leg"></div><div class="leg"></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>Student Desks (5인 — 가운데 YOU)</h4>
+      <div style="height:180px; display:flex; align-items:flex-end; gap:12px;">
+        <div class="desk">
+          <div class="student-head" style="background:#e74c3c;"></div>
+          <div class="student-body" style="background:#2980b9;"></div>
+          <div class="desk-table"></div>
+          <div class="desk-leg l"></div><div class="desk-leg r"></div>
+          <div class="chair"></div>
+        </div>
+        <div class="desk">
+          <div class="student-head" style="background:#f39c12;"></div>
+          <div class="student-body" style="background:#8e44ad;"></div>
+          <div class="desk-table"></div>
+          <div class="desk-leg l"></div><div class="desk-leg r"></div>
+          <div class="chair"></div>
+        </div>
+        <div class="desk player">
+          <div class="student-head">YOU</div>
+          <div class="student-body"></div>
+          <div class="desk-table"></div>
+          <div class="desk-leg l"></div><div class="desk-leg r"></div>
+          <div class="chair"></div>
+        </div>
+        <div class="desk">
+          <div class="student-head" style="background:#3498db;"></div>
+          <div class="student-body" style="background:#e67e22;"></div>
+          <div class="desk-table"></div>
+          <div class="desk-leg l"></div><div class="desk-leg r"></div>
+          <div class="chair"></div>
+        </div>
+        <div class="desk">
+          <div class="student-head" style="background:#9b59b6;"></div>
+          <div class="student-body" style="background:#16a085;"></div>
+          <div class="desk-table"></div>
+          <div class="desk-leg l"></div><div class="desk-leg r"></div>
+          <div class="chair"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 6. Screens ═══════════════ -->
+<section class="section" id="screens">
+  <h2><span class="num">06</span>화면 모음</h2>
+  <p class="lead">Start / Play / Game Over (성적표). Tutorial · Pause · Settings는 DESIGN.md 4장 참조.</p>
+
+  <h3>Start (강의실 입장)</h3>
+  <div class="screen scr-start">
+    <div class="screen-inner">
+      <span class="screen-label">Screen / Start (Desktop)</span>
+      <div class="board-title">
+        <h1>TYPE DEFENDER</h1>
+        <p>Defend your grade with keys.</p>
+      </div>
+      <div class="high">HIGH SCORE: 12,450  ·  TODAY: 8,200 (Daily)</div>
+      <div class="modes">
+        <button class="btn btn-toggle active">CLASSIC</button>
+        <button class="btn btn-toggle">TIME ATTACK</button>
+        <button class="btn btn-toggle">ZEN</button>
+        <button class="btn btn-toggle">DAILY</button>
+      </div>
+      <div class="start-cta">
+        <button class="btn btn-primary btn-lg">받아적을게요 (Enter)</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>Play (강의 진행 중)</h3>
+  <div class="screen scr-play">
+    <div class="topbar">
+      <div>
+        <div class="hud-pill"><span class="label">교수님</span><span class="tag">칠판보는중</span></div>
+        <div class="hud-pill"><span class="label">점수</span><span class="val">2,450</span></div>
+        <div class="hud-pill"><span class="label">학점</span><span class="val good">A-</span></div>
+      </div>
+      <div>
+        <div class="hud-pill"><span class="label">콤보</span><span class="val accent">x14</span></div>
+        <div class="hud-pill"><span class="label">WPM</span><span class="val">76</span></div>
+        <div class="hud-pill"><span class="label">시간</span><span class="val">04:23</span></div>
+      </div>
+    </div>
+    <div class="hp-row">
+      <div class="hp-bar-wrap"><span class="hp-label">HP</span><div class="hp-bar"><div class="hp-bar-fill" style="width:65%"></div></div><span class="hp-pct">65%</span></div>
+    </div>
+    <div class="board-mini">
+      <div class="ttl">&gt; 12주차: 해시맵</div>
+      - 충돌 해결: Chaining / Open Addressing<br>
+      - 시간복잡도: O(1) · Load Factor
+    </div>
+    <div class="prof-pos">
+      <div class="prof">
+        <div class="hair"></div><div class="head"></div><div class="glasses"></div>
+        <div class="body"></div>
+        <div class="arm left"></div>
+        <div class="arm right"><div class="chalk"></div></div>
+        <div class="legs"><div class="leg"></div><div class="leg"></div></div>
+      </div>
+    </div>
+    <div class="speech">"빨리 받아적으세요!"</div>
+    <div class="falling">
+      <span class="word easy" style="left:60px; top:0;">break</span>
+      <span class="word easy" style="left:280px; top:36px;">class</span>
+      <span class="word medium" style="left:120px; top:80px;">HashMap</span>
+      <span class="word medium" style="left:380px; top:108px;">Stream</span>
+      <span class="word hard" style="left:60px; top:160px;">ArrayList</span>
+      <span class="word boss" style="left:230px; top:200px;">synchronized</span>
+    </div>
+    <div class="desks-row">
+      <div class="desk"><div class="student-head" style="background:#e74c3c;"></div><div class="student-body" style="background:#2980b9;"></div><div class="desk-table"></div><div class="desk-leg l"></div><div class="desk-leg r"></div><div class="chair"></div></div>
+      <div class="desk"><div class="student-head" style="background:#f39c12;"></div><div class="student-body" style="background:#8e44ad;"></div><div class="desk-table"></div><div class="desk-leg l"></div><div class="desk-leg r"></div><div class="chair"></div></div>
+      <div class="desk player"><div class="student-head">YOU</div><div class="student-body"></div><div class="desk-table"></div><div class="desk-leg l"></div><div class="desk-leg r"></div><div class="chair"></div></div>
+      <div class="desk"><div class="student-head" style="background:#3498db;"></div><div class="student-body" style="background:#e67e22;"></div><div class="desk-table"></div><div class="desk-leg l"></div><div class="desk-leg r"></div><div class="chair"></div></div>
+      <div class="desk"><div class="student-head" style="background:#9b59b6;"></div><div class="student-body" style="background:#16a085;"></div><div class="desk-table"></div><div class="desk-leg l"></div><div class="desk-leg r"></div><div class="chair"></div></div>
+    </div>
+    <div class="input-pos">
+      <div class="notebook" style="font-size:24px;">
+        <span class="pencil">✏️</span>
+        <span class="typed-text">Hash</span><span class="ncursor"></span>
+        <div class="meta"><span>JavaScript</span><span>LV.5</span><span>MISSED: 3</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Game Over (성적표)</h3>
+  <div class="screen scr-over">
+    <span class="screen-label" style="position:absolute; top:16px; left:16px;">Screen / Game Over</span>
+    <div class="report-card">
+      <div class="rc-title">성적표</div>
+      <div class="rc-grade"><div class="grade-stamp a">A-</div></div>
+      <div class="rc-newrec">★ NEW RECORD! ★</div>
+      <div class="rc-stats">
+        <div class="row"><span class="label">점수</span><span class="val">12,450</span></div>
+        <div class="row"><span class="label">최대콤보</span><span class="val">x47</span></div>
+        <div class="row"><span class="label">레벨</span><span class="val">9</span></div>
+        <div class="rc-divider"></div>
+        <div class="row"><span class="label">WPM</span><span class="val">76</span></div>
+        <div class="row"><span class="label">정확도</span><span class="val">94%</span></div>
+        <div class="row"><span class="label">단어수</span><span class="val">124</span></div>
+      </div>
+      <div class="rc-actions">
+        <button class="btn btn-primary btn-sm">다시 수강</button>
+        <button class="btn btn-secondary btn-sm">순위표</button>
+        <button class="btn btn-secondary btn-sm">도전과제</button>
+        <button class="btn btn-ghost btn-sm">공유</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Type Defender Design System · Concept E · 시각 레퍼런스만 — 실제 게임은
+  <code>index.html</code>, 디자인 사양은 <code>DESIGN.md</code> 참조.
+</footer>
+
+</body>
+</html>

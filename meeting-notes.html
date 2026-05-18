@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Type Defender - Meeting Notes</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Pretendard', -apple-system, 'Noto Sans KR', sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      line-height: 1.7;
+    }
+
+    .nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(13, 17, 23, 0.95);
+      border-bottom: 1px solid #21262d;
+      z-index: 100;
+      padding: 0.8em 2em;
+      display: flex;
+      align-items: center;
+      gap: 2em;
+      backdrop-filter: blur(10px);
+    }
+    .nav-logo { color: #00ffcc; font-weight: bold; font-size: 1.1rem; font-family: monospace; }
+    .nav a { color: #8b949e; text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+    .nav a:hover { color: #f0f6fc; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 5em 2em 4em; }
+
+    .hero {
+      text-align: center;
+      padding: 3em 0 2em;
+      border-bottom: 1px solid #21262d;
+      margin-bottom: 3em;
+    }
+    .hero h1 { font-size: 2.2rem; color: #f0f6fc; margin-bottom: 0.3em; }
+    .hero h1 span { color: #00ffcc; }
+    .hero p { color: #8b949e; font-size: 1rem; }
+
+    .meeting {
+      margin-bottom: 3em;
+      background: #161b22;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .meeting-header {
+      background: #1c2128;
+      padding: 1.2em 1.8em;
+      border-bottom: 1px solid #21262d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .meeting-header:hover { background: #22272e; }
+    .meeting-header h2 {
+      font-size: 1.2rem;
+      color: #f0f6fc;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .meeting-date {
+      font-size: 0.8rem;
+      color: #388bfd;
+      background: rgba(56, 139, 253, 0.1);
+      padding: 0.3em 0.8em;
+      border-radius: 12px;
+    }
+    .meeting-toggle {
+      color: #484f58;
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    .meeting.collapsed .meeting-toggle { transform: rotate(-90deg); }
+    .meeting.collapsed .meeting-body { display: none; }
+    .meeting-body { padding: 1.5em 1.8em; }
+
+    .agenda-section { margin-bottom: 1.8em; }
+    .agenda-section:last-child { margin-bottom: 0; }
+    .agenda-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #00ffcc;
+      margin-bottom: 0.8em;
+      padding-bottom: 0.4em;
+      border-bottom: 1px solid #21262d;
+    }
+    .agenda-title.decisions { color: #f0883e; }
+    .agenda-title.todo { color: #388bfd; }
+
+    .member-status {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 1em 1.2em;
+      margin-bottom: 0.8em;
+    }
+    .member-name {
+      font-weight: bold;
+      color: #e6edf3;
+      font-size: 0.9rem;
+      margin-bottom: 0.4em;
+    }
+    .member-status p, .member-status ul {
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
+    .member-status ul { list-style: none; padding: 0; }
+    .member-status li { padding: 0.2em 0; }
+    .member-status li::before { content: "- "; color: #484f58; }
+
+    .ref-list { list-style: none; padding: 0; }
+    .ref-list li {
+      padding: 0.5em 0;
+      font-size: 0.9rem;
+    }
+    .ref-list a {
+      color: #388bfd;
+      text-decoration: none;
+    }
+    .ref-list a:hover { text-decoration: underline; }
+    .ref-tag {
+      font-size: 0.7rem;
+      color: #8b949e;
+      background: #21262d;
+      padding: 0.15em 0.5em;
+      border-radius: 4px;
+      margin-left: 0.5em;
+    }
+
+    .note-item {
+      font-size: 0.9rem;
+      color: #c9d1d9;
+      padding: 0.3em 0;
+    }
+    .note-item::before { content: "- "; color: #484f58; }
+    .note-empty {
+      font-size: 0.85rem;
+      color: #484f58;
+      font-style: italic;
+    }
+
+    .todo-list { list-style: none; padding: 0; }
+    .todo-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      padding: 0.4em 0;
+      font-size: 0.9rem;
+      color: #c9d1d9;
+    }
+    .todo-who {
+      font-size: 0.7rem;
+      color: #0d1117;
+      background: #388bfd;
+      padding: 0.15em 0.5em;
+      border-radius: 4px;
+      font-weight: bold;
+      min-width: 4em;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2em 0;
+      color: #484f58;
+      font-size: 0.8rem;
+      border-top: 1px solid #21262d;
+      margin-top: 2em;
+    }
+
+    @media (max-width: 600px) {
+      .nav { padding: 0.6em 1em; gap: 1em; }
+      .container { padding: 4em 1em 3em; }
+      .meeting-header { flex-wrap: wrap; gap: 0.5em; }
+      .meeting-body { padding: 1em; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <span class="nav-logo">Type Defender</span>
+    <a href="index.html">Game</a>
+    <a href="study.html">Study</a>
+    <a href="meeting-notes.html">Meetings</a>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1><span>Meeting</span> Notes</h1>
+      <p>Type Defender 팀 주간 회의록</p>
+    </div>
+
+    <!-- 5주차 -->
+    <div class="meeting">
+      <div class="meeting-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <div>
+          <h2>5주차 회의</h2>
+        </div>
+        <div style="display:flex; align-items:center; gap:1em;">
+          <span class="meeting-date">2026-04-07</span>
+          <span class="meeting-toggle">&#9660;</span>
+        </div>
+      </div>
+      <div class="meeting-body">
+
+        <div class="agenda-section">
+          <div class="agenda-title">참석자</div>
+          <p style="font-size:0.9rem;">전재형(팀장), 박태준, 김지우</p>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">개발 상황 공유</div>
+          <div class="member-status">
+            <div class="member-name">박태준</div>
+            <ul>
+              <li>프로토타입 제작 및 Vercel 배포 완료</li>
+              <li>순수 JS + HTML + CSS 기반, 핵심 게임 루프 구현</li>
+              <li>4가지 모드(Classic/Time Attack/Zen/Daily), 한영 입력 지원</li>
+              <li>배포 URL: <a href="https://type-defender.vercel.app" style="color:#388bfd;">type-defender.vercel.app</a></li>
+            </ul>
+          </div>
+          <div class="member-status">
+            <div class="member-name">전재형</div>
+            <ul>
+              <li>JavaScript 기초 문법 유튜브 강의 학습</li>
+              <li>CSS/HTML 관련 문헌 학습</li>
+              <li>인터프리터 기반 개발의 유연성 이해</li>
+              <li>애니메이션 구현을 위한 스프라이트 시트 조사</li>
+            </ul>
+          </div>
+          <div class="member-status">
+            <div class="member-name">김지우</div>
+            <ul>
+              <li>HTML 구조/문법 유튜브 강의 학습 및 정리</li>
+              <li>시맨틱 태그를 활용한 구조 설계 학습</li>
+              <li>CSS 학습으로 넘어갈 예정</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">레퍼런스 게임 분석</div>
+          <ul class="ref-list">
+            <li><a href="https://acidrain.hancomtaja.com/?gamekey=acidrain">한컴타자연습 산성비</a><span class="ref-tag">Web</span></li>
+            <li><a href="https://store.steampowered.com/app/2400160/Glyphica_Typing_Survival/?l=koreana">Glyphica: Typing Survival</a><span class="ref-tag">Steam</span></li>
+            <li><a href="https://store.steampowered.com/app/904440/Type_Defense/?l=koreana">Type Defense</a><span class="ref-tag">Steam</span></li>
+            <li><a href="https://play.google.com/store/apps/details?id=com.slg.TypingDefense3D&hl=ko">Type Defense 3D</a><span class="ref-tag">Android</span></li>
+          </ul>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">게임 컨셉 논의</div>
+          <div class="note-item">대학교 테마: 교수가 단어를 내려주고, 학생이 타이핑으로 없애는 구조</div>
+          <div style="margin-top:0.8em; margin-bottom:0.4em; font-size:0.85rem; color:#e6edf3; font-weight:bold;">시안 1 - 시험시간 컨닝</div>
+          <div class="note-item">단어 입력 = 컨닝 행위</div>
+          <div class="note-item">오타 = 컨닝하다 걸리는 횟수 증가</div>
+          <div class="note-item">미입력(단어 도달) = 시험 문제 오답 처리</div>
+          <div style="margin-top:0.8em; margin-bottom:0.4em; font-size:0.85rem; color:#e6edf3; font-weight:bold;">시안 2 - 필기 받아적기</div>
+          <div class="note-item">교수님 필기를 받아적는 컨셉</div>
+          <div class="note-item">실패 = 필기 누락</div>
+          <div style="margin-top:0.8em;">
+            <p class="note-empty">세부 디자인 레퍼런스 추가 리서치 필요 (다음 주 확정)</p>
+          </div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">디자인 방향성</div>
+          <div class="note-item">초기에 사이버틱한 느낌 고려했으나, 학교 테마와 맞지 않아 재검토</div>
+          <div class="note-item">대학생/프로그래밍 주제로 관련 레퍼런스 탐색 중</div>
+          <div class="note-item">디자인 컨셉 확정은 다음 주로</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">단어 데이터(DB) 방향</div>
+          <div class="note-item">프로그래밍 관련 단어들을 사용할 예정</div>
+          <div class="note-item">GitHub 오픈소스 데이터셋을 찾아 프로그램에 내장하는 방식으로 구현</div>
+          <div class="note-item">DB 확정은 다음 주로</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">정기 회의 시간</div>
+          <p class="note-empty">결정 예정</p>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title decisions">결정 사항</div>
+          <div class="note-item">게임 테마: 대학교 (시안 2개 중 다음 주 확정)</div>
+          <div class="note-item">단어 데이터: 프로그래밍 용어 오픈소스 DB 활용 방향</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title todo">다음 주 할 일</div>
+          <ul class="todo-list">
+            <li><span class="todo-who">전체</span> <span>디자인 레퍼런스 리서치 + 게임 컨셉(시안) 확정</span></li>
+            <li><span class="todo-who">전체</span> <span>프로그래밍 단어 오픈소스 DB 탐색 및 확정</span></li>
+            <li><span class="todo-who">박태준</span> <span>-</span></li>
+            <li><span class="todo-who">전재형</span> <span>-</span></li>
+            <li><span class="todo-who">김지우</span> <span>-</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4주차 -->
+    <div class="meeting collapsed">
+      <div class="meeting-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <div>
+          <h2>4주차 회의</h2>
+        </div>
+        <div style="display:flex; align-items:center; gap:1em;">
+          <span class="meeting-date">2026-03-31</span>
+          <span class="meeting-toggle">&#9660;</span>
+        </div>
+      </div>
+      <div class="meeting-body">
+
+        <div class="agenda-section">
+          <div class="agenda-title">참석자</div>
+          <p style="font-size:0.9rem;">전재형(팀장), 박태준, 김지우</p>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">프로젝트 방향 및 기술 스택</div>
+          <div class="note-item">초기 Pygame 기반 개발 고려 → 순수 웹(JS/HTML/CSS) 개발로 방향 선회</div>
+          <div class="note-item">이유: 약 2달간 웹 생태계 동작 원리를 깊이 학습하기 위함</div>
+          <div class="note-item">백엔드 없이 클라이언트 사이드 로직에 집중하여 기술적 완성도 우선</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">개발 상황 공유</div>
+          <div class="member-status">
+            <div class="member-name">박태준</div>
+            <ul>
+              <li>프로젝트 전반의 기획 및 설계 담당</li>
+              <li>게임 루프(requestAnimationFrame), 이벤트 처리, 모듈 구조 등 핵심 아키텍처 설계</li>
+              <li>개발 리드 + 코드 품질 관리(QA) 예정</li>
+              <li>팀원 학습 방향 안내 및 역할 분담 계획</li>
+            </ul>
+          </div>
+          <div class="member-status">
+            <div class="member-name">전재형, 김지우</div>
+            <ul>
+              <li>JavaScript 기초 문법(ES6+), HTML/CSS 구조, DOM 제어 방식 공통 학습</li>
+              <li>C/파이썬 기반 경험을 웹 환경으로 확장하는 데 집중</li>
+              <li>기초 학습 완료 후 역할 분담 예정 (게임 로직 / UI&middot;UX)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title">공통 진행 상황</div>
+          <div class="note-item">VS Code 등 개발 환경 세팅 진행 중</div>
+          <div class="note-item">순수 JavaScript 기반 웹 게임 오픈소스 프로젝트 및 튜토리얼 공동 조사</div>
+          <div class="note-item">GitHub 레포지토리는 기초 학습 완료 후 생성 예정</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title decisions">결정 사항</div>
+          <div class="note-item">기술 스택: 순수 JavaScript(ES6+) + HTML + CSS (프레임워크 없음)</div>
+          <div class="note-item">백엔드 없이 클라이언트 사이드에 집중</div>
+        </div>
+
+        <div class="agenda-section">
+          <div class="agenda-title todo">다음 주 할 일</div>
+          <ul class="todo-list">
+            <li><span class="todo-who">박태준</span> <span>프로토타입 제작 및 배포</span></li>
+            <li><span class="todo-who">전재형</span> <span>JS 기초 학습 계속, 스프라이트/애니메이션 조사</span></li>
+            <li><span class="todo-who">김지우</span> <span>HTML/CSS 기초 학습 계속</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 템플릿: 새 주차 추가 시 아래를 복사하여 위에 붙여넣기 -->
+    <!--
+    <div class="meeting">
+      <div class="meeting-header" onclick="this.parentElement.classList.toggle('collapsed')">
+        <div>
+          <h2>N주차 회의</h2>
+        </div>
+        <div style="display:flex; align-items:center; gap:1em;">
+          <span class="meeting-date">YYYY-MM-DD</span>
+          <span class="meeting-toggle">&#9660;</span>
+        </div>
+      </div>
+      <div class="meeting-body">
+        <div class="agenda-section">
+          <div class="agenda-title">참석자</div>
+          <p style="font-size:0.9rem;"></p>
+        </div>
+        <div class="agenda-section">
+          <div class="agenda-title">개발 상황 공유</div>
+        </div>
+        <div class="agenda-section">
+          <div class="agenda-title decisions">결정 사항</div>
+        </div>
+        <div class="agenda-section">
+          <div class="agenda-title todo">다음 주 할 일</div>
+          <ul class="todo-list">
+            <li><span class="todo-who">이름</span> <span>-</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    -->
+
+    <div class="footer">
+      Type Defender Team &middot; Open Source SW Course 2026
+    </div>
+  </div>
+
+</body>
+</html>
