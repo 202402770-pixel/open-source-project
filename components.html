@@ -80,6 +80,12 @@
     </section>
 
     <section class="demo-section">
+      <h2>Chalk Dust Effect</h2>
+      <p>아래 버튼을 누르면 W1 박태준 작업물인 분필 가루 파티클을 미리 볼 수 있습니다.</p>
+      <button class="td-btn td-btn--secondary" id="demo-chalk-dust" type="button">분필 가루 터트리기</button>
+    </section>
+
+    <section class="demo-section">
       <h2>Professor + Desk</h2>
 
       <div class="classroom-illustration">
@@ -100,7 +106,16 @@
     </section>
     </main>
 
+    <script src="./js/config.js"></script>
     <script src="./js/themes.js"></script>
+    <script src="./js/effects.js"></script>
     <script src="./js/ui.js"></script>
+    <script>
+      // W1 박태준 분필 가루 파티클 데모 — 버튼 위치에서 파편이 흩어진다
+      document.getElementById('demo-chalk-dust')?.addEventListener('click', (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        Effects.chalkDust(r.left + r.width / 2, r.top + r.height / 2);
+      });
+    </script>
 </body>
 </html>

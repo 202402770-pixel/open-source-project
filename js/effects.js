@@ -1,0 +1,95 @@
+/**
+ * Type Defender — Visual Effects
+ * --------------------------------------------------------------------------
+ * 게임에 시각적 텐션을 더하는 작은 효과 모듈.
+ *
+ * 현재 공개 API:
+ *   Effects.chalkDust(x, y, container?)   단어 파괴 분필 가루 파티클 8개
+ *
+ * 설계 원칙:
+ * - DOM 파티클 사용 (Canvas 미사용 — 프로젝트 정책)
+ * - transform + opacity 위주 (reflow 없음, GPU 가속)
+ * - prefers-reduced-motion 감지 시 효과 즉시 스킵
+ * - 종료 후 자동 cleanup (메모리 누수 방지)
+ *
+ * 의존성: js/config.js의 CONFIG.EFFECTS (먼저 로드되어 있어야 함)
+ * 참고: DESIGN.md §5.2 단어 완성 인터랙션 / WORK_PLAN.md §3 W1 박태준
+ */
+
+const Effects = {
+  /**
+   * 단어 파괴 시 분필 가루 파티클을 (x, y) 좌표에서 방사형으로 흩뿌린다.
+   *
+   * @param {number} x - 파괴 위치 x (viewport 좌표 또는 container 상대 좌표)
+   * @param {number} y - 파괴 위치 y
+   * @param {HTMLElement} [container=document.body] - 파티클 부착 부모
+   *
+   * 예시:
+   *   word.element.addEventListener('destroy', e => {
+   *     const rect = e.target.getBoundingClientRect();
+   *     Effects.chalkDust(rect.left + rect.width / 2, rect.top + rect.height / 2);
+   *   });
+   */
+  chalkDust(x, y, container = document.body) {
+    // 접근성 — 모션 줄이기 사용자에겐 효과 스킵
+    if (Effects._reducedMotion()) return;
+
+    const cfg = (typeof CONFIG !== 'undefined' && CONFIG.EFFECTS) || {
+      CHALK_DUST_PARTICLES: 8,
+      CHALK_DUST_DURATION: 400,
+      CHALK_DUST_DISTANCE: 60,
+    };
+
+    const count = cfg.CHALK_DUST_PARTICLES;
+    const duration = cfg.CHALK_DUST_DURATION;
+    const distance = cfg.CHALK_DUST_DISTANCE;
+
+    for (let i = 0; i < count; i++) {
+      // 8방향 균등 분포 + 약간의 랜덤 흔들림으로 자연스럽게
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+      const power = 0.7 + Math.random() * 0.6;
+      const dx = Math.cos(angle) * distance * power;
+      const dy = Math.sin(angle) * distance * power;
+
+      const particle = document.createElement('div');
+      particle.className = 'td-chalk-dust';
+      particle.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        width: 6px;
+        height: 6px;
+        background: var(--color-chalk, #f4f4eb);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity ${duration}ms ease-out;
+        will-change: transform, opacity;
+      `;
+      container.appendChild(particle);
+
+      // 다음 프레임에 transition 시작 (CSS transition 동작 보장)
+      requestAnimationFrame(() => {
+        particle.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        particle.style.opacity = '0';
+      });
+
+      // 종료 후 DOM에서 제거 — 누적 방지
+      setTimeout(() => particle.remove(), duration + 50);
+    }
+  },
+
+  /**
+   * (내부) 사용자가 OS 설정에서 모션 줄이기를 켰는지.
+   * matchMedia 미지원 환경(아주 오래된 브라우저)에선 false 반환.
+   */
+  _reducedMotion() {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (_) {
+      return false;
+    }
+  },
+};
