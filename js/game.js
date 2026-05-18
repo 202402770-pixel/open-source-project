@@ -1,9 +1,4 @@
-import { getWordsByLevel } from './wordData.js';
-import { UI } from './ui.js';
-import * as Effects from './effects.js';
-import { AchievementManager, ACHIEVEMENT_IDS, challenges } from './achievements.js';
-
-export class Game {
+class Game {
     constructor() {
         this.score = 0;
         this.combo = 0;
@@ -17,9 +12,9 @@ export class Game {
         this.startTime = Date.now();
         this.totalTypedChars = 0;
         this.wpm = 0;
-        this.activeWords = [...getWordsByLevel(this.level)];
-        AchievementManager.init();
-        AchievementManager.checkAttendance();
+        this.activeWords = [...WordData.getWordsByLevel(this.level)];
+        Achievements.init();
+        Achievements.checkAttendance();
 
         let playCount = parseInt(localStorage.getItem('typing_play_count')) || 0;
         playCount++;
@@ -48,9 +43,9 @@ export class Game {
         this.score += 10;
         this.combo++;
         this.activeWords.splice(targetIndex, 1);
-        if (this.score === 10) AchievementManager.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
-        AchievementManager.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
-        AchievementManager.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
+        Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
+        Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
+        Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
         if (this.combo >= 10) {
             Effects.toggleGlow(true, 'combo10');
         }
@@ -73,17 +68,17 @@ export class Game {
         if (this.levelAttempts > 0) {
             const accuracy = ((this.levelAttempts - this.levelMissed) / this.levelAttempts) * 100;
             if (accuracy >= 95) {
-                AchievementManager.check(ACHIEVEMENT_IDS.HONOR_STUDENT, 1);
+                Achievements.check(ACHIEVEMENT_IDS.HONOR_STUDENT, 1);
             }
             if (this.levelMissed === 0) {
-                AchievementManager.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1);
+                Achievements.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1);
             }
         }
         this.levelAttempts = 0;
         this.levelMissed = 0;
         this.level++;
-        AchievementManager.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
-        const nextWords = getWordsByLevel(this.level);
+        Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
+        const nextWords = WordData.getWordsByLevel(this.level);
         if (nextWords && nextWords.length > 0){
             this.activeWords = [...nextWords];
         } else {
@@ -102,6 +97,11 @@ export class Game {
 
     gameClear() {
         this.isGameOver = true;
+        if (this.currentHP === this.maxHP) {
+        Achievements.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1); 
+        }
+        if (this.currentHP <= this.maxHP * 0.2) Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, 1);
+        Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
         UI.showToast("게임 클리어!", "모든 단어를 방어했습니다.", "축");
     }
 
@@ -114,9 +114,14 @@ export class Game {
     calculateWPM(){
         if(this.isGameOver) return;
         const minutes = (Date.now() - this.startTime) / 60000;
-        if(minutes>0){
+        if(minutes > 0.05){
             this.wpm = Math.floor((this.totalTypedChars/5)/minutes);
-            AchievementManager.check(ACHIEVEMENT_IDS.SPEED_RUNNER, this.wpm);
+            Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, this.wpm);
+            if (minutes >= 3) {
+                Achievements.check(ACHIEVEMENT_IDS.NIGHT_STUDY, 1);
+            }
+        } else {
+            this.wpm = 0;
         }
     }
 }

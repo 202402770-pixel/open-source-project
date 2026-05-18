@@ -1,6 +1,4 @@
-import { UI } from './ui.js';
-// 현재 미연동된 도전과제: 8, 10, 11, 12
-export const ACHIEVEMENT_IDS = {
+const ACHIEVEMENT_IDS = {
   FIRST_WORD: 1,
   COMBO_10: 2,
   COMBO_50: 3,
@@ -15,27 +13,27 @@ export const ACHIEVEMENT_IDS = {
   TOP_CLASS: 12
 };
 
-export const challenges = [
-  { id: ACHIEVEMENT_IDS.FIRST_WORD, title: "첫 받아적기", description: "단어 1개 처리", icon: "✏️", targetValue: 1, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.COMBO_10, title: "집중력", description: "콤보 10 달성", icon: "x10", targetValue: 10, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.COMBO_50, title: "집중력 폭발", description: "콤보 50 달성", icon: "x50", targetValue: 50, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.HONOR_STUDENT, title: "우등생", description: "A+ 학점", icon: "A+", targetValue: 1, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.GRADUATION, title: "졸업", description: "LV 15 도달", icon: "🎓", targetValue: 15, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.SPEED_RUNNER, title: "속전속결", description: "WPM 100 돌파", icon: "⚡", targetValue: 100, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.ATTENDANCE, title: "개근", description: "7일 연속 Daily", icon: "📅", targetValue: 7, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 50", icon: "👹", targetValue: 50, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.PERFECTIONIST, title: "완벽주의", description: "오타 0%로 한 라운드", icon: "💯", targetValue: 1, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.NIGHT_STUDY, title: "야간 자율학습", description: "Zen 3분 완주", icon: "🌙", targetValue: 1, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.SELF_STUDY, title: "독학", description: "Custom Words 사용", icon: "📖", targetValue: 1, isCompleted: false },
-  { id: ACHIEVEMENT_IDS.TOP_CLASS, title: "수석", description: "리더보드 1위", icon: "🏆", targetValue: 1, isCompleted: false },
-];
+const Achievements = {
+  CHALLENGES: [
+    { id: ACHIEVEMENT_IDS.FIRST_WORD, title: "첫 받아적기", description: "단어 1개 처리", icon: "✏️", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.COMBO_10, title: "집중력", description: "콤보 10 달성", icon: "x10", targetValue: 10, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.COMBO_50, title: "집중력 폭발", description: "콤보 50 달성", icon: "x50", targetValue: 50, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.HONOR_STUDENT, title: "우등생", description: "A+ 학점", icon: "A+", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.GRADUATION, title: "졸업", description: "LV 15 도달", icon: "🎓", targetValue: 15, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.SPEED_RUNNER, title: "속전속결", description: "WPM 100 돌파", icon: "⚡", targetValue: 100, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.ATTENDANCE, title: "개근", description: "7일 연속 Daily", icon: "📅", targetValue: 7, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 50", icon: "👹", targetValue: 50, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.PERFECTIONIST, title: "완벽주의", description: "오타 0%로 한 라운드", icon: "💯", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.NIGHT_STUDY, title: "야간 자율학습", description: "Zen 3분 완주", icon: "🌙", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.SELF_STUDY, title: "독학", description: "Custom Words 사용", icon: "📖", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.TOP_CLASS, title: "수석", description: "리더보드 1위", icon: "🏆", targetValue: 1, isCompleted: false }
+    ],
 
-export const AchievementManager = {
     init() {
         try {
             const saved = JSON.parse(localStorage.getItem('typing_achievements'));
-              if (saved && Array.isArray(saved)) {
-                challenges.forEach(challenge => {
+            if (saved && Array.isArray(saved)) {
+                this.CHALLENGES.forEach(challenge => {
                   if (saved.includes(challenge.id)) {
                     challenge.isCompleted = true;
                   }
@@ -47,7 +45,7 @@ export const AchievementManager = {
     },
 
     check(id, currentValue) {
-        const target = challenges.find(c => c.id === id);
+        const target = this.CHALLENGES.find(c => c.id === id);
         if (!target || target.isCompleted) return;
         if (currentValue >= target.targetValue) {
             this.complete(target);
@@ -62,12 +60,12 @@ export const AchievementManager = {
 
     save() {
         try {
-            const completedIds = challenges
-                .filter(c => c.isCompleted)
-                .map(c => c.id);
-            localStorage.setItem('typing_achievements', JSON.stringify(completedIds));
+            const completed = this.CHALLENGES
+              .filter(c => c.isCompleted)
+              .map(c => c.id);
+            localStorage.setItem('typing_achievements', JSON.stringify(completed));
         } catch (e) {
-            console.error("업적 저장에 실패했습니다. 저장 공간이 부족하거나 권한이 없을 수 있습니다:", e);
+            console.error("업적 데이터를 저장하지 못했습니다.", e);
         }
     },
 

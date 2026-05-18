@@ -1,7 +1,6 @@
-const hiddenInput = document.getElementById('hidden-input');
-
-export const Input = {
+const Input = {
     init(onInput, onEnter) {
+        const hiddenInput = document.getElementById('hidden-input');
         const gameArea = document.querySelector('.notebook-input');
         if(gameArea) {
             gameArea.addEventListener('click', () => hiddenInput.focus());
@@ -9,7 +8,6 @@ export const Input = {
         hiddenInput.addEventListener('input', () => {
             onInput(hiddenInput.value);
         });
-
         hiddenInput.addEventListener('keydown', (e) => {
             if (e.isComposing) return;
             if (e.key === 'Enter') {

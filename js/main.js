@@ -1,12 +1,7 @@
-import { loadWords } from './wordData.js';
-import { Game } from './game.js';
-import { UI } from './ui.js';
-import { Input } from './input.js';
-
 let game;
 
 async function start() {
-    await loadWords();
+    await WordData.loadWords();
     game = new Game();
 
     Input.init(

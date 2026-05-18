@@ -1,22 +1,20 @@
-import * as Effects from './effects.js';
-
-export const UI = {
-    wordDisplay: document.getElementById('word-display'),
-    score: document.getElementById('score'),
-    level: document.getElementById('level'),
-    missed: document.getElementById('missed'),
-    hpFill: document.getElementById('hp-fill'), 
-    hpText: document.getElementById('hp-text'), 
-    toastContainer: document.getElementById('toast-container'),
-    wpmDisplay: document.getElementById('wpm'),
+const UI = {
+    get wordDisplay() { return document.getElementById('word-display'); },
+    get score() { return document.getElementById('score'); },
+    get level() { return document.getElementById('level'); },
+    get missed() { return document.getElementById('missed'); },
+    get hpFill() { return document.getElementById('hp-fill'); }, 
+    get hpText() { return document.getElementById('hp-text'); }, 
+    get toastContainer() { return document.getElementById('toast-container'); },
+    get wpmDisplay() { return document.getElementById('wpm'); },
     lastInputLength: 0,
-
 
     renderTargetWord(activeWords, userInput) {
         if (!userInput || userInput === "") {
             this.wordDisplay.innerHTML = '';
             this.addCursor();
             this.lastInputLength = 0;
+            this.currentTargetWord = null;
             return; 
         }
         const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
@@ -24,7 +22,9 @@ export const UI = {
         let detectError = false;
         if(!targetWord) {
             detectError = true;
-            targetWord = wordsList[0];
+            targetWord = this.currentTargetWord || wordsList[0];
+        } else {
+            this.currentTargetWord = targetWord;
         }
         if(this.wordDisplay.children.length !== targetWord.length + 1){
             this.wordDisplay.innerHTML = '';
