@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Type Defender - Design Mockups</title>
+<style>
+  /* ============================================================
+     GLOBAL / TAB NAV
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #111; color: #fff; }
+
+  .tab-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; background: #0a0a0a; border-bottom: 1px solid #333;
+    padding: 0 16px;
+  }
+  .tab-nav button {
+    padding: 14px 24px; background: none; border: none; color: #888;
+    font-size: 14px; cursor: pointer; border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-nav button:hover { color: #ccc; }
+  .tab-nav button.active { color: #fff; border-bottom-color: #00ffcc; }
+  .tab-nav .nav-title {
+    padding: 14px 24px; font-weight: bold; color: #555; font-size: 13px;
+    display: flex; align-items: center; letter-spacing: 1px;
+  }
+
+  .mockup { display: none; padding-top: 52px; min-height: 100vh; }
+  .mockup.active { display: block; }
+
+  .concept-badge {
+    position: absolute; top: 62px; right: 20px;
+    padding: 6px 14px; border-radius: 20px; font-size: 11px;
+    font-weight: bold; letter-spacing: 1px; z-index: 10;
+  }
+  .concept-info {
+    position: absolute; top: 62px; left: 20px;
+    padding: 10px 16px; border-radius: 8px; font-size: 12px;
+    line-height: 1.6; z-index: 10; max-width: 320px;
+  }
+
+  /* ============================================================
+     MOCKUP A: CRT TERMINAL + LECTURE NOTES
+     ============================================================ */
+  .mockup-a {
+    background: #0a0a00;
+    font-family: 'Courier New', 'Consolas', monospace;
+    position: relative;
+    overflow: hidden;
+  }
+  .mockup-a::before {
+    content: '';
+    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 0, 0.03) 0px,
+      rgba(0, 255, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none; z-index: 2;
+  }
+  .mockup-a::after {
+    content: '';
+    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none; z-index: 3;
+  }
+
+  .a-header {
+    text-align: center; padding: 20px; color: #33ff33;
+    border-bottom: 1px solid #1a3a1a;
+  }
+  .a-header .prof-line {
+    font-size: 14px; color: #22aa22; margin-bottom: 6px;
+  }
+  .a-header .prof-line span { color: #33ff33; }
+  .a-header .title {
+    font-size: 28px; color: #33ff33;
+    text-shadow: 0 0 10px #33ff33, 0 0 20px #33ff3366;
+    letter-spacing: 4px;
+  }
+  .a-header .subtitle {
+    font-size: 12px; color: #227722; margin-top: 4px; letter-spacing: 2px;
+  }
+
+  .a-hud {
+    display: flex; justify-content: space-between; padding: 10px 30px;
+    color: #22aa22; font-size: 13px; border-bottom: 1px solid #0f2a0f;
+  }
+  .a-hud .val { color: #33ff33; }
+
+  .a-play-area {
+    height: 420px; position: relative; border: 1px solid #1a3a1a;
+    margin: 10px 20px; background: #050a05;
+    overflow: hidden;
+  }
+  .a-word {
+    position: absolute; padding: 4px 10px; border-radius: 2px;
+    font-size: 18px; animation: a-fall 4s linear forwards;
+  }
+  .a-word.easy { color: #33ff33; }
+  .a-word.medium { color: #66ff66; font-size: 16px; }
+  .a-word.hard { color: #99ff33; font-size: 15px; }
+  .a-word.boss { color: #ffff33; font-size: 20px; text-shadow: 0 0 8px #ffff3366; }
+  .a-word .matched { color: #005500; text-decoration: line-through; }
+
+  @keyframes a-fall {
+    from { transform: translateY(-30px); }
+    to { transform: translateY(420px); }
+  }
+  @keyframes a-blink { 0%,50% { opacity: 1; } 51%,100% { opacity: 0; } }
+
+  .a-input-area {
+    margin: 10px 20px; padding: 12px 16px;
+    border: 1px solid #1a3a1a; background: #030803;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .a-prompt { color: #22aa22; font-size: 14px; }
+  .a-cursor {
+    display: inline-block; width: 10px; height: 18px;
+    background: #33ff33; animation: a-blink 1s step-end infinite;
+  }
+  .a-typed { color: #33ff33; font-size: 16px; letter-spacing: 1px; }
+
+  .a-status-bar {
+    display: flex; justify-content: space-between; padding: 8px 30px;
+    color: #1a5a1a; font-size: 11px; border-top: 1px solid #0f2a0f;
+  }
+
+  .a-badge { background: #0a2a0a; color: #33ff33; border: 1px solid #33ff3344; }
+  .a-info { background: #0a1a0a; color: #33ff33; border: 1px solid #33ff3322; }
+
+  /* ============================================================
+     MOCKUP B: NEON CYBERPUNK + EXAM CHEATING
+     ============================================================ */
+  .mockup-b {
+    background: #0a0014;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    position: relative;
+  }
+  .mockup-b::before {
+    content: '';
+    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(138, 43, 226, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(0, 200, 255, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .b-header {
+    text-align: center; padding: 20px;
+    background: linear-gradient(180deg, rgba(138,43,226,0.1) 0%, transparent 100%);
+  }
+  .b-header .exam-label {
+    font-size: 11px; color: #ff3366; letter-spacing: 4px;
+    text-transform: uppercase; margin-bottom: 8px;
+    animation: b-pulse 2s ease-in-out infinite;
+  }
+  @keyframes b-pulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+  .b-header .title {
+    font-size: 32px; font-weight: 900;
+    background: linear-gradient(135deg, #00d4ff, #8a2be2, #ff3366);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 3px;
+  }
+  .b-header .subtitle {
+    font-size: 12px; color: #554477; margin-top: 4px;
+  }
+
+  .b-hud {
+    display: flex; justify-content: space-around; padding: 12px 20px;
+    gap: 10px;
+  }
+  .b-hud-item {
+    flex: 1; text-align: center; padding: 10px;
+    background: rgba(138,43,226,0.08); border: 1px solid rgba(138,43,226,0.2);
+    border-radius: 8px;
+  }
+  .b-hud-item .label { font-size: 10px; color: #6644aa; letter-spacing: 2px; }
+  .b-hud-item .value { font-size: 22px; color: #00d4ff; font-weight: bold; margin-top: 2px; }
+  .b-hud-item .value.danger { color: #ff3366; }
+
+  .b-play-area {
+    height: 400px; position: relative; margin: 10px 20px;
+    background: rgba(10, 0, 30, 0.5);
+    border: 1px solid rgba(138,43,226,0.15);
+    border-radius: 12px; overflow: hidden;
+  }
+  .b-play-area::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,51,102,0.03) 100%);
+    pointer-events: none;
+  }
+
+  .b-word {
+    position: absolute; padding: 6px 14px; border-radius: 6px;
+    font-weight: 600; animation: b-fall 4s linear forwards;
+    backdrop-filter: blur(4px);
+  }
+  .b-word.easy {
+    color: #00d4ff; font-size: 18px;
+    text-shadow: 0 0 8px rgba(0,212,255,0.4);
+  }
+  .b-word.medium {
+    color: #8a2be2; font-size: 16px;
+    background: rgba(138,43,226,0.1); border: 1px solid rgba(138,43,226,0.2);
+    text-shadow: 0 0 8px rgba(138,43,226,0.4);
+  }
+  .b-word.hard {
+    color: #ff3366; font-size: 15px;
+    background: rgba(255,51,102,0.08); border: 1px solid rgba(255,51,102,0.2);
+    text-shadow: 0 0 8px rgba(255,51,102,0.4);
+  }
+  .b-word.boss {
+    color: #ffcc00; font-size: 22px; font-weight: 900;
+    background: rgba(255,204,0,0.08); border: 1px solid rgba(255,204,0,0.3);
+    text-shadow: 0 0 12px rgba(255,204,0,0.5);
+    padding: 8px 18px;
+  }
+  .b-word .matched { opacity: 0.3; }
+
+  @keyframes b-fall {
+    from { transform: translateY(-40px); }
+    to { transform: translateY(400px); }
+  }
+
+  .b-exam-paper {
+    position: absolute; bottom: 10px; right: 10px;
+    padding: 10px; background: rgba(255,51,102,0.05);
+    border: 1px solid rgba(255,51,102,0.15); border-radius: 8px;
+    font-size: 11px; color: #ff336688;
+  }
+  .b-exam-paper .caught { color: #ff3366; font-weight: bold; font-size: 14px; }
+
+  .b-input-area {
+    margin: 10px 20px; padding: 14px 20px;
+    background: rgba(138,43,226,0.06);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .b-input-icon { font-size: 18px; }
+  .b-typed {
+    font-size: 18px; color: #00d4ff; font-weight: 600;
+    text-shadow: 0 0 6px rgba(0,212,255,0.3);
+  }
+  .b-cursor {
+    width: 2px; height: 22px; background: #00d4ff;
+    animation: a-blink 0.8s step-end infinite;
+    box-shadow: 0 0 6px #00d4ff;
+  }
+
+  .b-badge { background: #1a0030; color: #8a2be2; border: 1px solid #8a2be244; }
+  .b-info { background: #0a0020; color: #aa88dd; border: 1px solid #8a2be222; }
+
+  /* ============================================================
+     MOCKUP C: HYBRID (TERMINAL + NEON) + LECTURE NOTES
+     ============================================================ */
+  .mockup-c {
+    background: #080810;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    position: relative;
+  }
+  .mockup-c::before {
+    content: '';
+    position: fixed; top: 52px; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 204, 0.015) 0px,
+      rgba(0, 255, 204, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+    pointer-events: none; z-index: 2;
+  }
+
+  .c-header {
+    text-align: center; padding: 18px;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .c-header .prof-line {
+    font-size: 13px; color: #00ffcc66;
+  }
+  .c-header .prof-line .name { color: #00ffcc; }
+  .c-header .title {
+    font-size: 26px; color: #00ffcc;
+    text-shadow: 0 0 15px rgba(0,255,204,0.3);
+    letter-spacing: 6px; margin-top: 6px;
+  }
+  .c-header .class-info {
+    font-size: 11px; color: #334455; margin-top: 4px;
+    letter-spacing: 2px;
+  }
+
+  .c-hud {
+    display: flex; justify-content: space-between; padding: 10px 24px;
+    border-bottom: 1px solid #111122;
+  }
+  .c-hud-item {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .c-hud-item .label { font-size: 10px; color: #334455; letter-spacing: 1px; }
+  .c-hud-item .value { font-size: 16px; color: #00ffcc; font-weight: bold; }
+  .c-hud-item .value.accent { color: #ff6699; }
+
+  .c-play-area {
+    height: 410px; position: relative; margin: 8px 16px;
+    border: 1px solid #151525; background: #06060e;
+    overflow: hidden;
+  }
+  .c-grid-overlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      linear-gradient(90deg, rgba(0,255,204,0.02) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(0,255,204,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .c-word {
+    position: absolute; padding: 4px 12px; border-radius: 3px;
+    animation: c-fall 4s linear forwards;
+    border-left: 2px solid;
+  }
+  .c-word.easy {
+    color: #00ffcc; font-size: 17px; border-color: #00ffcc44;
+  }
+  .c-word.medium {
+    color: #00aaff; font-size: 15px; border-color: #00aaff44;
+    background: rgba(0,170,255,0.05);
+  }
+  .c-word.hard {
+    color: #ff6699; font-size: 14px; border-color: #ff669944;
+    background: rgba(255,102,153,0.05);
+  }
+  .c-word.boss {
+    color: #ffcc00; font-size: 20px; font-weight: bold;
+    border-color: #ffcc0066;
+    background: rgba(255,204,0,0.05);
+    text-shadow: 0 0 10px rgba(255,204,0,0.3);
+    padding: 6px 16px;
+  }
+  .c-word .matched { color: #334455; }
+
+  @keyframes c-fall {
+    from { transform: translateY(-30px); }
+    to { transform: translateY(410px); }
+  }
+
+  .c-input-area {
+    margin: 8px 16px; padding: 12px 16px;
+    border: 1px solid #151525; background: #0a0a14;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .c-prompt { color: #00ffcc; font-size: 13px; opacity: 0.6; }
+  .c-typed { color: #00ffcc; font-size: 17px; }
+  .c-cursor {
+    width: 9px; height: 18px; background: #00ffcc;
+    animation: a-blink 0.9s step-end infinite;
+    box-shadow: 0 0 4px #00ffcc66;
+  }
+
+  .c-note-progress {
+    margin: 6px 16px; padding: 8px 12px;
+    background: #0a0a14; border: 1px solid #151525;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; color: #334455;
+  }
+  .c-note-bar {
+    flex: 1; height: 4px; background: #151525; border-radius: 2px; overflow: hidden;
+  }
+  .c-note-bar-fill {
+    width: 67%; height: 100%;
+    background: linear-gradient(90deg, #00ffcc, #00aaff);
+    border-radius: 2px;
+  }
+
+  .c-badge { background: #0a0a1a; color: #00ffcc; border: 1px solid #00ffcc33; }
+  .c-info { background: #08081a; color: #00ddbb; border: 1px solid #00ffcc22; }
+
+  /* ============================================================
+     MOCKUP D: RETRO UNIVERSITY BULLETIN + EXAM
+     ============================================================ */
+  .mockup-d {
+    background: #1a1520;
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+  }
+
+  .d-header {
+    text-align: center; padding: 18px;
+    background: linear-gradient(180deg, #231e30 0%, transparent 100%);
+    border-bottom: 2px solid #2a2535;
+  }
+  .d-header .univ-badge {
+    display: inline-block; padding: 4px 16px; border-radius: 20px;
+    background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3);
+    color: #ffaa00; font-size: 11px; letter-spacing: 3px; margin-bottom: 8px;
+  }
+  .d-header .title {
+    font-size: 30px; font-weight: 900; color: #f0e6d3;
+    letter-spacing: 2px;
+  }
+  .d-header .subtitle {
+    font-size: 12px; color: #665544; margin-top: 4px;
+  }
+
+  .d-hud {
+    display: flex; justify-content: space-around; padding: 12px 20px;
+    background: #16121e;
+  }
+  .d-hud-item { text-align: center; }
+  .d-hud-item .label {
+    font-size: 10px; color: #554433; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .d-hud-item .value { font-size: 20px; color: #ffaa00; font-weight: bold; }
+  .d-hud-item .value.grade { color: #44ddaa; }
+  .d-hud-item .value.risk { color: #ff4444; }
+
+  .d-play-area {
+    height: 400px; position: relative; margin: 10px 20px;
+    background: #12101a;
+    border: 2px solid #2a2535; border-radius: 4px;
+    overflow: hidden;
+  }
+  .d-play-area .paper-bg {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent 0px, transparent 39px, #1e1a28 39px, #1e1a28 40px
+    );
+    pointer-events: none; opacity: 0.5;
+  }
+  .d-prof-area {
+    position: absolute; top: 0; left: 0; right: 0;
+    padding: 8px 16px; background: rgba(255,170,0,0.04);
+    border-bottom: 1px dashed #2a2535;
+    font-size: 11px; color: #665544;
+    display: flex; justify-content: space-between;
+  }
+
+  .d-word {
+    position: absolute; padding: 6px 14px; border-radius: 4px;
+    font-weight: 600; animation: d-fall 4s linear forwards;
+  }
+  .d-word.easy {
+    color: #f0e6d3; font-size: 18px;
+    background: rgba(240,230,211,0.05);
+  }
+  .d-word.medium {
+    color: #ffaa00; font-size: 16px;
+    background: rgba(255,170,0,0.06); border: 1px solid rgba(255,170,0,0.15);
+  }
+  .d-word.hard {
+    color: #ff6644; font-size: 15px;
+    background: rgba(255,102,68,0.06); border: 1px solid rgba(255,102,68,0.15);
+  }
+  .d-word.boss {
+    color: #ff4444; font-size: 22px; font-weight: 900;
+    background: rgba(255,68,68,0.08); border: 1px solid rgba(255,68,68,0.25);
+    text-shadow: 0 0 8px rgba(255,68,68,0.3);
+    padding: 8px 18px;
+  }
+  .d-word .matched { color: #44ddaa; text-decoration: underline; }
+
+  @keyframes d-fall {
+    from { transform: translateY(-30px); }
+    to { transform: translateY(400px); }
+  }
+
+  .d-answer-sheet {
+    position: absolute; bottom: 10px; left: 10px;
+    padding: 8px 12px; background: rgba(68,221,170,0.05);
+    border: 1px solid rgba(68,221,170,0.15); border-radius: 6px;
+    font-size: 11px;
+  }
+  .d-answer-sheet .label { color: #44ddaa66; }
+  .d-answer-sheet .answers { color: #44ddaa; margin-top: 2px; }
+
+  .d-input-area {
+    margin: 10px 20px; padding: 14px 18px;
+    background: #16121e; border: 2px solid #2a2535;
+    border-radius: 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .d-pencil { font-size: 18px; }
+  .d-typed { font-size: 18px; color: #f0e6d3; }
+  .d-cursor {
+    width: 2px; height: 20px; background: #ffaa00;
+    animation: a-blink 0.8s step-end infinite;
+  }
+
+  .d-exam-timer {
+    margin: 8px 20px; padding: 8px 14px;
+    background: rgba(255,68,68,0.04); border: 1px solid rgba(255,68,68,0.12);
+    border-radius: 4px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: #663333;
+  }
+  .d-exam-timer .time { color: #ff4444; font-weight: bold; font-size: 16px; }
+
+  .d-badge { background: #231e30; color: #ffaa00; border: 1px solid #ffaa0033; }
+  .d-info { background: #1e1828; color: #ccaa77; border: 1px solid #ffaa0022; }
+
+  /* ============================================================
+     MOCKUP F: FLASH GAME + CLASSROOM + CHEATING CONCEPT
+     ============================================================ */
+  .mockup-f {
+    background: #d4c8a0;
+    font-family: 'NanumBarunGothic', 'Malgun Gothic', 'Segoe UI', sans-serif;
+    position: relative;
+    color: #333;
+    overflow: hidden;
+  }
+
+  /* -- HUD overlay -- */
+  .f-hud-overlay {
+    position: relative; z-index: 10;
+    display: flex; justify-content: space-between; align-items: start;
+    padding: 8px 14px;
+  }
+  .f-hud-left, .f-hud-right {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .f-hud-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.85); border-radius: 8px;
+    padding: 4px 12px; font-size: 13px; font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    backdrop-filter: blur(4px);
+  }
+  .f-hud-pill .label { color: #666; font-weight: normal; font-size: 11px; }
+  .f-hud-pill .val { color: #2c3e50; }
+  .f-hud-pill .val.danger { color: #e74c3c; }
+  .f-hud-pill .val.good { color: #27ae60; }
+  .f-hud-pill .val.accent { color: #e67e22; }
+  .f-hud-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: bold; color: #fff;
+  }
+  .f-hud-tag.safe { background: #27ae60; }
+  .f-hud-tag.warn { background: #f39c12; animation: f-tag-blink 0.6s ease-in-out infinite alternate; }
+  .f-hud-tag.danger { background: #e74c3c; animation: f-tag-blink 0.3s ease-in-out infinite alternate; }
+  @keyframes f-tag-blink { from { opacity: 1; } to { opacity: 0.5; } }
+
+  /* Suspicion bar */
+  .f-suspicion-bar {
+    position: relative; z-index: 10;
+    margin: 0 14px 2px; display: flex; align-items: center; gap: 8px;
+  }
+  .f-suspicion-label { font-size: 11px; font-weight: 900; color: #e74c3c;
+    text-shadow: 0 1px 0 #fff; white-space: nowrap; }
+  .f-suspicion-track {
+    flex: 1; height: 14px; background: #ccc; border-radius: 7px;
+    overflow: hidden; border: 3px solid #aaa;
+    box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+  }
+  .f-suspicion-fill {
+    width: 45%; height: 100%;
+    background: linear-gradient(90deg, #f1c40f 0%, #e74c3c 100%);
+    border-radius: 5px;
+    transition: width 0.3s;
+  }
+  .f-suspicion-text { font-size: 12px; font-weight: 900; color: #e67e22;
+    text-shadow: 0 1px 0 #fff; }
+
+  /* Caught counter */
+  .f-caught-bar {
+    position: relative; z-index: 10;
+    margin: 0 14px 4px; display: flex; align-items: center; gap: 6px;
+  }
+  .f-caught-label { font-size: 11px; font-weight: 900; color: #c0392b;
+    text-shadow: 0 1px 0 #fff; }
+  .f-caught-dots {
+    display: flex; gap: 4px;
+  }
+  .f-caught-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #c0392b; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .f-caught-dot.filled { background: #e74c3c; color: #fff; }
+  .f-caught-hint { font-size: 10px; color: #999; margin-left: 4px; }
+
+  /* Warning banner */
+  .f-warning-banner {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 20; padding: 12px 30px;
+    background: rgba(231,76,60,0.92); color: #fff;
+    font-size: 18px; font-weight: 900; border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(231,76,60,0.5);
+    animation: f-warn-shake 0.3s ease-in-out infinite alternate;
+    display: none;
+  }
+  .f-warning-banner.visible { display: block; }
+  @keyframes f-warn-shake {
+    from { transform: translate(-50%, -50%) rotate(-1deg); }
+    to { transform: translate(-50%, -50%) rotate(1deg); }
+  }
+
+  /* Classroom scene */
+  .f-classroom {
+    position: relative; height: 480px; overflow: hidden;
+  }
+  .f-wall {
+    position: absolute; top: 0; left: 0; right: 0; height: 280px;
+    background: linear-gradient(180deg, #d9cea6 0%, #cfc196 100%);
+  }
+
+  /* Chalkboard (exam paper) */
+  .f-chalkboard {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 460px; height: 180px;
+    background: linear-gradient(170deg, #2e6b4a 0%, #1a5c3a 30%, #225e3f 100%);
+    border: 8px solid #8b7355;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.15);
+    z-index: 2; overflow: hidden;
+  }
+  .f-chalkboard::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 8px;
+    background: #a0916e; border-radius: 0 0 2px 2px;
+  }
+  .f-chalk-text {
+    position: absolute; top: 12px; left: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+  }
+  .f-chalk-title {
+    position: absolute; top: 8px; right: 16px;
+    font-size: 12px; color: rgba(255,255,200,0.6);
+    font-family: 'Courier New', monospace;
+  }
+  .f-exam-notice {
+    position: absolute; bottom: 14px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.12); padding: 3px 14px; border-radius: 4px;
+    font-size: 13px; color: rgba(255,200,200,0.8);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  /* Professor - facing board (back turned) or watching */
+  .f-professor {
+    position: absolute; bottom: 200px; right: 60px;
+    z-index: 4; display: flex; flex-direction: column; align-items: center;
+  }
+  .f-prof-head {
+    width: 50px; height: 50px; background: #f5d5b8;
+    border-radius: 50%; position: relative;
+    border: 2px solid #d4a574;
+  }
+  .f-prof-hair {
+    position: absolute; top: -4px; left: 4px; right: 4px; height: 16px;
+    background: #555; border-radius: 20px 20px 0 0;
+  }
+  .f-prof-glasses {
+    position: absolute; top: 16px; left: 6px;
+    width: 38px; height: 14px;
+    border: 2px solid #333; border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+  }
+  .f-prof-glasses::before {
+    content: ''; position: absolute; top: 3px; left: 50%;
+    transform: translateX(-50%); width: 6px; height: 2px;
+    background: #333;
+  }
+  .f-prof-eye-indicator {
+    position: absolute; top: 18px; left: 12px;
+    display: flex; gap: 10px;
+  }
+  .f-prof-eye {
+    width: 8px; height: 8px; background: #333;
+    border-radius: 50%;
+  }
+  .f-prof-eye.looking { background: #e74c3c; box-shadow: 0 0 6px #e74c3c; }
+  .f-prof-body {
+    width: 46px; height: 55px; background: #7f8c8d;
+    border-radius: 8px 8px 4px 4px; margin-top: -4px;
+    position: relative;
+  }
+  .f-prof-arm {
+    position: absolute; top: 8px;
+    width: 12px; height: 40px; background: #7f8c8d;
+    border-radius: 6px;
+  }
+  .f-prof-arm.left { left: -10px; transform: rotate(15deg); }
+  .f-prof-arm.right { right: -10px; transform: rotate(-15deg); }
+  .f-prof-hand {
+    position: absolute; bottom: -4px; width: 10px; height: 10px;
+    background: #f5d5b8; border-radius: 50%;
+  }
+  .f-prof-paper {
+    position: absolute; top: 2px; right: -18px;
+    width: 18px; height: 24px; background: #fff;
+    border: 1px solid #ccc; border-radius: 2px;
+    transform: rotate(5deg);
+  }
+  .f-prof-paper::before {
+    content: ''; position: absolute; top: 4px; left: 3px;
+    width: 10px; height: 2px; background: #ccc;
+    box-shadow: 0 4px 0 #ccc, 0 8px 0 #ccc;
+  }
+  .f-prof-legs {
+    display: flex; gap: 4px; margin-top: -2px;
+  }
+  .f-prof-leg {
+    width: 14px; height: 30px; background: #555;
+    border-radius: 4px 4px 6px 6px;
+  }
+  .f-prof-speech {
+    position: absolute; top: -40px; right: 60px;
+    background: #fff; padding: 6px 12px; border-radius: 12px;
+    border: 2px solid #ddd; font-size: 12px; color: #555;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .f-prof-speech::after {
+    content: ''; position: absolute; bottom: -8px; right: 20px;
+    border: 5px solid transparent; border-top-color: #fff;
+  }
+  .f-prof-speech.threat { border-color: #e74c3c; color: #c0392b; font-weight: bold; }
+
+  /* Floor */
+  .f-floor {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    background: linear-gradient(180deg, #c4956a 0%, #b8895e 100%);
+    z-index: 3;
+  }
+
+  /* Fall zone */
+  .f-fall-zone {
+    position: absolute; top: 20px; left: 0; right: 0; height: 300px;
+    z-index: 5; pointer-events: none;
+  }
+  .f-word {
+    position: absolute; padding: 5px 14px; border-radius: 6px;
+    font-weight: 800; font-size: 16px;
+    animation: f-fall 5s linear forwards;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    font-family: 'Malgun Gothic', sans-serif;
+  }
+  .f-word.easy { color: #fff; background: #3498db; border: 2px solid #2980b9; }
+  .f-word.medium { color: #fff; background: #f39c12; border: 2px solid #d68910; font-size: 15px; }
+  .f-word.hard { color: #fff; background: #e74c3c; border: 2px solid #c0392b; font-size: 14px; }
+  .f-word.boss {
+    color: #fff; font-size: 18px; font-weight: 900;
+    background: linear-gradient(135deg, #8e44ad, #c0392b);
+    border: 3px solid #732d91;
+    padding: 7px 18px;
+    box-shadow: 0 4px 14px rgba(142,68,173,0.4);
+  }
+  .f-word .matched { opacity: 0.35; }
+
+  @keyframes f-fall {
+    from { transform: translateY(-40px); }
+    to { transform: translateY(310px); }
+  }
+
+  /* Cheat sheet (answer paper on player desk) */
+  .f-cheat-sheet {
+    position: absolute; bottom: 115px; left: 50%;
+    transform: translateX(-50%); z-index: 8;
+    width: 60px; height: 40px; background: #fffde6;
+    border: 1px solid #e0d8a0; border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    padding: 4px; font-size: 6px; color: #999;
+    line-height: 1.3; overflow: hidden;
+    transform-origin: center;
+    animation: f-cheat-peek 3s ease-in-out infinite;
+  }
+  @keyframes f-cheat-peek {
+    0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+    50% { transform: translateX(-50%) rotate(2deg); }
+  }
+
+  /* Desks */
+  .f-desks {
+    position: absolute; bottom: 40px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 20px;
+    z-index: 6;
+  }
+  .f-desk { display: flex; flex-direction: column; align-items: center; }
+  .f-student-head {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; font-weight: bold;
+    position: relative; z-index: 2;
+  }
+  .f-student-body {
+    width: 30px; height: 20px; border-radius: 6px 6px 2px 2px;
+    margin-top: -6px; position: relative; z-index: 1;
+  }
+  .f-desk-table {
+    width: 70px; height: 22px; background: #a07040;
+    border: 2px solid #8a6030; border-radius: 3px;
+    margin-top: -4px;
+    box-shadow: 0 3px 0 #7a5528;
+  }
+  .f-desk-legs {
+    display: flex; justify-content: space-between; width: 58px;
+  }
+  .f-desk-leg {
+    width: 6px; height: 18px; background: #8a6030;
+    border-radius: 0 0 2px 2px;
+  }
+  .f-chair {
+    width: 34px; height: 14px; background: #e67e22;
+    border-radius: 4px 4px 2px 2px; margin-top: -2px;
+    border: 2px solid #d35400;
+  }
+  .f-desk.player .f-desk-table {
+    border-color: #e74c3c; box-shadow: 0 3px 0 #c0392b, 0 0 12px rgba(231,76,60,0.2);
+  }
+  .f-desk.player .f-student-head {
+    box-shadow: 0 0 10px rgba(231,76,60,0.3);
+  }
+
+  /* Input */
+  .f-input-wrap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 10; padding: 8px 14px;
+    background: rgba(255,255,255,0.9);
+    border-top: 3px solid #a07040;
+    backdrop-filter: blur(6px);
+  }
+  .f-input-area {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: #fff; border: 3px solid #e74c3c;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(231,76,60,0.15);
+  }
+  .f-input-icon { font-size: 18px; }
+  .f-typed { font-size: 20px; color: #2c3e50; font-weight: 700; }
+  .f-cursor {
+    width: 3px; height: 22px; background: #e74c3c;
+    animation: a-blink 0.8s step-end infinite;
+    border-radius: 1px;
+  }
+  .f-input-hint { font-size: 11px; color: #999; margin-left: auto; }
+
+  .f-badge { background: #e74c3c; color: #fff; border: none; border-radius: 12px; }
+  .f-info { background: rgba(255,255,255,0.9); color: #e74c3c; border: 2px solid rgba(231,76,60,0.3); border-radius: 8px; }
+
+  /* ============================================================
+     MOCKUP E: FLASH GAME + CLASSROOM ILLUSTRATION
+     ============================================================ */
+  .mockup-e {
+    background: #d4c8a0;
+    font-family: 'NanumBarunGothic', 'Malgun Gothic', 'Segoe UI', sans-serif;
+    position: relative;
+    color: #333;
+    overflow: hidden;
+  }
+
+  /* -- HUD overlay (top) -- */
+  .e-hud-overlay {
+    position: relative; z-index: 10;
+    display: flex; justify-content: space-between; align-items: start;
+    padding: 8px 14px;
+  }
+  .e-hud-left, .e-hud-right {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .e-hud-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.85); border-radius: 8px;
+    padding: 4px 12px; font-size: 13px; font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    backdrop-filter: blur(4px);
+  }
+  .e-hud-pill .label { color: #666; font-weight: normal; font-size: 11px; }
+  .e-hud-pill .val { color: #2c3e50; }
+  .e-hud-pill .val.danger { color: #e74c3c; }
+  .e-hud-pill .val.good { color: #27ae60; }
+  .e-hud-pill .val.accent { color: #e67e22; }
+  .e-hud-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: bold; color: #fff;
+  }
+  .e-hud-tag.on { background: #27ae60; }
+  .e-hud-tag.off { background: #e74c3c; }
+
+  .e-hp-bar-top {
+    position: relative; z-index: 10;
+    margin: 0 14px 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .e-hp-label { font-size: 12px; font-weight: 900; color: #c0392b;
+    text-shadow: 0 1px 0 #fff; }
+  .e-hp-bar {
+    flex: 1; height: 16px; background: #bbb; border-radius: 8px;
+    overflow: hidden; border: 3px solid #999;
+    box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+  }
+  .e-hp-bar-fill {
+    width: 65%; height: 100%;
+    background: linear-gradient(180deg, #f1c40f 0%, #e74c3c 100%);
+    border-radius: 5px;
+  }
+  .e-hp-text { font-size: 12px; font-weight: 900; color: #c0392b;
+    text-shadow: 0 1px 0 #fff; }
+
+  /* -- Classroom scene -- */
+  .e-classroom {
+    position: relative; height: 480px; overflow: hidden;
+  }
+
+  /* Wall */
+  .e-wall {
+    position: absolute; top: 0; left: 0; right: 0; height: 280px;
+    background: linear-gradient(180deg, #d9cea6 0%, #cfc196 100%);
+  }
+
+  /* Chalkboard */
+  .e-chalkboard {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 460px; height: 180px;
+    background: linear-gradient(170deg, #2e6b4a 0%, #1a5c3a 30%, #225e3f 100%);
+    border: 8px solid #8b7355;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 0 30px rgba(0,0,0,0.15);
+    z-index: 2;
+    overflow: hidden;
+  }
+  .e-chalkboard::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 8px;
+    background: #a0916e; border-radius: 0 0 2px 2px;
+  }
+  .e-chalk-text {
+    position: absolute; top: 10px; left: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+  }
+  .e-chalk-title {
+    position: absolute; top: 8px; right: 16px;
+    font-size: 12px; color: rgba(255,255,200,0.6);
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Words fall zone (over chalkboard area) */
+  .e-fall-zone {
+    position: absolute; top: 20px; left: 0; right: 0; height: 300px;
+    z-index: 5; pointer-events: none;
+  }
+  .e-word {
+    position: absolute; padding: 5px 14px; border-radius: 6px;
+    font-weight: 800; font-size: 16px;
+    animation: e-fall 5s linear forwards;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    font-family: 'Malgun Gothic', sans-serif;
+  }
+  .e-word.easy {
+    color: #fff; background: #3498db; border: 2px solid #2980b9;
+  }
+  .e-word.medium {
+    color: #fff; background: #f39c12; border: 2px solid #d68910;
+    font-size: 15px;
+  }
+  .e-word.hard {
+    color: #fff; background: #e74c3c; border: 2px solid #c0392b;
+    font-size: 14px;
+  }
+  .e-word.boss {
+    color: #fff; font-size: 18px; font-weight: 900;
+    background: linear-gradient(135deg, #8e44ad, #c0392b);
+    border: 3px solid #732d91;
+    padding: 7px 18px;
+    box-shadow: 0 4px 14px rgba(142,68,173,0.4);
+    animation: e-fall 5s linear forwards, e-boss-pulse 0.8s ease-in-out infinite alternate;
+  }
+  .e-word .matched { opacity: 0.35; }
+
+  @keyframes e-fall {
+    from { transform: translateY(-40px); }
+    to { transform: translateY(310px); }
+  }
+  @keyframes e-boss-pulse {
+    from { transform: scale(1) translateY(var(--y, 0)); }
+    to { transform: scale(1.05) translateY(var(--y, 0)); }
+  }
+
+  /* Professor character */
+  .e-professor {
+    position: absolute; bottom: 200px; right: 60px;
+    z-index: 4; display: flex; flex-direction: column; align-items: center;
+  }
+  .e-prof-head {
+    width: 50px; height: 50px; background: #f5d5b8;
+    border-radius: 50%; position: relative;
+    border: 2px solid #d4a574;
+  }
+  .e-prof-hair {
+    position: absolute; top: -4px; left: 4px; right: 4px; height: 16px;
+    background: #555; border-radius: 20px 20px 0 0;
+  }
+  .e-prof-glasses {
+    position: absolute; top: 16px; left: 6px;
+    width: 38px; height: 14px;
+    border: 2px solid #333; border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+  }
+  .e-prof-glasses::before {
+    content: ''; position: absolute; top: 3px; left: 50%;
+    transform: translateX(-50%); width: 6px; height: 2px;
+    background: #333;
+  }
+  .e-prof-body {
+    width: 46px; height: 55px; background: #7f8c8d;
+    border-radius: 8px 8px 4px 4px; margin-top: -4px;
+    position: relative;
+  }
+  .e-prof-arm {
+    position: absolute; top: 8px;
+    width: 12px; height: 40px; background: #7f8c8d;
+    border-radius: 6px;
+  }
+  .e-prof-arm.left { left: -10px; transform: rotate(15deg); }
+  .e-prof-arm.right { right: -10px; transform: rotate(-40deg); }
+  .e-prof-hand {
+    position: absolute; bottom: -4px; width: 10px; height: 10px;
+    background: #f5d5b8; border-radius: 50%;
+  }
+  .e-prof-chalk {
+    position: absolute; top: -16px; right: -20px;
+    width: 6px; height: 22px; background: #eee;
+    border-radius: 2px; transform: rotate(-30deg);
+    border: 1px solid #ccc;
+  }
+  .e-prof-legs {
+    display: flex; gap: 4px; margin-top: -2px;
+  }
+  .e-prof-leg {
+    width: 14px; height: 30px; background: #555;
+    border-radius: 4px 4px 6px 6px;
+  }
+  .e-prof-speech {
+    position: absolute; top: -40px; right: 60px;
+    background: #fff; padding: 6px 12px; border-radius: 12px;
+    border: 2px solid #ddd; font-size: 12px; color: #555;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .e-prof-speech::after {
+    content: ''; position: absolute; bottom: -8px; right: 20px;
+    border: 5px solid transparent; border-top-color: #fff;
+  }
+
+  /* Floor / desk area */
+  .e-floor {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    background: linear-gradient(180deg, #c4956a 0%, #b8895e 100%);
+    z-index: 3;
+  }
+
+  /* Desks */
+  .e-desks {
+    position: absolute; bottom: 40px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 20px;
+    z-index: 6;
+  }
+  .e-desk {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .e-student-head {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2px solid rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #fff; font-weight: bold;
+    position: relative; z-index: 2;
+  }
+  .e-student-body {
+    width: 30px; height: 20px; border-radius: 6px 6px 2px 2px;
+    margin-top: -6px; position: relative; z-index: 1;
+  }
+  .e-desk-table {
+    width: 70px; height: 22px; background: #a07040;
+    border: 2px solid #8a6030; border-radius: 3px;
+    margin-top: -4px;
+    box-shadow: 0 3px 0 #7a5528;
+  }
+  .e-desk-legs {
+    display: flex; justify-content: space-between; width: 58px;
+  }
+  .e-desk-leg {
+    width: 6px; height: 18px; background: #8a6030;
+    border-radius: 0 0 2px 2px;
+  }
+  .e-chair {
+    width: 34px; height: 14px; background: #e67e22;
+    border-radius: 4px 4px 2px 2px; margin-top: -2px;
+    border: 2px solid #d35400;
+  }
+
+  /* Player desk (center, highlighted) */
+  .e-desk.player .e-desk-table {
+    border-color: #27ae60; box-shadow: 0 3px 0 #1e8449, 0 0 12px rgba(39,174,96,0.3);
+  }
+  .e-desk.player .e-student-head {
+    box-shadow: 0 0 10px rgba(39,174,96,0.4);
+  }
+
+  /* Input area */
+  .e-input-wrap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 10; padding: 8px 14px;
+    background: rgba(255,255,255,0.9);
+    border-top: 3px solid #a07040;
+    backdrop-filter: blur(6px);
+  }
+  .e-input-area {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    background: #fff; border: 3px solid #3498db;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(52,152,219,0.2);
+  }
+  .e-input-icon { font-size: 18px; }
+  .e-typed { font-size: 20px; color: #2c3e50; font-weight: 700; }
+  .e-cursor {
+    width: 3px; height: 22px; background: #3498db;
+    animation: a-blink 0.8s step-end infinite;
+    border-radius: 1px;
+  }
+  .e-input-hint {
+    font-size: 11px; color: #999; margin-left: auto;
+  }
+
+  .e-badge { background: #3498db; color: #fff; border: none; border-radius: 12px; }
+  .e-info { background: rgba(255,255,255,0.9); color: #3498db; border: 2px solid #3498db44; border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<!-- TAB NAVIGATION -->
+<div class="tab-nav">
+  <div class="nav-title">DESIGN MOCKUPS</div>
+  <button class="active" onclick="showMockup('a', this)">A. CRT Terminal</button>
+  <button onclick="showMockup('b', this)">B. Neon Cyberpunk</button>
+  <button onclick="showMockup('c', this)">C. Hybrid</button>
+  <button onclick="showMockup('d', this)">D. Retro Univ</button>
+  <button onclick="showMockup('e', this)">E. 강의 필기</button>
+  <button onclick="showMockup('f', this)">F. 시험 컨닝</button>
+</div>
+
+<!-- ============================================================
+     MOCKUP A: CRT TERMINAL + LECTURE NOTES (필기 받아적기)
+     ============================================================ -->
+<div id="mockup-a" class="mockup mockup-a active">
+  <div class="concept-badge a-badge">CONCEPT: 필기 받아적기</div>
+  <div class="concept-info a-info">
+    <strong>시안 A: CRT Terminal + 필기</strong><br>
+    무드: 90년대 대학 컴퓨터실 CRT 모니터<br>
+    컬러: 다크 + 포스포 그린<br>
+    효과: 스캔라인, CRT 곡면, 커서 깜빡임
+  </div>
+
+  <div class="a-header">
+    <div class="prof-line">$ professor --name <span>"김알고"</span> --subject <span>"자료구조"</span></div>
+    <div class="title">TYPE DEFENDER</div>
+    <div class="subtitle">[ LECTURE MODE :: DATA STRUCTURES ]</div>
+  </div>
+
+  <div class="a-hud">
+    <span>NOTES: <span class="val">23/30</span></span>
+    <span>WPM: <span class="val">78</span></span>
+    <span>ACCURACY: <span class="val">94.2%</span></span>
+    <span>LEVEL: <span class="val">LV.04</span></span>
+    <span>COMBO: <span class="val">x12</span></span>
+  </div>
+
+  <div class="a-play-area">
+    <div class="a-word easy" style="left:80px; animation-delay:0s;">const</div>
+    <div class="a-word easy" style="left:400px; animation-delay:0.5s;">void</div>
+    <div class="a-word medium" style="left:220px; animation-delay:1s;">stack</div>
+    <div class="a-word medium" style="left:550px; animation-delay:1.5s;">queue</div>
+    <div class="a-word hard" style="left:150px; animation-delay:2s;">iterator</div>
+    <div class="a-word hard" style="left:450px; animation-delay:0.8s;">compiler</div>
+    <div class="a-word boss" style="left:200px; animation-delay:2.5s;">polymorphism</div>
+  </div>
+
+  <div class="a-input-area">
+    <span class="a-prompt">student@lecture:~$</span>
+    <span class="a-typed">stac</span><span class="a-cursor"></span>
+  </div>
+
+  <div class="a-status-bar">
+    <span>[ SESSION: 04:23 ]</span>
+    <span>[ MISSED NOTES: 7 ]</span>
+    <span>[ LANG: Python ]</span>
+    <span>[ DIFFICULTY: NORMAL ]</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCKUP B: NEON CYBERPUNK + EXAM CHEATING (시험 컨닝)
+     ============================================================ -->
+<div id="mockup-b" class="mockup mockup-b">
+  <div class="concept-badge b-badge">CONCEPT: 시험시간 컨닝</div>
+  <div class="concept-info b-info">
+    <strong>시안 B: Neon Cyberpunk + 시험 컨닝</strong><br>
+    무드: 사이버펑크 2077 스타일 HUD<br>
+    컬러: 딥다크 + 시안/마젠타/퍼플<br>
+    효과: 네온 글로우, 글래스모피즘
+  </div>
+
+  <div class="b-header">
+    <div class="exam-label">/// EXAM IN PROGRESS - DO NOT GET CAUGHT ///</div>
+    <div class="title">TYPE DEFENDER</div>
+    <div class="subtitle">FINAL EXAM :: DATA STRUCTURES :: Prof. Kim</div>
+  </div>
+
+  <div class="b-hud">
+    <div class="b-hud-item">
+      <div class="label">SCORE</div>
+      <div class="value">2,340</div>
+    </div>
+    <div class="b-hud-item">
+      <div class="label">ANSWERS</div>
+      <div class="value">18/25</div>
+    </div>
+    <div class="b-hud-item">
+      <div class="label">SUSPICION</div>
+      <div class="value danger">72%</div>
+    </div>
+    <div class="b-hud-item">
+      <div class="label">WPM</div>
+      <div class="value">85</div>
+    </div>
+    <div class="b-hud-item">
+      <div class="label">COMBO</div>
+      <div class="value">x8</div>
+    </div>
+  </div>
+
+  <div class="b-play-area">
+    <div class="b-word easy" style="left:60px; animation-delay:0.2s;">async</div>
+    <div class="b-word easy" style="left:350px; animation-delay:0.7s;">yield</div>
+    <div class="b-word medium" style="left:180px; animation-delay:1.2s;">Promise</div>
+    <div class="b-word medium" style="left:500px; animation-delay:0.4s;">Object</div>
+    <div class="b-word hard" style="left:100px; animation-delay:1.8s;">callback</div>
+    <div class="b-word hard" style="left:420px; animation-delay:1s;">iterator</div>
+    <div class="b-word boss" style="left:160px; animation-delay:2.2s;">encapsulation</div>
+
+    <div class="b-exam-paper">
+      <div>CAUGHT: <span class="caught">3 / 5</span></div>
+      <div style="margin-top:4px; color:#ff336644; font-size:10px;">5회 적발시 GAME OVER</div>
+    </div>
+  </div>
+
+  <div class="b-input-area">
+    <span class="b-input-icon">&#128270;</span>
+    <span class="b-typed">Prom</span><span class="b-cursor"></span>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCKUP C: HYBRID (TERMINAL + NEON) + LECTURE NOTES (필기)
+     ============================================================ -->
+<div id="mockup-c" class="mockup mockup-c">
+  <div class="concept-badge c-badge">CONCEPT: 필기 받아적기</div>
+  <div class="concept-info c-info">
+    <strong>시안 C: Hybrid + 필기 받아적기</strong><br>
+    무드: 터미널 베이스 + 네온 악센트<br>
+    컬러: 다크 + 시안 주색 + 핑크 포인트<br>
+    효과: 스캔라인 + 네온 글로우 + 그리드
+  </div>
+
+  <div class="c-header">
+    <div class="prof-line">[<span class="name">Prof.Kim</span>] lecture --subject "Algorithm" --week 12</div>
+    <div class="title">TYPE DEFENDER</div>
+    <div class="class-info">CSE3013 :: ALGORITHM DESIGN :: WEEK 12</div>
+  </div>
+
+  <div class="c-hud">
+    <div class="c-hud-item">
+      <span class="label">NOTES </span>
+      <span class="value">27/35</span>
+    </div>
+    <div class="c-hud-item">
+      <span class="label">WPM </span>
+      <span class="value">82</span>
+    </div>
+    <div class="c-hud-item">
+      <span class="label">ACC </span>
+      <span class="value">96.1%</span>
+    </div>
+    <div class="c-hud-item">
+      <span class="label">MISS </span>
+      <span class="value accent">3</span>
+    </div>
+    <div class="c-hud-item">
+      <span class="label">COMBO </span>
+      <span class="value">x15</span>
+    </div>
+  </div>
+
+  <div class="c-play-area">
+    <div class="c-grid-overlay"></div>
+    <div class="c-word easy" style="left:70px; animation-delay:0.3s;">func</div>
+    <div class="c-word easy" style="left:380px; animation-delay:0.9s;">defer</div>
+    <div class="c-word medium" style="left:200px; animation-delay:1.4s;">struct</div>
+    <div class="c-word medium" style="left:520px; animation-delay:0.6s;">mutex</div>
+    <div class="c-word hard" style="left:130px; animation-delay:1.8s;">goroutine</div>
+    <div class="c-word hard" style="left:430px; animation-delay:1.1s;">channel</div>
+    <div class="c-word boss" style="left:180px; animation-delay:2.3s;">concurrency</div>
+  </div>
+
+  <div class="c-input-area">
+    <span class="c-prompt">note &gt;</span>
+    <span class="c-typed">struc</span><span class="c-cursor"></span>
+  </div>
+
+  <div class="c-note-progress">
+    <span>LECTURE PROGRESS</span>
+    <div class="c-note-bar"><div class="c-note-bar-fill"></div></div>
+    <span style="color:#00ffcc;">67%</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCKUP D: RETRO UNIVERSITY + EXAM (시험 컨닝)
+     ============================================================ -->
+<div id="mockup-d" class="mockup mockup-d">
+  <div class="concept-badge d-badge">CONCEPT: 시험시간 컨닝</div>
+  <div class="concept-info d-info">
+    <strong>시안 D: Retro University + 시험 컨닝</strong><br>
+    무드: 레트로 대학 강의실, 시험지 느낌<br>
+    컬러: 다크 + 앰버/웜톤<br>
+    효과: 시험지 줄무늬, 연필 모티프
+  </div>
+
+  <div class="d-header">
+    <div class="d-univ-badge" style="display:inline-block; padding:4px 16px; border-radius:20px; background:rgba(255,170,0,0.1); border:1px solid rgba(255,170,0,0.3); color:#ffaa00; font-size:11px; letter-spacing:3px; margin-bottom:8px;">
+      ENGINEERING DEPT.
+    </div>
+    <div class="title">TYPE DEFENDER</div>
+    <div class="subtitle">MIDTERM EXAM :: CSE2010 DATA STRUCTURES :: Prof. Kim</div>
+  </div>
+
+  <div class="d-hud">
+    <div class="d-hud-item">
+      <div class="label">SCORE</div>
+      <div class="value">1,850</div>
+    </div>
+    <div class="d-hud-item">
+      <div class="label">GRADE</div>
+      <div class="value grade">B+</div>
+    </div>
+    <div class="d-hud-item">
+      <div class="label">CAUGHT</div>
+      <div class="value risk">2/5</div>
+    </div>
+    <div class="d-hud-item">
+      <div class="label">WPM</div>
+      <div class="value">72</div>
+    </div>
+    <div class="d-hud-item">
+      <div class="label">TIME LEFT</div>
+      <div class="value">08:42</div>
+    </div>
+  </div>
+
+  <div class="d-play-area">
+    <div class="paper-bg"></div>
+    <div class="d-prof-area">
+      <span>&#128104;&#8205;&#127891; Prof. Kim is watching...</span>
+      <span>VIGILANCE: MEDIUM</span>
+    </div>
+
+    <div class="d-word easy" style="left:90px; animation-delay:0.4s;">break</div>
+    <div class="d-word easy" style="left:380px; animation-delay:1s;">class</div>
+    <div class="d-word medium" style="left:210px; animation-delay:1.3s;">HashMap</div>
+    <div class="d-word medium" style="left:500px; animation-delay:0.5s;">Stream</div>
+    <div class="d-word hard" style="left:120px; animation-delay:1.9s;">ArrayList</div>
+    <div class="d-word hard" style="left:440px; animation-delay:0.8s;">Override</div>
+    <div class="d-word boss" style="left:170px; animation-delay:2.4s;">synchronized</div>
+
+    <div class="d-answer-sheet">
+      <div class="label">ANSWER SHEET</div>
+      <div class="answers">&#9745; 12  &#9745; 7  &#9744; 6</div>
+    </div>
+  </div>
+
+  <div class="d-input-area">
+    <span class="d-pencil">&#9999;&#65039;</span>
+    <span class="d-typed">Hash</span><span class="d-cursor"></span>
+  </div>
+
+  <div class="d-exam-timer">
+    <span>&#9888;&#65039; 교수님 시선 주의! 너무 빨리 치면 의심받습니다</span>
+    <span class="time">08:42</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCKUP F: FLASH GAME + CLASSROOM + CHEATING CONCEPT
+     ============================================================ -->
+<div id="mockup-f" class="mockup mockup-f">
+  <div class="concept-badge f-badge">CONCEPT: 시험 컨닝</div>
+  <div class="concept-info f-info">
+    <strong>시안 F: 교실 일러스트 + 시험 컨닝</strong><br>
+    무드: 선생님 몰래 춤추기 스타일<br>
+    컬러: 따뜻한 베이지 + 빨간 경고<br>
+    효과: 교수 시선 게이지, 적발 카운트, 컨닝페이퍼
+  </div>
+
+  <!-- HUD -->
+  <div class="f-hud-overlay">
+    <div class="f-hud-left">
+      <div class="f-hud-pill">
+        <span class="label">교수님</span>
+        <span class="f-hud-tag warn">의심중...</span>
+      </div>
+      <div class="f-hud-pill">
+        <span class="label">점수</span>
+        <span class="val">1,820</span>
+      </div>
+      <div class="f-hud-pill">
+        <span class="label">학점</span>
+        <span class="val good">B+</span>
+      </div>
+    </div>
+    <div class="f-hud-right">
+      <div class="f-hud-pill">
+        <span class="label">콤보</span>
+        <span class="val accent">x6</span>
+      </div>
+      <div class="f-hud-pill">
+        <span class="label">WPM</span>
+        <span class="val">68</span>
+      </div>
+      <div class="f-hud-pill">
+        <span class="label">남은시간</span>
+        <span class="val danger">03:42</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suspicion gauge -->
+  <div class="f-suspicion-bar">
+    <span class="f-suspicion-label">&#128064; 의심도</span>
+    <div class="f-suspicion-track"><div class="f-suspicion-fill"></div></div>
+    <span class="f-suspicion-text">45%</span>
+  </div>
+
+  <!-- Caught counter -->
+  <div class="f-caught-bar">
+    <span class="f-caught-label">&#9888;&#65039; 적발</span>
+    <div class="f-caught-dots">
+      <div class="f-caught-dot filled">&#10005;</div>
+      <div class="f-caught-dot filled">&#10005;</div>
+      <div class="f-caught-dot">&#8203;</div>
+      <div class="f-caught-dot">&#8203;</div>
+      <div class="f-caught-dot">&#8203;</div>
+    </div>
+    <span class="f-caught-hint">5회 적발시 퇴장!</span>
+  </div>
+
+  <!-- Classroom scene -->
+  <div class="f-classroom">
+    <div class="f-wall"></div>
+
+    <!-- Chalkboard (exam info) -->
+    <div class="f-chalkboard">
+      <div class="f-chalk-title">MIDTERM EXAM</div>
+      <div class="f-chalk-text">
+        CSE2010 자료구조<br>
+        중간고사<br><br>
+        - 총 25문제<br>
+        - 제한시간: 60분<br>
+        - 커닝 적발시 F
+      </div>
+      <div class="f-exam-notice">&#9888; 시험중 &#9888;</div>
+    </div>
+
+    <!-- Professor -->
+    <div class="f-professor">
+      <div class="f-prof-speech threat">"...누가 움직였어?"</div>
+      <div class="f-prof-head">
+        <div class="f-prof-hair"></div>
+        <div class="f-prof-glasses"></div>
+        <div class="f-prof-eye-indicator">
+          <div class="f-prof-eye looking"></div>
+          <div class="f-prof-eye looking"></div>
+        </div>
+      </div>
+      <div class="f-prof-body">
+        <div class="f-prof-arm left"><div class="f-prof-hand"></div></div>
+        <div class="f-prof-arm right">
+          <div class="f-prof-hand"></div>
+          <div class="f-prof-paper"></div>
+        </div>
+      </div>
+      <div class="f-prof-legs">
+        <div class="f-prof-leg"></div>
+        <div class="f-prof-leg"></div>
+      </div>
+    </div>
+
+    <!-- Warning banner (shown when prof looks) -->
+    <div class="f-warning-banner visible">&#128680; 교수님이 돌아본다! 타이핑 멈춰! &#128680;</div>
+
+    <!-- Falling words -->
+    <div class="f-fall-zone">
+      <div class="f-word easy" style="left:40px; animation-delay:0.3s;">const</div>
+      <div class="f-word easy" style="left:300px; animation-delay:0.8s;">void</div>
+      <div class="f-word medium" style="left:150px; animation-delay:1.3s;">Promise</div>
+      <div class="f-word medium" style="left:420px; animation-delay:0.6s;">Object</div>
+      <div class="f-word hard" style="left:80px; animation-delay:1.9s;">callback</div>
+      <div class="f-word hard" style="left:350px; animation-delay:1.2s;">iterator</div>
+      <div class="f-word boss" style="left:130px; animation-delay:2.4s;">encapsulation</div>
+    </div>
+
+    <!-- Cheat sheet on player desk -->
+    <div class="f-cheat-sheet">
+      const void<br>
+      Promise<br>
+      callback<br>
+      iterator...
+    </div>
+
+    <!-- Floor -->
+    <div class="f-floor"></div>
+
+    <!-- Desks -->
+    <div class="f-desks">
+      <div class="f-desk">
+        <div class="f-student-head" style="background:#e74c3c;"></div>
+        <div class="f-student-body" style="background:#2980b9;"></div>
+        <div class="f-desk-table"></div>
+        <div class="f-desk-legs"><div class="f-desk-leg"></div><div class="f-desk-leg"></div></div>
+        <div class="f-chair"></div>
+      </div>
+
+      <div class="f-desk">
+        <div class="f-student-head" style="background:#f39c12;"></div>
+        <div class="f-student-body" style="background:#8e44ad;"></div>
+        <div class="f-desk-table"></div>
+        <div class="f-desk-legs"><div class="f-desk-leg"></div><div class="f-desk-leg"></div></div>
+        <div class="f-chair"></div>
+      </div>
+
+      <div class="f-desk player">
+        <div class="f-student-head" style="background:#e74c3c;">YOU</div>
+        <div class="f-student-body" style="background:#c0392b;"></div>
+        <div class="f-desk-table"></div>
+        <div class="f-desk-legs"><div class="f-desk-leg"></div><div class="f-desk-leg"></div></div>
+        <div class="f-chair"></div>
+      </div>
+
+      <div class="f-desk">
+        <div class="f-student-head" style="background:#3498db;"></div>
+        <div class="f-student-body" style="background:#e67e22;"></div>
+        <div class="f-desk-table"></div>
+        <div class="f-desk-legs"><div class="f-desk-leg"></div><div class="f-desk-leg"></div></div>
+        <div class="f-chair"></div>
+      </div>
+
+      <div class="f-desk">
+        <div class="f-student-head" style="background:#9b59b6;"></div>
+        <div class="f-student-body" style="background:#16a085;"></div>
+        <div class="f-desk-table"></div>
+        <div class="f-desk-legs"><div class="f-desk-leg"></div><div class="f-desk-leg"></div></div>
+        <div class="f-chair"></div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="f-input-wrap">
+      <div class="f-input-area">
+        <span class="f-input-icon">&#128172;</span>
+        <span class="f-typed">Prom</span><span class="f-cursor"></span>
+        <span class="f-input-hint">JavaScript &middot; 적발 2/5 &middot; 의심 45%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MOCKUP E: FLASH GAME + CLASSROOM ILLUSTRATION
+     ============================================================ -->
+<div id="mockup-e" class="mockup mockup-e">
+  <div class="concept-badge e-badge">CONCEPT: 대학 강의실 플래시게임</div>
+  <div class="concept-info e-info">
+    <strong>시안 E: 교실 일러스트 플래시게임</strong><br>
+    무드: 선생님 몰래 춤추기, 한컴타자 산성비<br>
+    컬러: 따뜻한 베이지/갈색 + 초록 칠판<br>
+    효과: CSS 캐릭터, 칠판, 나무 책상, HP바
+  </div>
+
+  <!-- HUD overlay -->
+  <div class="e-hud-overlay">
+    <div class="e-hud-left">
+      <div class="e-hud-pill">
+        <span class="label">교수님</span>
+        <span class="e-hud-tag on">칠판보는중</span>
+      </div>
+      <div class="e-hud-pill">
+        <span class="label">점수</span>
+        <span class="val">2,450</span>
+      </div>
+      <div class="e-hud-pill">
+        <span class="label">학점</span>
+        <span class="val good">A-</span>
+      </div>
+    </div>
+    <div class="e-hud-right">
+      <div class="e-hud-pill">
+        <span class="label">콤보</span>
+        <span class="val accent">x14</span>
+      </div>
+      <div class="e-hud-pill">
+        <span class="label">WPM</span>
+        <span class="val">76</span>
+      </div>
+      <div class="e-hud-pill">
+        <span class="label">시간</span>
+        <span class="val">04:23</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HP bar -->
+  <div class="e-hp-bar-top">
+    <span class="e-hp-label">HP</span>
+    <div class="e-hp-bar"><div class="e-hp-bar-fill"></div></div>
+    <span class="e-hp-text">65%</span>
+  </div>
+
+  <!-- Classroom scene -->
+  <div class="e-classroom">
+    <!-- Wall -->
+    <div class="e-wall"></div>
+
+    <!-- Chalkboard -->
+    <div class="e-chalkboard">
+      <div class="e-chalk-title">CSE2010 자료구조</div>
+      <div class="e-chalk-text">
+        &gt; 12주차: 해시맵<br>
+        - 충돌 해결<br>
+        &nbsp; - Chaining<br>
+        &nbsp; - Open Addressing<br>
+        - 시간복잡도: O(1)<br>
+        - Load Factor
+      </div>
+    </div>
+
+    <!-- Professor character -->
+    <div class="e-professor">
+      <div class="e-prof-speech">"빨리 받아적으세요!"</div>
+      <div class="e-prof-head">
+        <div class="e-prof-hair"></div>
+        <div class="e-prof-glasses"></div>
+      </div>
+      <div class="e-prof-body">
+        <div class="e-prof-arm left">
+          <div class="e-prof-hand"></div>
+        </div>
+        <div class="e-prof-arm right">
+          <div class="e-prof-hand"></div>
+          <div class="e-prof-chalk"></div>
+        </div>
+      </div>
+      <div class="e-prof-legs">
+        <div class="e-prof-leg"></div>
+        <div class="e-prof-leg"></div>
+      </div>
+    </div>
+
+    <!-- Falling words zone -->
+    <div class="e-fall-zone">
+      <div class="e-word easy" style="left:40px; animation-delay:0.2s;">break</div>
+      <div class="e-word easy" style="left:300px; animation-delay:0.9s;">class</div>
+      <div class="e-word medium" style="left:150px; animation-delay:1.4s;">HashMap</div>
+      <div class="e-word medium" style="left:420px; animation-delay:0.5s;">Stream</div>
+      <div class="e-word hard" style="left:80px; animation-delay:1.8s;">ArrayList</div>
+      <div class="e-word hard" style="left:350px; animation-delay:1.1s;">Override</div>
+      <div class="e-word boss" style="left:130px; animation-delay:2.3s;">synchronized</div>
+    </div>
+
+    <!-- Floor -->
+    <div class="e-floor"></div>
+
+    <!-- Student desks -->
+    <div class="e-desks">
+      <div class="e-desk">
+        <div class="e-student-head" style="background:#e74c3c;"></div>
+        <div class="e-student-body" style="background:#2980b9;"></div>
+        <div class="e-desk-table"></div>
+        <div class="e-desk-legs"><div class="e-desk-leg"></div><div class="e-desk-leg"></div></div>
+        <div class="e-chair"></div>
+      </div>
+
+      <div class="e-desk">
+        <div class="e-student-head" style="background:#f39c12;"></div>
+        <div class="e-student-body" style="background:#8e44ad;"></div>
+        <div class="e-desk-table"></div>
+        <div class="e-desk-legs"><div class="e-desk-leg"></div><div class="e-desk-leg"></div></div>
+        <div class="e-chair"></div>
+      </div>
+
+      <div class="e-desk player">
+        <div class="e-student-head" style="background:#2ecc71;">YOU</div>
+        <div class="e-student-body" style="background:#27ae60;"></div>
+        <div class="e-desk-table"></div>
+        <div class="e-desk-legs"><div class="e-desk-leg"></div><div class="e-desk-leg"></div></div>
+        <div class="e-chair"></div>
+      </div>
+
+      <div class="e-desk">
+        <div class="e-student-head" style="background:#3498db;"></div>
+        <div class="e-student-body" style="background:#e67e22;"></div>
+        <div class="e-desk-table"></div>
+        <div class="e-desk-legs"><div class="e-desk-leg"></div><div class="e-desk-leg"></div></div>
+        <div class="e-chair"></div>
+      </div>
+
+      <div class="e-desk">
+        <div class="e-student-head" style="background:#9b59b6;"></div>
+        <div class="e-student-body" style="background:#16a085;"></div>
+        <div class="e-desk-table"></div>
+        <div class="e-desk-legs"><div class="e-desk-leg"></div><div class="e-desk-leg"></div></div>
+        <div class="e-chair"></div>
+      </div>
+    </div>
+
+    <!-- Input area (fixed bottom) -->
+    <div class="e-input-wrap">
+      <div class="e-input-area">
+        <span class="e-input-icon">&#9999;&#65039;</span>
+        <span class="e-typed">Hash</span><span class="e-cursor"></span>
+        <span class="e-input-hint">JavaScript &middot; LV.5 &middot; MISSED: 3</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showMockup(id, btn) {
+  document.querySelectorAll('.mockup').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.tab-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('mockup-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
