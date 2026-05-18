@@ -1,0 +1,163 @@
+/* ==========================================================================
+ * Type Defender — Design Tokens
+ * --------------------------------------------------------------------------
+ * 모든 색 / 타이포 / 스페이싱 / 그림자 / 라디우스 / 모션 값의 단일 진실 원천.
+ * Figma 파일과 1:1로 매핑된다.
+ *   https://www.figma.com/design/mlNd2rpBgOyIeZJwHDKRYO
+ *
+ * 사용 규칙:
+ *   ✅ 다른 CSS 파일은 var(--token-name) 으로만 색·치수 참조
+ *   ❌ 인라인 hex/rgb/px 직접 사용 금지
+ *
+ * 참고: DESIGN.md §2
+ * ========================================================================== */
+
+:root {
+  /* ── Color · Surface (벽·바닥·종이) ───────────────────────────────────── */
+  --color-wall-top:        #d9cea6;
+  --color-wall-bottom:     #cfc196;
+  --color-floor-top:       #c4956a;
+  --color-floor-bottom:    #b8895e;
+  --color-paper:           #fdf9ee;
+  --color-paper-line:      #d4c89a;
+
+  /* ── Color · Chalkboard (칠판) ────────────────────────────────────────── */
+  --color-board-top:       #2e6b4a;
+  --color-board-mid:       #1a5c3a;
+  --color-board-bottom:    #225e3f;
+  --color-board-frame:     #8b7355;
+  --color-board-tray:      #a0916e;
+  --color-chalk:           #f4f4eb;
+  --color-chalk-dim:       #c8c8b8;
+  --color-chalk-yellow:    #f6d76a;
+
+  /* ── Color · Wood (나무 가구) ─────────────────────────────────────────── */
+  --color-wood-light:      #b8956b;
+  --color-wood-mid:        #a07040;
+  --color-wood-dark:       #8a6030;
+
+  /* ── Color · Brand / Accent ──────────────────────────────────────────── */
+  --color-accent:          #d97706;
+  --color-accent-deep:     #b45309;
+
+  /* ── Color · State ───────────────────────────────────────────────────── */
+  --color-success:         #15803d;
+  --color-warn:            #b45309;
+  --color-danger:          #c2410c;
+  --color-info:            #1e6091;
+
+  /* ── Color · Grade (학점 도장) ────────────────────────────────────────── */
+  --color-grade-aplus:     #15803d;
+  --color-grade-a:         #166534;
+  --color-grade-b:         #ca8a04;
+  --color-grade-c:         #ea580c;
+  --color-grade-f:         #c2410c;
+
+  /* ── Color · Text ────────────────────────────────────────────────────── */
+  --color-text:            #2b241a;
+  --color-text-soft:       #5a4d3a;
+  --color-text-mute:       #8a7a62;
+  --color-text-on-board:   #f4f4eb;
+  --color-text-on-paper:   #2b241a;
+
+  /* ── Color · Typing state (입력 진행) ─────────────────────────────────── */
+  --color-typed:           #15803d;
+  --color-untyped:         #f4f4eb;
+  --color-error:           #c2410c;
+  --color-cursor:          #f6d76a;
+
+  /* ── Typography · Font Families ──────────────────────────────────────── */
+  --font-ui:               'Pretendard Variable', 'Pretendard', 'Noto Sans KR', system-ui, sans-serif;
+  --font-chalk:            'Gaegu', 'Nanum Pen Script', cursive;
+  --font-mono:             'JetBrains Mono', 'D2Coding', 'Menlo', monospace;
+  --font-title:            'Black Han Sans', 'Pretendard Variable', sans-serif;
+
+  /* ── Typography · Sizes (1.25 ratio, 8pt grid 변형) ──────────────────── */
+  --font-size-xs:          12px;
+  --font-size-sm:          14px;
+  --font-size-base:        16px;
+  --font-size-md:          20px;   /* word easy */
+  --font-size-lg:          26px;   /* word medium */
+  --font-size-xl:          32px;   /* word hard */
+  --font-size-2xl:         44px;   /* word boss */
+  --font-size-3xl:         56px;   /* screen title */
+  --font-size-4xl:         84px;   /* game over · grade */
+
+  /* ── Typography · Weights ────────────────────────────────────────────── */
+  --font-weight-regular:   400;
+  --font-weight-medium:    500;
+  --font-weight-bold:      700;
+  --font-weight-black:     900;
+
+  /* ── Typography · Line Height ────────────────────────────────────────── */
+  --line-tight:            1.1;
+  --line-snug:             1.3;
+  --line-normal:           1.5;
+  --line-loose:            1.7;
+
+  /* ── Spacing (8pt grid) ──────────────────────────────────────────────── */
+  --space-1:               4px;
+  --space-2:               8px;
+  --space-3:               12px;
+  --space-4:               16px;
+  --space-5:               24px;
+  --space-6:               32px;
+  --space-7:               48px;
+  --space-8:               64px;
+  --space-9:               96px;
+
+  /* ── Border Radius ───────────────────────────────────────────────────── */
+  --radius-sm:             4px;
+  --radius-md:             8px;
+  --radius-lg:             16px;
+  --radius-xl:             24px;
+  --radius-pill:           999px;
+
+  /* ── Shadow ──────────────────────────────────────────────────────────── */
+  --shadow-sm:             0 1px 2px rgba(43, 36, 26, 0.10);
+  --shadow-md:             0 4px 8px rgba(43, 36, 26, 0.12);
+  --shadow-lg:             0 12px 24px rgba(43, 36, 26, 0.18);
+  --shadow-board:          0 6px 0 #6b573f, 0 12px 24px rgba(0, 0, 0, 0.25);
+  --shadow-paper:          0 2px 0 var(--color-paper-line), 0 8px 16px rgba(43, 36, 26, 0.10);
+
+  /* ── Motion · Duration ───────────────────────────────────────────────── */
+  --duration-instant:      80ms;
+  --duration-fast:         180ms;
+  --duration-base:         260ms;
+  --duration-slow:         420ms;
+
+  /* ── Motion · Easing ─────────────────────────────────────────────────── */
+  --ease-out:              cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce:           cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap:             cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  /* ── z-index Scale ───────────────────────────────────────────────────── */
+  --z-bg:                  0;
+  --z-board:               10;
+  --z-prof:                20;
+  --z-falling:             30;
+  --z-floor:               40;
+  --z-desks:               50;
+  --z-hud:                 60;
+  --z-input:               70;
+  --z-overlay:             80;
+  --z-toast:               90;
+  --z-fullscreen:          100;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * 접근성 — Reduced Motion
+ * 사용자가 OS 설정에서 모션 줄이기를 켰으면 모든 애니메이션을 거의 0으로 단축.
+ * 새로 만드는 애니메이션은 이 매체 쿼리를 의식해서 작성할 것.
+ * 참고: DESIGN.md §7.1
+ * ────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:    0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:   0.01ms !important;
+    scroll-behavior:       auto !important;
+  }
+}
