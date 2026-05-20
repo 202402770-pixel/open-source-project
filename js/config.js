@@ -125,6 +125,7 @@ const CONFIG = {
     DAILY_LAST_DATE:   'td_daily_last_date',
     ACHIEVEMENTS:      'td_achievements',
     LEADERBOARD:       'td_leaderboard',
+    PLAY_COUNT:        'td_play_count',
     SETTINGS_LECTURE:  'td_settings_lecture',
     SETTINGS_APPEAR:   'td_settings_appearance',
     SETTINGS_SOUND:    'td_settings_sound',

@@ -16,9 +16,9 @@ class Game {
         Achievements.init();
         Achievements.checkAttendance();
 
-        let playCount = parseInt(localStorage.getItem('typing_play_count')) || 0;
+        let playCount = parseInt(localStorage.getItem(CONFIG.STORAGE.PLAY_COUNT)) || 0;
         playCount++;
-        localStorage.setItem('typing_play_count', playCount);
+        localStorage.setItem(CONFIG.STORAGE.PLAY_COUNT, playCount);
     }
 
     getActiveWords() {
@@ -40,13 +40,13 @@ class Game {
 
     handleSuccess(targetIndex, word) {
         this.totalTypedChars += word.length;
-        this.score += 10;
+        this.score += CONFIG.SCORING.WORD_DESTROY_BASE;
         this.combo++;
         this.activeWords.splice(targetIndex, 1);
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
-        if (this.combo >= 10) {
+        if (this.combo >= CONFIG.SCORING.COMBO_GLOW_THRESHOLD) {
             Effects.toggleGlow(true, 'combo10');
         }
         else if(this.combo >= 5){
@@ -67,7 +67,7 @@ class Game {
     levelUp() {
         if (this.levelAttempts > 0) {
             const accuracy = ((this.levelAttempts - this.levelMissed) / this.levelAttempts) * 100;
-            if (accuracy >= 95) {
+            if (accuracy >= CONFIG.GRADE.APLUS.minAccuracy) {
                 Achievements.check(ACHIEVEMENT_IDS.HONOR_STUDENT, 1);
             }
             if (this.levelMissed === 0) {
