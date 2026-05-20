@@ -15,18 +15,18 @@ const ACHIEVEMENT_IDS = {
 
 const Achievements = {
   CHALLENGES: [
-    { id: ACHIEVEMENT_IDS.FIRST_WORD, title: "첫 받아적기", description: "단어 1개 처리", icon: "✏️", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.FIRST_WORD, title: "첫 받아적기", description: "첫 단어 처치", icon: "ST", targetValue: 1, isCompleted: false },
     { id: ACHIEVEMENT_IDS.COMBO_10, title: "집중력", description: "콤보 10 달성", icon: "x10", targetValue: 10, isCompleted: false },
     { id: ACHIEVEMENT_IDS.COMBO_50, title: "집중력 폭발", description: "콤보 50 달성", icon: "x50", targetValue: 50, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.HONOR_STUDENT, title: "우등생", description: "A+ 학점", icon: "A+", targetValue: 1, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.GRADUATION, title: "졸업", description: "LV 15 도달", icon: "🎓", targetValue: 15, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.SPEED_RUNNER, title: "속전속결", description: "WPM 100 돌파", icon: "⚡", targetValue: 100, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.ATTENDANCE, title: "개근", description: "7일 연속 Daily", icon: "📅", targetValue: 7, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 50", icon: "👹", targetValue: 50, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.PERFECTIONIST, title: "완벽주의", description: "오타 0%로 한 라운드", icon: "💯", targetValue: 1, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.NIGHT_STUDY, title: "야간 자율학습", description: "Zen 3분 완주", icon: "🌙", targetValue: 1, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.SELF_STUDY, title: "독학", description: "Custom Words 사용", icon: "📖", targetValue: 1, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.TOP_CLASS, title: "수석", description: "리더보드 1위", icon: "🏆", targetValue: 1, isCompleted: false }
+    { id: ACHIEVEMENT_IDS.HONOR_STUDENT, title: "우등생", description: "A+ 학점 달성", icon: "A+", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.GRADUATION, title: "졸업", description: "LV 15 도달", icon: "LV15", targetValue: 15, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.SPEED_RUNNER, title: "속전속결", description: "WPM 100 돌파", icon: "100", targetValue: 100, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.ATTENDANCE, title: "개근", description: "7일 Daily 출석", icon: "D7", targetValue: 7, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 10회 처치", icon: "BOSS", targetValue: 50, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.PERFECTIONIST, title: "완벽주의", description: "정확도 100%", icon: "100%", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.NIGHT_STUDY, title: "야간 자율학습", description: "자정 ~ 6시 사이 플레이", icon: "NITE", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.SELF_STUDY, title: "독학", description: "Custom Words로 플레이", icon: "OWN", targetValue: 1, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.TOP_CLASS, title: "수석", description: "High Score 갱신", icon: "TOP", targetValue: 1, isCompleted: false }
     ],
 
     init() {
