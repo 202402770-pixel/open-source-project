@@ -45,6 +45,7 @@
   --color-warn:            #b45309;
   --color-danger:          #c2410c;
   --color-info:            #1e6091;
+  --color-typing-error:    var(--color-danger); /* 오타 플래시 — danger의 의미 분리 alias */
 
   /* ── Color · Grade (학점 도장) ────────────────────────────────────────── */
   --color-grade-aplus:     #15803d;
