@@ -1,8 +1,18 @@
-# Migration Plan — W1 종료 후 새 Org로 이전
+# ⚠️ DEPRECATED — 마이그레이션 진행하지 않음
 
-> **목적:** W1 작업이 모두 끝난 시점에 레포를 새 GitHub Organization으로 **Transfer**해서, 박태준이 인프라(Branch protection · GitHub Actions 등) 권한을 갖게 한다.
+> **상태:** 🚫 폐기 (2026-05-19 결정)
 >
-> **전제:** 두 팀원(전재형 · 김지우)이 Git에 익숙하지 않으므로, **모든 로컬이 안정된 상태** → 마이그레이션 → URL 갱신 한 줄, 이렇게 안전한 순서로 진행한다.
+> 본 계획서는 작성 시점엔 채택됐으나, 이후 팀 논의 결과 **Organization 마이그레이션을 진행하지 않기로 결정**했다. Branch protection은 레포 owner인 전재형이 본인 admin 권한으로 직접 활성화하는 방식으로 진행한다 — [Issue #12](https://github.com/202402770-pixel/open-source-project/issues/12) 참조.
+>
+> 이 문서는 **히스토리 보존용**으로만 남겨두며, 실제 작업 절차로 따르지 않는다. 만약 미래에 다시 마이그레이션이 필요해지면 본 문서를 시작점으로 활용할 수 있다.
+
+---
+
+# Migration Plan — W1 종료 후 새 Org로 이전 (보류)
+
+> **(원본 목적 — 더 이상 유효하지 않음)** W1 작업이 모두 끝난 시점에 레포를 새 GitHub Organization으로 **Transfer**해서, 박태준이 인프라(Branch protection · GitHub Actions 등) 권한을 갖게 한다.
+>
+> **(원본 전제)** 두 팀원(전재형 · 김지우)이 Git에 익숙하지 않으므로, **모든 로컬이 안정된 상태** → 마이그레이션 → URL 갱신 한 줄, 이렇게 안전한 순서로 진행한다.
 
 ---
 
