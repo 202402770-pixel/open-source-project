@@ -1,7 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Type Defender Components</title>
@@ -11,111 +15,247 @@
 
   <!-- Google Fonts: Black Han Sans (타이틀) · Gaegu (칠판 손글씨) · JetBrains Mono (숫자) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" />
 
   <link rel="stylesheet" href="./css/tokens.css" />
+
   <link rel="stylesheet" href="./css/style.css" />
+
 </head>
+
 <body class="component-page">
+
   <main class="component-demo">
+
     <section class="demo-section">
+
       <p class="eyebrow">W1 COMPONENTS</p>
+
       <h1>전재형 담당 UI 컴포넌트</h1>
+
       <p>Button, Toggle, Word Chip, HUD Pill, Professor + Desk 데모 페이지</p>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Button</h2>
 
       <div class="demo-row">
+
         <button class="td-btn td-btn--primary">받아적을게요</button>
+
         <button class="td-btn td-btn--secondary">설정</button>
+
         <button class="td-btn td-btn--ghost">취소</button>
+
         <button class="td-btn td-btn--primary" disabled>비활성</button>
+
       </div>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Button Size</h2>
 
       <div class="demo-row">
+
         <button class="td-btn td-btn--primary td-btn--sm">SM</button>
+
         <button class="td-btn td-btn--primary">MD</button>
+
         <button class="td-btn td-btn--primary td-btn--lg">LG</button>
+
       </div>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Toggle</h2>
 
       <div class="td-toggle-group" role="group" aria-label="게임 모드 선택">
+
         <button class="td-toggle is-active">CLASSIC</button>
+
         <button class="td-toggle">TIME ATTACK</button>
+
         <button class="td-toggle">ZEN</button>
+
         <button class="td-toggle">DAILY</button>
+
       </div>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Word Chip</h2>
 
       <div class="demo-row">
+
         <span class="word-chip word-chip--easy">break</span>
-        <span class="word-chip word-chip--normal">HashMap</span>
+
+        <span class="word-chip word-chip--normal">
+          <span class="word-chip__typed">Hash</span><span class="word-chip__rest">Map</span>
+        </span>
+
         <span class="word-chip word-chip--hard">ArrayList</span>
+
         <span class="word-chip word-chip--boss">synchronized</span>
+
       </div>
+
     </section>
 
     <section class="demo-section">
+
       <h2>HUD Pill</h2>
 
       <div class="hud-row">
+
         <span class="hud-pill">점수 <strong>2,450</strong></span>
+
         <span class="hud-pill">학점 <strong>A-</strong></span>
-        <span class="hud-pill">콤보 <strong>x14</strong></span>
+
+        <span class="hud-pill hud-pill--accent">콤보 <strong>x14</strong></span>
+
+        <span class="hud-pill hud-pill--good">정확도 <strong>98%</strong></span>
+
+        <span class="hud-pill hud-pill--bad">남은 목숨 <strong>1</strong></span>
+
         <span class="hud-pill">WPM <strong>76</strong></span>
+
       </div>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Chalk Dust Effect</h2>
+
       <p>아래 버튼을 누르면 W1 박태준 작업물인 분필 가루 파티클을 미리 볼 수 있습니다.</p>
+
       <button class="td-btn td-btn--secondary" id="demo-chalk-dust" type="button">분필 가루 터트리기</button>
+
     </section>
 
     <section class="demo-section">
+
       <h2>Professor + Desk</h2>
 
       <div class="classroom-illustration">
-        <div class="professor">
-          <div class="professor__head"></div>
-          <div class="professor__body"></div>
-          <div class="professor__arm"></div>
+
+        <div class="professor-state-row">
+
+          <div class="professor-state">
+
+            <div class="professor professor--writing">
+
+              <div class="professor__head"></div>
+
+              <div class="professor__body"></div>
+
+              <div class="professor__arm"></div>
+
+            </div>
+
+            <p>writing</p>
+
+          </div>
+
+          <div class="professor-state">
+
+            <div class="professor professor--watching">
+
+              <div class="professor__head"></div>
+
+              <div class="professor__body"></div>
+
+              <div class="professor__arm"></div>
+
+            </div>
+
+            <p>watching</p>
+
+          </div>
+
+          <div class="professor-state">
+
+            <div class="professor professor--angry">
+
+              <div class="professor__head"></div>
+
+              <div class="professor__body"></div>
+
+              <div class="professor__arm"></div>
+
+            </div>
+
+            <p>angry</p>
+
+          </div>
+
         </div>
 
         <div class="desk-row">
-          <div class="student-desk"></div>
-          <div class="student-desk"></div>
-          <div class="student-desk student-desk--you">YOU</div>
-          <div class="student-desk"></div>
-          <div class="student-desk"></div>
-        </div>
-      </div>
-    </section>
-    </main>
 
-    <script src="./js/config.js"></script>
-    <script src="./js/themes.js"></script>
-    <script src="./js/effects.js"></script>
-    <script src="./js/ui.js"></script>
-    <script>
-      // W1 박태준 분필 가루 파티클 데모 — 버튼 위치에서 파편이 흩어진다
-      document.getElementById('demo-chalk-dust')?.addEventListener('click', (e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        Effects.chalkDust(r.left + r.width / 2, r.top + r.height / 2);
-      });
-    </script>
+          <div class="student-desk student-desk--npc-1">
+            <div class="student-desk__head"></div>
+            <div class="student-desk__body"></div>
+          </div>
+
+          <div class="student-desk student-desk--npc-2">
+            <div class="student-desk__head"></div>
+            <div class="student-desk__body"></div>
+          </div>
+
+          <div class="student-desk student-desk--you">YOU</div>
+
+          <div class="student-desk student-desk--npc-3">
+            <div class="student-desk__head"></div>
+            <div class="student-desk__body"></div>
+          </div>
+
+          <div class="student-desk student-desk--npc-4">
+            <div class="student-desk__head"></div>
+            <div class="student-desk__body"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="./js/config.js"></script>
+
+  <script src="./js/themes.js"></script>
+
+  <script src="./js/effects.js"></script>
+
+  <script src="./js/ui.js"></script>
+
+  <script>
+
+    // W1 박태준 분필 가루 파티클 데모 — 버튼 위치에서 파편이 흩어진다
+
+    document.getElementById('demo-chalk-dust')?.addEventListener('click', (e) => {
+
+      const r = e.currentTarget.getBoundingClientRect();
+
+      Effects.chalkDust(r.left + r.width / 2, r.top + r.height / 2);
+
+    });
+
+  </script>
+
 </body>
+
 </html>

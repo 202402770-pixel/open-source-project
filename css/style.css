@@ -14,6 +14,10 @@
   --color-wood-dark: #8a6030;
   --color-accent: #d97706;
   --color-danger: #c2410c;
+  --color-typed: #86efac;
+  --color-untyped: #f4f4eb;
+  --color-warn: #f6d76a;
+  --color-success: #22c55e;
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -240,6 +244,14 @@ a {
   box-shadow: 0 4px 0 var(--color-wood-dark);
 }
 
+.word-chip__typed {
+  color: var(--color-typed);
+}
+
+.word-chip__rest {
+  color: var(--color-untyped);
+}
+
 /* =========================
    W1 Component - HUD Pill
 ========================= */
@@ -265,6 +277,19 @@ a {
 
 .hud-pill strong {
   color: var(--color-accent);
+}
+
+/* HUD Pill tone variants */
+.hud-pill--accent strong {
+  color: var(--color-warn);
+}
+
+.hud-pill--good strong {
+  color: var(--color-success);
+}
+
+.hud-pill--bad strong {
+  color: var(--color-danger);
 }
 
 /* =========================
@@ -316,6 +341,49 @@ a {
   border-radius: 999px;
   background: var(--color-wood-dark);
   transform: rotate(-24deg);
+}
+
+.professor__head,
+.professor__arm {
+  transition: transform 120ms ease;
+}
+
+/* Professor state variants */
+.professor--writing .professor__arm {
+  transform: rotate(-24deg);
+}
+
+.professor--watching .professor__arm {
+  transform: rotate(10deg);
+}
+
+.professor--angry .professor__arm {
+  transform: rotate(-40deg);
+}
+
+.professor--angry .professor__head {
+  transform: rotate(-3deg);
+}
+
+.professor-state-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: end;
+  justify-content: center;
+}
+
+.professor-state {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.professor-state p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-board-mid);
 }
 
 .desk-row {
