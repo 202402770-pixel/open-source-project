@@ -15,6 +15,13 @@ async function start() {
             UI.renderTargetWord(game.getActiveWords(), "");
         }
     );
+    UI.initRanking();
+    const showRankingBtn = document.getElementById('show-ranking-btn');
+        if (showRankingBtn) {
+            showRankingBtn.addEventListener('click', () => {
+                UI.toggleRankingModal(true);
+            });
+        }
 
     UI.updateHUD(game);
     UI.renderTargetWord(game.getActiveWords(), "");

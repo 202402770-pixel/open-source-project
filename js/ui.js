@@ -10,6 +10,102 @@ const UI = {
     get gameOverScreen() { return document.querySelector('.game-over'); },
     lastInputLength: 0,
 
+    get rankingModal() { return document.getElementById('ranking-modal'); },
+    get rankingContainer() { return document.getElementById('ranking-container'); },
+    get rankingTabs() { return document.querySelectorAll('.tab-btn'); },
+
+    mockRankingData: {
+        all: [
+            { name: "익명#A12", score: 34850, combo: 120, level: 12, isMe: false },
+            { name: "익명#B34", score: 28420, combo: 95, level: 11, isMe: false },
+            { name: "익명#C56", score: 25200, combo: 88, level: 11, isMe: false },
+            { name: "익명#D78", score: 24100, combo: 82, level: 11, isMe: false },
+            { name: "익명#E90", score: 23800, combo: 79, level: 11, isMe: false },
+            { name: "익명#A91", score: 21500, combo: 75, level: 10, isMe: false },
+            { name: "익명#F12", score: 19200, combo: 68, level: 9, isMe: false },
+            { name: "YOU (당신)", score: 18450, combo: 67, level: 9, isMe: true }
+        ],
+        week: [
+            { name: "익명#D78", score: 24100, combo: 82, level: 11, isMe: false },
+            { name: "익명#E90", score: 23800, combo: 79, level: 11, isMe: false },
+            { name: "익명#A91", score: 21500, combo: 75, level: 10, isMe: false },
+            { name: "YOU (당신)", score: 18450, combo: 67, level: 9, isMe: true },
+            { name: "익명#H56", score: 16500, combo: 54, level: 9, isMe: false },
+            { name: "익명#K34", score: 15800, combo: 50, level: 8, isMe: false },
+            { name: "익명#I78", score: 14900, combo: 48, level: 8, isMe: false },
+            { name: "익명#J90", score: 14200, combo: 45, level: 8, isMe: false }
+        ],
+        today: [
+            { name: "YOU (당신)", score: 18450, combo: 67, level: 9, isMe: true },
+            { name: "익명#K34", score: 15800, combo: 50, level: 8, isMe: false },
+            { name: "익명#I78", score: 14900, combo: 48, level: 8, isMe: false },
+            { name: "익명#J90", score: 14200, combo: 45, level: 8, isMe: false },
+            { name: "익명#M55", score: 13600, combo: 42, level: 7, isMe: false },
+            { name: "익명#N34", score: 11500, combo: 35, level: 6, isMe: false },
+            { name: "익명#O56", score: 10800, combo: 31, level: 6, isMe: false },
+            { name: "익명#X12", score: 9900, combo: 28, level: 5, isMe: false },
+        ]
+    },
+    
+    initRanking() {
+        const closeBtn = document.getElementById('close-ranking-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.toggleRankingModal(false));
+        }
+
+        if (this.rankingTabs) {
+            this.rankingTabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    this.rankingTabs.forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.renderRanking(e.target.dataset.type);
+                });
+            });
+        }
+    },
+
+    toggleRankingModal(show) {
+        if (!this.rankingModal) return;
+        if (show) {
+            this.rankingModal.classList.remove('hidden');
+            this.renderRanking('all');
+            
+            if (this.rankingTabs.length > 0) {
+                this.rankingTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('.tab-btn[data-type="all"]').classList.add('active');
+            }
+        } else {
+            this.rankingModal.classList.add('hidden');
+            const hiddenInput = document.getElementById('hidden-input');
+            if (hiddenInput) hiddenInput.focus();
+        }
+    },
+
+    renderRanking(type) {
+        if (!this.rankingContainer) return;
+        this.rankingContainer.innerHTML = ''; 
+        const data = this.mockRankingData[type] || this.mockRankingData['all'];
+
+        data.forEach((user, index) => {
+            const rank = index + 1;
+            const isTop3 = rank <= 3 ? 'top-rank' : '';
+            const isMeClass = user.isMe ? 'is-me' : '';
+
+            const row = document.createElement('div');
+            row.className = `rank-item ${isTop3} ${isMeClass}`;
+            
+            row.innerHTML = `
+                <div class="rank-num">#${rank}</div>
+                <div class="rank-name">${user.name}</div>
+                <div class="rank-score">${user.score}</div>
+                <div class="rank-combo">x${user.combo}</div>
+                <div class="rank-level">LV ${user.level}</div>
+            `;
+            this.rankingContainer.appendChild(row);
+        });
+    },
+
+
     renderTargetWord(activeWords, userInput) {
         if (!userInput || userInput === "") {
             this.wordDisplay.innerHTML = '';

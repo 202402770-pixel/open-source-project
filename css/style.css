@@ -1268,6 +1268,127 @@ body.shake {
 }
 
 /* =========================
+   순위표 (Ranking Modal)
+========================= */
+
+#ranking-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+}
+
+#ranking-modal.hidden {
+  display: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.ranking-modal-content {
+  position: relative;
+  width: 520px;
+  background-color: var(--color-paper);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.ranking-title {
+  margin: 0 0 24px 0;
+  font-family: "Black Han Sans", sans-serif;
+  font-size: 2.2rem;
+  color: var(--color-text);
+  letter-spacing: -1px;
+}
+
+.ranking-tabs {
+  display: flex;
+  border: 1px solid var(--color-paper-line);
+  border-radius: 6px;
+  margin-bottom: 24px;
+}
+
+.ranking-tabs .tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ranking-tabs .tab-btn.active {
+  background-color: var(--color-accent);
+  color: var(--color-paper);
+  border-radius: 6px;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.ranking-list::-webkit-scrollbar { display: none; }
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid var(--color-paper-line);
+  border-radius: 6px;
+  background: var(--color-paper);
+}
+
+.rank-num { width: 40px; font-weight: 800; color: var(--color-text-mute); }
+.rank-item.top-rank .rank-num { color: var(--color-accent); }
+.rank-name { flex: 1; font-weight: 700; color: var(--color-text); font-size: 0.95rem; }
+.rank-score { font-weight: 800; font-family: "JetBrains Mono", sans-serif; color: var(--color-text); margin-right: 12px; }
+.rank-combo { font-size: 0.8rem; font-weight: 700; color: var(--color-accent); width: 40px; }
+.rank-level { font-size: 0.8rem; font-weight: 600; color: var(--color-text-mute); width: 45px; text-align: right; }
+
+.rank-item.is-me {
+  background-color: #faeedf;
+  border-color: #faeedf;
+}
+
+.rank-item.is-me .rank-num,
+.rank-item.is-me .rank-name,
+.rank-item.is-me .rank-score,
+.rank-item.is-me .rank-combo,
+.rank-item.is-me .rank-level {
+  color: #ffffff;
+  text-shadow: 0 0 2px rgba(0,0,0,0.1);
+}
+
+.ranking-close-btn {
+  align-self: flex-start;
+  background: transparent;
+  border: 1.5px solid var(--color-wood-mid);
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* =========================
    Responsive
 ========================= */
 
@@ -1306,5 +1427,36 @@ body.shake {
 
   .hp-track {
     width: 100%;
+  }
+}
+
+/* =========================
+   Typing Feedback — 정타 펄스 / 오타 플래시 (W2 박태준)
+========================= */
+
+.notebook-input.typed-pulse {
+  animation: td-typed-pulse 80ms ease-out;
+}
+
+@keyframes td-typed-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.notebook-input.error-flash {
+  animation: td-error-flash 200ms ease-out;
+}
+
+@keyframes td-error-flash {
+  0%   { box-shadow: 0 0 0 0 transparent; }
+  50%  { box-shadow: 0 0 12px 2px var(--color-typing-error); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notebook-input.typed-pulse,
+  .notebook-input.error-flash {
+    animation: none;
   }
 }
