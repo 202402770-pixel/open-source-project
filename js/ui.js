@@ -216,13 +216,20 @@ const UI = {
         if (state.totalWordAttempts > 0) {
             accuracy = Math.floor((state.successWords / state.totalWordAttempts) * 100);
         }
+        if (accuracy === 100 && state.successWords > 0) {
+            Achievements.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1)
+        }
         let highScore = parseInt(localStorage.getItem('typing_high_score')) || 0;
         let isNewRecord = false;
         if (state.score > highScore && state.score > 0) {
             localStorage.setItem('typing_high_score', state.score);
             isNewRecord = true;
+            Achievements.check(ACHIEVEMENT_IDS.TOP_CLASS, 1);
         }
         let gradeText = Grade.calc(state.score, accuracy);
+        if (gradeText === "A+"){
+            Achievements.check(ACHIEVEMENT_IDS.HONOR_STUDENT, 1);
+        }
         let stampClass = 'stamp-f';
         switch(gradeText) {
             case 'A+': stampClass = 'stamp-a-plus'; break;

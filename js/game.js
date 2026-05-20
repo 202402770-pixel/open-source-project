@@ -22,6 +22,11 @@ class Game {
         let playCount = parseInt(localStorage.getItem(CONFIG.STORAGE.PLAY_COUNT)) || 0;
         playCount++;
         localStorage.setItem(CONFIG.STORAGE.PLAY_COUNT, playCount);
+        
+        const currentHour = new Date().getHours();
+        if (currentHour >= 0 && currentHour < 6) {
+            Achievements.check(ACHIEVEMENT_IDS.NIGHT_STUDY, 1);
+        }
     }
 
     getActiveWords() {
@@ -73,12 +78,6 @@ class Game {
     levelUp() {
         if (this.levelAttempts > 0) {
             const accuracy = ((this.levelAttempts - this.levelMissed) / this.levelAttempts) * 100;
-            if (accuracy >= CONFIG.GRADE.APLUS.minAccuracy) {
-                Achievements.check(ACHIEVEMENT_IDS.HONOR_STUDENT, 1);
-            }
-            if (this.levelMissed === 0) {
-                Achievements.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1);
-            }
         }
         this.levelAttempts = 0;
         this.levelMissed = 0;
@@ -103,10 +102,6 @@ class Game {
 
     gameClear() {
         this.isGameOver = true;
-        if (this.currentHP === this.maxHP) {
-        Achievements.check(ACHIEVEMENT_IDS.PERFECTIONIST, 1); 
-        }
-        if (this.currentHP <= this.maxHP * 0.2) Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, 1);
         Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
         UI.showToast("게임 클리어!", "모든 단어를 방어했습니다.", "축");
         UI.showGameOver(this);
@@ -125,9 +120,6 @@ class Game {
         if(minutes > 0.05){
             this.wpm = Math.floor((this.totalTypedChars/5)/minutes);
             Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, this.wpm);
-            if (minutes >= 3) {
-                Achievements.check(ACHIEVEMENT_IDS.NIGHT_STUDY, 1);
-            }
         } else {
             this.wpm = 0;
         }

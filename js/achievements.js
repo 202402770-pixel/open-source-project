@@ -22,7 +22,7 @@ const Achievements = {
     { id: ACHIEVEMENT_IDS.GRADUATION, title: "졸업", description: "LV 15 도달", icon: "LV15", targetValue: 15, isCompleted: false },
     { id: ACHIEVEMENT_IDS.SPEED_RUNNER, title: "속전속결", description: "WPM 100 돌파", icon: "100", targetValue: 100, isCompleted: false },
     { id: ACHIEVEMENT_IDS.ATTENDANCE, title: "개근", description: "7일 Daily 출석", icon: "D7", targetValue: 7, isCompleted: false },
-    { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 10회 처치", icon: "BOSS", targetValue: 50, isCompleted: false },
+    { id: ACHIEVEMENT_IDS.BOSS_HUNTER, title: "보스 헌터", description: "보스 단어 10회 처치", icon: "BOSS", targetValue: 10, isCompleted: false },
     { id: ACHIEVEMENT_IDS.PERFECTIONIST, title: "완벽주의", description: "정확도 100%", icon: "100%", targetValue: 1, isCompleted: false },
     { id: ACHIEVEMENT_IDS.NIGHT_STUDY, title: "야간 자율학습", description: "자정 ~ 6시 사이 플레이", icon: "NITE", targetValue: 1, isCompleted: false },
     { id: ACHIEVEMENT_IDS.SELF_STUDY, title: "독학", description: "Custom Words로 플레이", icon: "OWN", targetValue: 1, isCompleted: false },
