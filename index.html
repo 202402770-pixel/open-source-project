@@ -85,7 +85,7 @@
         <div class="action-buttons">
           <button id="restart-btn" class="btn btn-primary">다시 수강</button>
           <button class="btn btn-secondary" onclick="UI.toggleRankingModal(true)">순위표</button>
-          <button class="btn btn-secondary" onclick="alert('준비중입니다.')">도전과제</button>
+          <button class="btn btn-secondary" onclick="UI.toggleAchievementModal(true)">도전과제</button>
           <button class="btn btn-text" onclick="alert('준비중입니다.')">공유</button>
         </div>
       </div>
@@ -105,6 +105,20 @@
       <div class="ranking-list" id="ranking-container">
         </div>
       <button id="close-ranking-btn" class="ranking-close-btn">CLOSE</button>
+    </div>
+  </div>
+  <div id="achievement-modal" class="modal hidden">
+    <div class="modal-overlay" onclick="UI.toggleAchievementModal(false)"></div>
+    <div class="achievement-modal-content">
+      <h2 class="achievement-title">도전과제 <span class="achievement-progress" id="achievement-progress">0 / 12</span></h2>
+      <div class="achievement-tabs">
+        <button class="achieve-tab-btn active" data-filter="all">전체</button>
+        <button class="achieve-tab-btn" data-filter="acquired">획득</button>
+        <button class="achieve-tab-btn" data-filter="unacquired">미획득</button>
+      </div>
+      <div class="achievement-grid" id="achievement-container">
+        </div>
+      <button class="ranking-close-btn" onclick="UI.toggleAchievementModal(false)">CLOSE</button>
     </div>
   </div>
 
