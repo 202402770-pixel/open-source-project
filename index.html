@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Type Defender</title>
 
   <!-- Pretendard Variable (UI) -->
@@ -16,20 +15,53 @@
 
   <link rel="stylesheet" href="./css/tokens.css" />
   <link rel="stylesheet" href="./css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/effects.js"></script>
+  <script src="js/wordData.js"></script>
+  <script src="js/ui.js"></script> 
+  <script src="js/achievements.js"></script> 
+  <script src="js/input.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
 </head>
-<body class="home-page">
-  <main class="home">
-    <section class="home-card">
-      <p class="eyebrow">OPEN SOURCE PROJECT</p>
-      <h1>Type Defender</h1>
-      <p>
-        교수님의 공격 단어를 빠르게 입력해서 막아내는 타이핑 디펜스 게임입니다.
-      </p>
+<body>
+  <div class="start">
+    </div>
 
-      <div class="home-actions">
-        <a class="td-btn td-btn--primary" href="./components.html">W1 컴포넌트 보기</a>
-        <button class="td-btn td-btn--secondary" type="button">게임 시작 준비중</button>
+  <div class="play">
+    <div class="hud">
+        <div id="score" class="score-display">SCORE: 0</div>
+        <div class="hp-container">
+            <span class="hp-label">HP</span>
+            <div class="hp-track">
+                <div id="hp-fill" class="hp-fill ok" style="width: 100%;"></div>
+            </div>
+            <span id="hp-text" class="hp-percent">100%</span>
+        </div>
+    </div>
+
+    <div class="notebook-input">
+      <div class="typing-area">
+        <span class="pencil-icon">✏️</span>
+        <input type="text" id="hidden-input" autofocus 
+               style="position: absolute; opacity: 0; pointer-events: none;" 
+               autocomplete="off">
+        <div id="word-display" class="word-display"></div>
       </div>
+      <div class="meta-info">
+        <span id="lang">JavaScript</span>
+        <span id="level">LV.1</span>
+        <span id="missed">MISSED: 0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-over">
+    </div>
+  <div id="toast-container"></div>
     </section>
   </main>
 

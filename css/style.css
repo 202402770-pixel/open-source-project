@@ -1,31 +1,425 @@
-/* =========================
-   Type Defender Design Tokens
-========================= */
-
+/* 1. 디자인 토큰 */
 :root {
-  --color-wall-top: #d9cea6;
-  --color-wall-bottom: #cfc196;
-  --color-paper: #fdf9ee;
-  --color-board-mid: #1a5c3a;
-  --color-board-frame: #8b7355;
-  --color-chalk: #f4f4eb;
-  --color-chalk-yellow: #f6d76a;
-  --color-wood-mid: #b98246;
-  --color-wood-dark: #8a6030;
-  --color-accent: #d97706;
-  --color-danger: #c2410c;
+  /* ── Surface (배경 / 표면) ─────────────────────── */
+  --color-wall-top:       #d9cea6;  /* 강의실 벽 상단 */
+  --color-wall-bottom:    #cfc196;  /* 강의실 벽 하단 */
+  --color-floor-top:      #c4956a;  /* 마룻바닥 상단 */
+  --color-floor-bottom:   #b8895e;  /* 마룻바닥 하단 */
+  --color-paper:          #fdf9ee;  /* 노트/필기장 종이 */
+  --color-paper-line:     #d4c89a;  /* 필기장 줄 */
+
+  /* ── Chalkboard (칠판) ────────────────────────── */
+  --color-board-top:      #2e6b4a;
+  --color-board-mid:      #1a5c3a;
+  --color-board-bottom:   #225e3f;
+  --color-board-frame:    #8b7355;  /* 나무 프레임 */
+  --color-board-tray:     #a0916e;  /* 분필 받침대 */
+  --color-chalk:          #f4f4eb;  /* 분필 흰색 (살짝 노랑) */
+  --color-chalk-dim:      #c8c8b8;  /* 흐려진 분필 (이전 단원) */
+  --color-chalk-yellow:   #f6d76a;  /* 강조 분필 */
+
+  /* ── Wood (나무 가구) ─────────────────────────── */
+  --color-wood-light:     #b8956b;
+  --color-wood-mid:       #a07040;
+  --color-wood-dark:      #8a6030;
+
+  /* ── Brand / Accent ──────────────────────────── */
+  --color-accent:         #d97706;  /* 출석부 빨강·주황 (CTA) */
+  --color-accent-deep:    #b45309;
+  --color-success:        #15803d;  /* 정타·A학점 */
+  --color-warn:           #b45309;  /* 콤보·경고 */
+  --color-danger:         #c2410c;  /* HP 위험 */
+  --color-info:           #1e6091;  /* 학번·정보 */
+
+  /* ── Grade (학점 컬러) ────────────────────────── */
+  --color-grade-aplus:    #15803d;  /* A+ */
+  --color-grade-a:        #166534;  /* A / A- */
+  --color-grade-b:        #ca8a04;  /* B */
+  --color-grade-c:        #ea580c;  /* C */
+  --color-grade-f:        #c2410c;  /* F (게임오버) */
+
+  /* ── Text ────────────────────────────────────── */
+  --color-text:           #2b241a;  /* 본문 (다크 브라운) */
+  --color-text-soft:      #5a4d3a;
+  --color-text-mute:      #8a7a62;
+  --color-text-on-board:  #f4f4eb;  /* 칠판 위 흰 분필 */
+  --color-text-on-paper:  #2b241a;  /* 종이 위 검정 */
+
+  /* ── State ───────────────────────────────────── */
+  --color-typed:          #15803d;  /* 이미 친 글자 (초록) */
+  --color-untyped:        #f4f4eb;  /* 아직 안 친 글자 (분필 흰) */
+  --color-error:          #c2410c;  /* 오타 */
+  --color-cursor:         #f6d76a;  /* 커서 (노랑 분필) */
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* =========================
-   Base
-========================= */
+/* ── W1 Components ────────────────────────── */
+* {
+  box-sizing: border-box;
+}
 
+/* 2. 스타일 적용 부분 */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--color-wall-top);
+  margin: 0;
+}
+
+/* 2-1. Notebook Input */
+#hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.notebook-input {
+  margin-top: 560px;
+  width: 1024px;
+  height: 174px;
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 49px, 
+    var(--color-paper-line) 49px, 
+    var(--color-paper-line) 50px 
+  );
+  background-size: 100% 50px;
+  background-position: 0 34px;
+  border: 1px solid var(--color-paper-line);
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.typing-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.pencil-icon {
+  margin-top: -12px;
+  font-size: 2rem;
+}
+
+.word-display {
+  font-size: 3.5rem;
+  font-family: 'Nanum Pen Script', cursive;
+  display: flex;
+  align-items: center;
+  gap: 2px; 
+  white-space: nowrap;
+  min-height: 4.5rem; 
+  line-height: 1;
+}
+
+.text-untyped { 
+  color: var(--color-untyped);
+} 
+
+.text-typed { 
+  color: var(--color-typed);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 3rem;
+  background-color: var(--color-text);
+  margin: 0 2px;
+  border-radius: 2px;
+  animation: blink 0.8s infinite;
+  flex-shrink: 0; 
+}
+
+.notebook-input.glow-combo5 {
+  box-shadow: 0 0 20px var(--color-success), 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-success);
+  animation: pulse-glow 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.05); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+  @keyframes pulse-typed {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.text-typed { 
+  color: var(--color-typed);
+  display: inline-block;
+  animation: pulse-typed 0.08s ease-out;
+}
+
+@keyframes shake-error {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+body.shake {
+  animation: shake-error 0.3s ease-in-out;
+}
+
+.notebook-input.glow-combo10 {
+  box-shadow: 0 0 25px var(--color-chalk-yellow), 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-chalk-yellow);
+  animation: pulse-glow-yellow 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow-yellow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.05); }
+} 
+
+.meta-info {
+  display: flex;
+  gap: 30px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: var(--color-text-soft);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  margin-bottom: 23px;
+}
+
+/* 2-2. HP Bar */
+.hp-container {
+  position: absolute; 
+  top: 30px;          
+  right: 40px;       
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: var(--color-text); 
+  font-size: 1.2rem;
+  background-color: var(--color-paper); 
+  padding: 10px 20px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.hp-track {
+  width: 250px; 
+  height: 16px;
+  background-color: var(--color-paper-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.hp-fill.ok { background-color: var(--color-success); }
+.hp-fill.warn { background-color: var(--color-warn); }
+.hp-fill.danger { background-color: var(--color-danger); }
+
+#score {
+    display: none;
+}
+
+/* 2-3. Toast */
+#toast-container {
+    position: fixed;
+    top: 30%;
+    right: 30px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    z-index: 9999;
+    align-items: flex-end;
+}
+
+.toast {
+    background-color: var(--color-paper); 
+    border: 1px solid var(--color-paper-line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    display: flex;
+    align-items: center;
+    width: 340px;
+    height: 80px;
+    padding: 0 20px 0 0;
+    position: relative;
+    
+    animation: slide-in-right 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.toast.fade-out {
+    animation: fade-out-bottom 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+}
+
+.toast-accent {
+    width: 4px;
+    height: 44px;
+    background-color: var(--color-accent); 
+    border-radius: 4px;
+    margin-left: 16px;
+}
+
+.toast-icon {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-accent);
+    font-weight: 900;
+    font-size: 16px;
+    margin-left: 16px;
+}
+
+.toast-content {
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.toast-title {
+    color: var(--color-text);
+    font-weight: 800;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.toast-desc {
+    color: var(--color-text-soft);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+@keyframes slide-in-right {
+    0% { transform: translateX(50px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-out-bottom {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(50px); opacity: 0; }
+}
+
+/* 2-4.Grade Stamp */
+.stamp {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    
+    border: 10px solid;
+    background-color: transparent;
+    
+    transform: rotate(15deg);
+    
+    opacity: 0; 
+}
+
+.stamp span {
+    line-height: 1;
+}
+
+.stamp-a-plus {
+    color: var(--color-grade-aplus);
+    border-color: var(--color-grade-aplus);
+}
+
+.stamp-a {
+    color: var(--color-grade-a);
+    border-color: var(--color-grade-a);
+}
+
+.stamp-b {
+    color: var(--color-grade-b);
+    border-color: var(--color-grade-b);
+}
+
+.stamp-c {
+    color: var(--color-grade-c);
+    border-color: var(--color-grade-c);
+}
+
+.stamp-f {
+    color: var(--color-grade-f);
+    border-color: var(--color-grade-f);
+}
+
+.stamp.show {
+    animation: stamp-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes stamp-in {
+    0% {
+        transform: scale(2.5) rotate(15deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(0.9) rotate(15deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(15deg);
+        opacity: 1;
+    }
+  }
+
+  .component-demo {
+    width: min(100% - 20px, 960px);
+    padding: 24px 0;
+  }
+
+  .demo-section {
+    padding: 18px;
+  }
+
+  .td-toggle-group {
+    border-radius: 20px;
+  }
+
+/* 2. 스타일 적용 부분 */
 * {
   box-sizing: border-box;
 }
 
 body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0;
   min-height: 100vh;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -37,10 +431,345 @@ body {
   color: var(--color-board-mid);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* 2-1. Notebook Input */
+#hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
+
+.notebook-input {
+  margin-top: 560px;
+  width: 1024px;
+  height: 174px;
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 49px, 
+    var(--color-paper-line) 49px, 
+    var(--color-paper-line) 50px 
+  );
+  background-size: 100% 50px;
+  background-position: 0 34px;
+  border: 1px solid var(--color-paper-line);
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.typing-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.pencil-icon {
+  margin-top: -12px;
+  font-size: 2rem;
+}
+
+.word-display {
+  font-size: 3.5rem;
+  font-family: 'Nanum Pen Script', cursive;
+  display: flex;
+  align-items: center;
+  gap: 2px; 
+  white-space: nowrap;
+  min-height: 4.5rem; 
+  line-height: 1;
+}
+
+.text-untyped { 
+  color: var(--color-untyped);
+} 
+
+.text-typed { 
+  color: var(--color-typed);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.cursor {
+  display: inline-block;
+  width: 3px;
+  height: 3rem;
+  background-color: var(--color-text);
+  margin: 0 2px;
+  border-radius: 2px;
+  animation: blink 0.8s infinite;
+  flex-shrink: 0; 
+}
+
+.notebook-input.glow-combo5 {
+  box-shadow: 0 0 20px var(--color-success), 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-success);
+  animation: pulse-glow 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.05); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+  @keyframes pulse-typed {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.text-typed { 
+  color: var(--color-typed);
+  display: inline-block;
+  animation: pulse-typed 0.08s ease-out;
+}
+
+@keyframes shake-error {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+body.shake {
+  animation: shake-error 0.3s ease-in-out;
+}
+
+.notebook-input.glow-combo10 {
+  box-shadow: 0 0 25px var(--color-chalk-yellow), 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-chalk-yellow);
+  animation: pulse-glow-yellow 1.5s infinite alternate;
+}
+
+@keyframes pulse-glow-yellow {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.05); }
+} 
+
+.meta-info {
+  display: flex;
+  gap: 30px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: var(--color-text-soft);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  margin-bottom: 23px;
+}
+
+/* 2-2. HP Bar */
+.hp-container {
+  position: absolute; 
+  top: 30px;          
+  right: 40px;       
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: var(--color-text); 
+  font-size: 1.2rem;
+  background-color: var(--color-paper); 
+  padding: 10px 20px; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.hp-track {
+  width: 250px; 
+  height: 16px;
+  background-color: var(--color-paper-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.hp-fill.ok { background-color: var(--color-success); }
+.hp-fill.warn { background-color: var(--color-warn); }
+.hp-fill.danger { background-color: var(--color-danger); }
+
+#score {
+    display: none;
+}
+
+/* 2-3. Toast */
+#toast-container {
+    position: fixed;
+    top: 30%;
+    right: 30px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    z-index: 9999;
+    align-items: flex-end;
+}
+
+.toast {
+    background-color: var(--color-paper); 
+    border: 1px solid var(--color-paper-line);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    display: flex;
+    align-items: center;
+    width: 340px;
+    height: 80px;
+    padding: 0 20px 0 0;
+    position: relative;
+    
+    animation: slide-in-right 0.4s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.toast.fade-out {
+    animation: fade-out-bottom 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+}
+
+.toast-accent {
+    width: 4px;
+    height: 44px;
+    background-color: var(--color-accent); 
+    border-radius: 4px;
+    margin-left: 16px;
+}
+
+.toast-icon {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-accent);
+    font-weight: 900;
+    font-size: 16px;
+    margin-left: 16px;
+}
+
+.toast-content {
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.toast-title {
+    color: var(--color-text);
+    font-weight: 800;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.toast-desc {
+    color: var(--color-text-soft);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+@keyframes slide-in-right {
+    0% { transform: translateX(50px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-out-bottom {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(50px); opacity: 0; }
+}
+
+/* 2-4.Grade Stamp */
+.stamp {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-size: 3.5rem;
+    font-weight: 900;
+    font-family: 'Arial Black', 'Impact', sans-serif;
+    
+    border: 10px solid;
+    background-color: transparent;
+    
+    transform: rotate(-12deg);
+    
+    opacity: 0; 
+}
+
+.stamp span {
+    line-height: 1;
+}
+
+.stamp-a-plus {
+    color: var(--color-grade-aplus);
+    border-color: var(--color-grade-aplus);
+}
+
+.stamp-a {
+    color: var(--color-grade-a);
+    border-color: var(--color-grade-a);
+}
+
+.stamp-b {
+    color: var(--color-grade-b);
+    border-color: var(--color-grade-b);
+}
+
+.stamp-c {
+    color: var(--color-grade-c);
+    border-color: var(--color-grade-c);
+}
+
+.stamp-f {
+    color: var(--color-grade-f);
+    border-color: var(--color-grade-f);
+}
+
+.stamp.show {
+    animation: stamp-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes stamp-in {
+    0% {
+        transform: scale(2.5) rotate(-12deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(0.9) rotate(-12deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(-12deg);
+        opacity: 1;
+    }
+  }
+
+/* =========================================================================
+ * W1 컴포넌트 + 공통 페이지 스타일 (main에서 복원)
+ * --------------------------------------------------------------------------
+ * Source: feat/w1-foundation (#2 머지) + 전재형 컴포넌트 (#1, #2 머지)
+ * 복원 사유: feat/game-core-ui 브랜치에서 W1 컴포넌트 스타일 25개가
+ * rebase 과정에서 손실되어, PR #1 머지 시 main 손실을 막기 위해 복원.
+ * 박태준 (puze8681) — 2026-05-19
+ * =========================================================================
+ */
 
 .eyebrow {
   margin: 0 0 8px;
