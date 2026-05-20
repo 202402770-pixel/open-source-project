@@ -6,8 +6,9 @@
  * 게임 종료 시 점수·정확도를 받아 학점 string을 반환한다.
  * 임계값은 CONFIG.GRADE에서 가져온다 (W1 박태준 정의).
  *
- * 반환 string은 UI.stampGrade()의 셀렉터(.stamp[data-grade="..."])와
- * 동일한 형식을 유지한다: 'A+' | 'A' | 'A-' | 'B' | 'C' | 'F'
+ * 반환 string: 'A+' | 'A' | 'A-' | 'B' | 'C' | 'F'
+ * 사용처: ui.js의 showGameOver()에서 받아 .stamp DOM의 className에 매핑
+ *        (예: 'A+' → 'stamp-a-plus' 클래스 → --color-grade-aplus 컬러)
  *
  * Why 별도 모듈:
  *  - game.js의 게임 루프와 분리해 단위 테스트 가능

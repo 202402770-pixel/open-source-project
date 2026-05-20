@@ -7,6 +7,7 @@ const UI = {
     get hpText() { return document.getElementById('hp-text'); }, 
     get toastContainer() { return document.getElementById('toast-container'); },
     get wpmDisplay() { return document.getElementById('wpm'); },
+    get gameOverScreen() { return document.querySelector('.game-over'); },
     lastInputLength: 0,
 
     renderTargetWord(activeWords, userInput) {
@@ -113,18 +114,44 @@ const UI = {
         }, 3000);
     },
     
-    stampGrade(targetGrade) {
-        const stamps = document.querySelectorAll('.stamp');
-        stamps.forEach(stamp => {
-            stamp.classList.remove('show');
-            stamp.style.display = 'none';
-        });
-        const targetElement = document.querySelector(`.stamp[data-grade="${targetGrade}"]`);
-        if (targetElement) {
-            targetElement.style.display = 'flex';
-            setTimeout(() => {
-                targetElement.classList.add('show');
-            }, 10);
+    showGameOver(state){
+        if (!this.gameOverScreen) return;
+        let accuracy = 0;
+        if (state.totalWordAttempts > 0) {
+            accuracy = Math.floor((state.successWords / state.totalWordAttempts) * 100);
         }
+        let highScore = parseInt(localStorage.getItem('typing_high_score')) || 0;
+        let isNewRecord = false;
+        if (state.score > highScore && state.score > 0) {
+            localStorage.setItem('typing_high_score', state.score);
+            isNewRecord = true;
+        }
+        let gradeText = Grade.calc(state.score, accuracy);
+        let stampClass = 'stamp-f';
+        switch(gradeText) {
+            case 'A+': stampClass = 'stamp-a-plus'; break;
+            case 'A':  stampClass = 'stamp-a'; break;
+            case 'A-': stampClass = 'stamp-a-minus'; break;
+            case 'B':  stampClass = 'stamp-b'; break;
+            case 'C':  stampClass = 'stamp-c'; break;
+            case 'F':  stampClass = 'stamp-f'; break;
+        }
+        document.getElementById('result-score').textContent = state.score.toLocaleString();
+        document.getElementById('result-combo').textContent = `x${state.maxCombo}`;
+        document.getElementById('result-level').textContent = `LV.${state.level}`;
+        document.getElementById('result-wpm').textContent = state.wpm;
+        document.getElementById('result-accuracy').textContent = `${accuracy}%`;
+        document.getElementById('result-words').textContent = state.successWords;
+        const stampElement = document.getElementById('result-stamp');
+        stampElement.className = `stamp ${stampClass} show`;
+        document.getElementById('result-grade').textContent = gradeText;
+        const newRecordElement = document.getElementById('result-new-record');
+        newRecordElement.style.display = isNewRecord ? 'block' : 'none';
+        this.gameOverScreen.classList.add('active');
+    },
+
+    hideGameOver() {
+        if (!this.gameOverScreen) return;
+        this.gameOverScreen.classList.remove('active');
     }
 };

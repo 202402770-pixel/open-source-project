@@ -27,3 +27,4 @@ function gameLoop() {
 }
 
 window.onload = start;
+document.getElementById('restart-btn').addEventListener('click', () => location.reload());
