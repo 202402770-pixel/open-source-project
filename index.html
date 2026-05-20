@@ -201,6 +201,9 @@
           <button class="td-btn td-btn--secondary" type="button" data-go="play">
             계속 연습
           </button>
+          <button class="td-btn td-btn--secondary" type="button" onclick="UI.toggleAchievementModal(true)">
+            도전과제
+          </button>
           <button class="td-btn td-btn--ghost" type="button" data-go="start">
             처음으로
           </button>
@@ -227,6 +230,21 @@
         <div id="ranking-container" class="ranking-container"></div>
       </div>
     </section>
+
+    <!-- Achievement Modal -->
+    <div id="achievement-modal" class="modal hidden">
+      <div class="modal-overlay" onclick="UI.toggleAchievementModal(false)"></div>
+      <div class="achievement-modal-content">
+        <h2 class="achievement-title">도전과제 <span class="achievement-progress" id="achievement-progress">0 / 12</span></h2>
+        <div class="achievement-tabs">
+          <button class="achieve-tab-btn active" data-filter="all">전체</button>
+          <button class="achieve-tab-btn" data-filter="acquired">획득</button>
+          <button class="achieve-tab-btn" data-filter="unacquired">미획득</button>
+        </div>
+        <div class="achievement-grid" id="achievement-container"></div>
+        <button class="ranking-close-btn" onclick="UI.toggleAchievementModal(false)">CLOSE</button>
+      </div>
+    </div>
   </main>
 
   <script src="./js/config.js"></script>
