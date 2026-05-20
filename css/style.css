@@ -1308,3 +1308,34 @@ body.shake {
     width: 100%;
   }
 }
+
+/* =========================
+   Typing Feedback — 정타 펄스 / 오타 플래시 (W2 박태준)
+========================= */
+
+.notebook-input.typed-pulse {
+  animation: td-typed-pulse 80ms ease-out;
+}
+
+@keyframes td-typed-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.notebook-input.error-flash {
+  animation: td-error-flash 200ms ease-out;
+}
+
+@keyframes td-error-flash {
+  0%   { box-shadow: 0 0 0 0 transparent; }
+  50%  { box-shadow: 0 0 12px 2px var(--color-typing-error); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notebook-input.typed-pulse,
+  .notebook-input.error-flash {
+    animation: none;
+  }
+}
