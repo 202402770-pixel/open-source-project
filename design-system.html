@@ -275,7 +275,7 @@ body {
 .toast .body .sub { font-size:13px; color:var(--color-text-soft); }
 
 /* ───────── Components — Grade ───────── */
-.grade-stamp {
+.stamp {
   display:inline-flex; align-items:center; justify-content:center;
   width:120px; height:120px; border-radius:50%;
   border:5px solid currentColor;
@@ -283,11 +283,11 @@ body {
   transform:rotate(-12deg);
   background:var(--color-paper);
 }
-.grade-stamp.aplus { color:var(--color-grade-aplus); }
-.grade-stamp.a { color:var(--color-grade-a); }
-.grade-stamp.b { color:var(--color-grade-b); }
-.grade-stamp.c { color:var(--color-grade-c); }
-.grade-stamp.f { color:var(--color-grade-f); }
+.stamp.stamp-a-plus { color:var(--color-grade-aplus); }
+.stamp.stamp-a { color:var(--color-grade-a); }
+.stamp.stamp-b { color:var(--color-grade-b); }
+.stamp.stamp-c { color:var(--color-grade-c); }
+.stamp.stamp-f { color:var(--color-grade-f); }
 
 /* ───────── Illustrations — Professor ───────── */
 .prof {
@@ -639,11 +639,11 @@ footer {
 
   <h3>Grade Stamp (성적)</h3>
   <div class="btn-row">
-    <div class="grade-stamp aplus">A+</div>
-    <div class="grade-stamp a">A</div>
-    <div class="grade-stamp b">B</div>
-    <div class="grade-stamp c">C</div>
-    <div class="grade-stamp f">F</div>
+    <div class="stamp stamp-a-plus">A+</div>
+    <div class="stamp stamp-a">A</div>
+    <div class="stamp stamp-b">B</div>
+    <div class="stamp stamp-c">C</div>
+    <div class="stamp stamp-f">F</div>
   </div>
 </section>
 
@@ -795,7 +795,7 @@ footer {
     <span class="screen-label" style="position:absolute; top:16px; left:16px;">Screen / Game Over</span>
     <div class="report-card">
       <div class="rc-title">성적표</div>
-      <div class="rc-grade"><div class="grade-stamp a">A-</div></div>
+      <div class="rc-grade"><div class="stamp stamp-a">A-</div></div>
       <div class="rc-newrec">★ NEW RECORD! ★</div>
       <div class="rc-stats">
         <div class="row"><span class="label">점수</span><span class="val">12,450</span></div>
