@@ -34,10 +34,10 @@
   /* ── Grade (학점 컬러) ────────────────────────── */
   --color-grade-aplus: #15803d;
   --color-grade-a: #166534;
-  --color-grade-aminus: #4d7c0f; /* 임의로 설정 */
   --color-grade-b: #ca8a04;
   --color-grade-c: #ea580c;
   --color-grade-f: #c2410c;
+  /* 참고: --color-grade-aminus는 css/tokens.css에 정의됨 (토큰 SoT) */
 
   /* ── Text ────────────────────────────────────── */
   --color-text: #2b241a;
@@ -444,6 +444,11 @@ body.shake {
 .stamp-a {
   color: var(--color-grade-a);
   border-color: var(--color-grade-a);
+}
+
+.stamp-a-minus {
+  color: var(--color-grade-aminus);
+  border-color: var(--color-grade-aminus);
 }
 
 .stamp-b {
@@ -1056,81 +1061,6 @@ body.shake {
     0% { transform: translateY(0); opacity: 1; }
     100% { transform: translateY(50px); opacity: 0; }
 }
-
-/* 2-4.Grade Stamp */
-.stamp {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    font-size: 3.5rem;
-    font-weight: 900;
-    font-family: 'Arial Black', 'Impact', sans-serif;
-    
-    border: 10px solid;
-    background-color: transparent;
-    
-    transform: rotate(15deg);
-    
-    opacity: 0; 
-}
-
-.stamp span {
-    line-height: 1;
-}
-
-.stamp-a-plus {
-    color: var(--color-grade-aplus);
-    border-color: var(--color-grade-aplus);
-}
-
-.stamp-a {
-    color: var(--color-grade-a);
-    border-color: var(--color-grade-a);
-}
-
-.stamp-a-minus {
-    color: var(--color-grade-aminus);
-    border-color: var(--color-grade-aminus);
-}
-
-.stamp-b {
-    color: var(--color-grade-b);
-    border-color: var(--color-grade-b);
-}
-
-.stamp-c {
-    color: var(--color-grade-c);
-    border-color: var(--color-grade-c);
-}
-
-.stamp-f {
-    color: var(--color-grade-f);
-    border-color: var(--color-grade-f);
-}
-
-.stamp.show {
-    animation: stamp-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes stamp-in {
-    0% {
-        transform: scale(2.5) rotate(15deg);
-        opacity: 0;
-    }
-    60% {
-        transform: scale(0.9) rotate(15deg);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1) rotate(15deg);
-        opacity: 1;
-    }
-  }
-
 
 /* Game Over */
 .game-over {

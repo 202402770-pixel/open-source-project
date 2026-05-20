@@ -114,21 +114,6 @@ const UI = {
         }, 3000);
     },
     
-    stampGrade(targetGrade) {
-        const stamps = document.querySelectorAll('.stamp');
-        stamps.forEach(stamp => {
-            stamp.classList.remove('show');
-            stamp.style.display = 'none';
-        });
-        const targetElement = document.querySelector(`.stamp[data-grade="${targetGrade}"]`);
-        if (targetElement) {
-            targetElement.style.display = 'flex';
-            setTimeout(() => {
-                targetElement.classList.add('show');
-            }, 10);
-        }
-    },
-
     showGameOver(state){
         if (!this.gameOverScreen) return;
         let accuracy = 0;
@@ -144,12 +129,12 @@ const UI = {
         let gradeText = Grade.calc(state.score, accuracy);
         let stampClass = 'stamp-f';
         switch(gradeText) {
-            case 'A+': stampClass = 'stamp-aplus'; break;
-            case 'A': stampClass = 'stamp-a'; break;
-            case 'A-': stampClass = 'stamp-aminus'; break;
-            case 'B': stampClass = 'stamp-b'; break;
-            case 'C': stampClass = 'stamp-c'; break;
-            case 'F': stampClass = 'stamp-f'; break;
+            case 'A+': stampClass = 'stamp-a-plus'; break;
+            case 'A':  stampClass = 'stamp-a'; break;
+            case 'A-': stampClass = 'stamp-a-minus'; break;
+            case 'B':  stampClass = 'stamp-b'; break;
+            case 'C':  stampClass = 'stamp-c'; break;
+            case 'F':  stampClass = 'stamp-f'; break;
         }
         document.getElementById('result-score').textContent = state.score.toLocaleString();
         document.getElementById('result-combo').textContent = `x${state.maxCombo}`;
