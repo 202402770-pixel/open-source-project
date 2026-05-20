@@ -84,7 +84,7 @@
         
         <div class="action-buttons">
           <button id="restart-btn" class="btn btn-primary">다시 수강</button>
-          <button class="btn btn-secondary" onclick="alert('준비중입니다.')">순위표</button>
+          <button class="btn btn-secondary" onclick="UI.toggleRankingModal(true)">순위표</button>
           <button class="btn btn-secondary" onclick="alert('준비중입니다.')">도전과제</button>
           <button class="btn btn-text" onclick="alert('준비중입니다.')">공유</button>
         </div>
@@ -93,6 +93,20 @@
     </div>
     </div>
   <div id="toast-container"></div>
+  <div id="ranking-modal" class="modal hidden">
+    <div class="modal-overlay"></div>
+    <div class="ranking-modal-content">
+      <h2 class="ranking-title">순위표</h2>
+      <div class="ranking-tabs">
+        <button class="tab-btn active" data-type="all">전체</button>
+        <button class="tab-btn" data-type="week">이번주</button>
+        <button class="tab-btn" data-type="today">오늘</button>
+      </div>
+      <div class="ranking-list" id="ranking-container">
+        </div>
+      <button id="close-ranking-btn" class="ranking-close-btn">CLOSE</button>
+    </div>
+  </div>
 
   <!-- Scripts (의존성 순서대로 — CONFIG 먼저, main.js 마지막) -->
   <script src="./js/config.js"></script>
