@@ -31,7 +31,7 @@ const Achievements = {
 
     init() {
         try {
-            const saved = JSON.parse(localStorage.getItem('typing_achievements'));
+            const saved = JSON.parse(localStorage.getItem(CONFIG.STORAGE.ACHIEVEMENTS));
             if (saved && Array.isArray(saved)) {
                 this.CHALLENGES.forEach(challenge => {
                   if (saved.includes(challenge.id)) {
@@ -63,7 +63,7 @@ const Achievements = {
             const completed = this.CHALLENGES
               .filter(c => c.isCompleted)
               .map(c => c.id);
-            localStorage.setItem('typing_achievements', JSON.stringify(completed));
+            localStorage.setItem(CONFIG.STORAGE.ACHIEVEMENTS, JSON.stringify(completed));
         } catch (e) {
             console.error("업적 데이터를 저장하지 못했습니다.", e);
         }
@@ -73,8 +73,8 @@ const Achievements = {
         try {
             const today = new Date();
             const todayStr = today.toDateString();
-            let lastDateStr = localStorage.getItem('typing_last_date');
-            let attendanceDays = parseInt(localStorage.getItem('typing_attendance_days')) || 0;
+            let lastDateStr = localStorage.getItem(CONFIG.STORAGE.DAILY_LAST_DATE);
+            let attendanceDays = parseInt(localStorage.getItem(CONFIG.STORAGE.DAILY_STREAK)) || 0;
             if (lastDateStr !== todayStr) {
                 let yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
@@ -84,8 +84,8 @@ const Achievements = {
                     attendanceDays = 1;
                 }
 
-                localStorage.setItem('typing_last_date', todayStr);
-                localStorage.setItem('typing_attendance_days', attendanceDays);
+                localStorage.setItem(CONFIG.STORAGE.DAILY_LAST_DATE, todayStr);
+                localStorage.setItem(CONFIG.STORAGE.DAILY_STREAK, attendanceDays);
             }
             this.check(ACHIEVEMENT_IDS.ATTENDANCE, attendanceDays);
         } catch (e) {
