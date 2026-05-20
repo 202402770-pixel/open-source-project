@@ -232,6 +232,146 @@
 
     </section>
 
+    <section class="demo-section">
+
+      <h2>Notebook Input</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 30px; align-items: center; background-color: var(--color-wall-top); padding: 30px; border-radius: 8px;">
+
+        <div class="notebook-input" style="margin-top: 0; width: 100%;">
+
+          <div class="typing-area">
+
+            <span class="pencil-icon">✏️</span>
+
+            <div class="word-display">
+              <span class="text-typed">d</span><span class="text-typed">e</span><span class="text-untyped">f</span><span class="text-untyped">a</span><span class="text-untyped">u</span><span class="text-untyped">l</span><span class="text-untyped">t</span><span class="cursor"></span>
+            </div>
+
+          </div>
+
+          <div class="meta-info">
+            <span>Normal</span><span>LV.1</span><span>MISSED: 0</span>
+          </div>
+
+        </div>
+
+        <div class="notebook-input glow-combo5" style="margin-top: 0; width: 100%;">
+
+          <div class="typing-area">
+
+            <span class="pencil-icon">✏️</span>
+
+            <div class="word-display">
+              <span class="text-typed">c</span><span class="text-typed">o</span><span class="text-typed">m</span><span class="text-typed">b</span><span class="text-untyped">o</span><span class="cursor"></span>
+            </div>
+
+          </div>
+
+          <div class="meta-info">
+            <span>Combo 5+</span><span>LV.2</span><span>MISSED: 0</span>
+          </div>
+
+        </div>
+
+        <div class="notebook-input glow-combo10" style="margin-top: 0; width: 100%;">
+
+          <div class="typing-area">
+
+            <span class="pencil-icon">✏️</span>
+
+            <div class="word-display">
+              <span class="text-typed">s</span><span class="text-typed">y</span><span class="text-typed">n</span><span class="text-typed">c</span><span class="text-error">h</span><span class="text-untyped">r</span><span class="text-untyped">o</span><span class="text-untyped">n</span><span class="text-untyped">i</span><span class="text-untyped">z</span><span class="text-untyped">e</span><span class="text-untyped">d</span><span class="cursor"></span>
+            </div>
+
+          </div>
+
+          <div class="meta-info">
+            <span>Combo 10+</span><span>LV.3</span><span>MISSED: 1</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="demo-section">
+
+      <h2>HP Bar</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 20px; background-color: var(--color-wall-top); padding: 30px; border-radius: 8px;">
+
+        <div class="hp-container" style="position: static; box-shadow: none;">
+          <span class="hp-label">HP</span>
+          <div class="hp-track">
+            <div class="hp-fill ok" style="width: 100%;"></div>
+          </div>
+          <span class="hp-percent">100%</span>
+        </div>
+
+        <div class="hp-container" style="position: static; box-shadow: none;">
+          <span class="hp-label">HP</span>
+          <div class="hp-track">
+            <div class="hp-fill warn" style="width: 50%;"></div>
+          </div>
+          <span class="hp-percent">50%</span>
+        </div>
+
+        <div class="hp-container" style="position: static; box-shadow: none;">
+          <span class="hp-label">HP</span>
+          <div class="hp-track">
+            <div class="hp-fill danger" style="width: 15%;"></div>
+          </div>
+          <span class="hp-percent">15%</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="demo-section">
+
+      <h2>Toast</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 20px; background-color: var(--color-wall-top); padding: 30px; border-radius: 8px; align-items: center;">
+
+        <div class="toast" style="position: static; animation: none;">
+          <div class="toast-accent"></div>
+          <div class="toast-icon">축</div>
+          <div class="toast-content">
+            <div class="toast-title">게임 클리어!</div>
+            <div class="toast-desc">모든 단어를 방어했습니다.</div>
+          </div>
+        </div>
+
+        <div class="toast" style="position: static; animation: none;">
+          <div class="toast-accent" style="background-color: var(--color-danger);"></div>
+          <div class="toast-icon" style="color: var(--color-danger); border-color: var(--color-danger);">死</div>
+          <div class="toast-content">
+            <div class="toast-title">게임 오버!</div>
+            <div class="toast-desc">다시 도전해 보세요.</div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="demo-section">
+
+      <h2>Grade Stamp</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; background-color: var(--color-wall-top); padding: 50px 30px; border-radius: 8px; justify-items: center;">
+        <div class="stamp stamp-a-plus" style="opacity: 1; position: static;"><span>A+</span></div>
+        <div class="stamp stamp-a" style="opacity: 1; position: static;"><span>A</span></div>
+        <div class="stamp stamp-b" style="opacity: 1; position: static;"><span>B</span></div>
+        <div class="stamp stamp-c" style="opacity: 1; position: static;"><span>C</span></div>
+        <div class="stamp stamp-f" style="opacity: 1; position: static;"><span>F</span></div>
+      </div>
+
+    </section>
+
   </main>
 
   <script src="./js/config.js"></script>
@@ -243,17 +383,11 @@
   <script src="./js/ui.js"></script>
 
   <script>
-
     // W1 박태준 분필 가루 파티클 데모 — 버튼 위치에서 파편이 흩어진다
-
     document.getElementById('demo-chalk-dust')?.addEventListener('click', (e) => {
-
       const r = e.currentTarget.getBoundingClientRect();
-
       Effects.chalkDust(r.left + r.width / 2, r.top + r.height / 2);
-
     });
-
   </script>
 
 </body>
