@@ -1,38 +1,422 @@
-// Toggle 선택 상태 변경
-const toggleButtons = document.querySelectorAll(".td-toggle");
+const UI = {
+  lastInputLength: 0,
+  currentTargetWord: null,
+  controlsBound: false,
 
-toggleButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const group = button.closest(".td-toggle-group");
+  get wordDisplay() {
+    return document.getElementById('word-display');
+  },
 
-    if (!group) {
+  get score() {
+    return document.getElementById('score');
+  },
+
+  get level() {
+    return document.getElementById('level');
+  },
+
+  get missed() {
+    return document.getElementById('missed');
+  },
+
+  get hpFill() {
+    return document.getElementById('hp-fill');
+  },
+
+  get hpText() {
+    return document.getElementById('hp-text');
+  },
+
+  get toastContainer() {
+    return document.getElementById('toast-container');
+  },
+
+  get wpmDisplay() {
+    return document.getElementById('wpm');
+  },
+
+  get gameOverScreen() {
+    return document.querySelector('.game-over');
+  },
+
+  get scenes() {
+    return document.querySelectorAll('[data-scene]');
+  },
+
+  get rankingModal() {
+    return document.getElementById('ranking-modal');
+  },
+
+  get rankingContainer() {
+    return document.getElementById('ranking-container');
+  },
+
+  get rankingTabs() {
+    return document.querySelectorAll('.tab-btn');
+  },
+
+  mockRankingData: {
+    all: [
+      { name: '익명#A12', score: 34850, combo: 120, level: 12, isMe: false },
+      { name: '익명#B34', score: 28420, combo: 95, level: 11, isMe: false },
+      { name: '익명#C56', score: 25200, combo: 88, level: 11, isMe: false },
+      { name: '익명#D78', score: 24100, combo: 82, level: 11, isMe: false },
+      { name: '익명#E90', score: 23800, combo: 79, level: 11, isMe: false },
+      { name: '익명#A91', score: 21500, combo: 75, level: 10, isMe: false },
+      { name: '익명#F12', score: 19200, combo: 68, level: 9, isMe: false },
+      { name: 'YOU (당신)', score: 18450, combo: 67, level: 9, isMe: true },
+    ],
+    week: [
+      { name: '익명#D78', score: 24100, combo: 82, level: 11, isMe: false },
+      { name: '익명#E90', score: 23800, combo: 79, level: 11, isMe: false },
+      { name: '익명#A91', score: 21500, combo: 75, level: 10, isMe: false },
+      { name: 'YOU (당신)', score: 18450, combo: 67, level: 9, isMe: true },
+      { name: '익명#H56', score: 16500, combo: 54, level: 9, isMe: false },
+      { name: '익명#K34', score: 15800, combo: 50, level: 8, isMe: false },
+      { name: '익명#I78', score: 14900, combo: 48, level: 8, isMe: false },
+      { name: '익명#J90', score: 14200, combo: 45, level: 8, isMe: false },
+    ],
+    today: [
+      { name: 'YOU (당신)', score: 18450, combo: 67, level: 9, isMe: true },
+      { name: '익명#K34', score: 15800, combo: 50, level: 8, isMe: false },
+      { name: '익명#I78', score: 14900, combo: 48, level: 8, isMe: false },
+      { name: '익명#J90', score: 14200, combo: 45, level: 8, isMe: false },
+      { name: '익명#M55', score: 13600, combo: 42, level: 7, isMe: false },
+      { name: '익명#N34', score: 11500, combo: 35, level: 6, isMe: false },
+      { name: '익명#O56', score: 10800, combo: 31, level: 6, isMe: false },
+      { name: '익명#X12', score: 9900, combo: 28, level: 5, isMe: false },
+    ],
+  },
+
+  initControls() {
+    if (this.controlsBound) return;
+    this.controlsBound = true;
+
+    const toggleButtons = document.querySelectorAll('.td-toggle');
+
+    toggleButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = button.closest('.td-toggle-group');
+        if (!group) return;
+
+        const buttonsInGroup = group.querySelectorAll('.td-toggle');
+        buttonsInGroup.forEach((item) => item.classList.remove('is-active'));
+        button.classList.add('is-active');
+      });
+    });
+
+    const sceneButtons = document.querySelectorAll('[data-go]');
+
+    sceneButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetScene = button.dataset.go;
+        this.showScene(targetScene);
+      });
+    });
+  },
+
+  showScene(sceneName) {
+    if (!sceneName) return;
+
+    this.scenes.forEach((scene) => {
+      const isTargetScene = scene.dataset.scene === sceneName;
+      scene.classList.toggle('is-active', isTargetScene);
+    });
+
+    if (sceneName === 'play') {
+      const hiddenInput = document.getElementById('hidden-input');
+      if (hiddenInput) hiddenInput.focus();
+    }
+  },
+
+  initRanking() {
+    this.initControls();
+
+    const closeBtn = document.getElementById('close-ranking-btn');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.toggleRankingModal(false));
+    }
+
+    if (this.rankingTabs) {
+      this.rankingTabs.forEach((tab) => {
+        tab.addEventListener('click', (event) => {
+          this.rankingTabs.forEach((item) => item.classList.remove('active'));
+          event.target.classList.add('active');
+          this.renderRanking(event.target.dataset.type);
+        });
+      });
+    }
+  },
+
+  toggleRankingModal(show) {
+    if (!this.rankingModal) return;
+
+    if (show) {
+      this.rankingModal.classList.remove('hidden');
+      this.renderRanking('all');
+
+      if (this.rankingTabs.length > 0) {
+        this.rankingTabs.forEach((tab) => tab.classList.remove('active'));
+
+        const allTab = document.querySelector('.tab-btn[data-type="all"]');
+        if (allTab) allTab.classList.add('active');
+      }
+    } else {
+      this.rankingModal.classList.add('hidden');
+
+      const hiddenInput = document.getElementById('hidden-input');
+      if (hiddenInput) hiddenInput.focus();
+    }
+  },
+
+  renderRanking(type) {
+    if (!this.rankingContainer) return;
+
+    this.rankingContainer.innerHTML = '';
+
+    const data = this.mockRankingData[type] || this.mockRankingData.all;
+
+    data.forEach((user, index) => {
+      const rank = index + 1;
+      const isTop3 = rank <= 3 ? 'top-rank' : '';
+      const isMeClass = user.isMe ? 'is-me' : '';
+
+      const row = document.createElement('div');
+      row.className = `rank-item ${isTop3} ${isMeClass}`;
+
+      row.innerHTML = `
+        <div class="rank-num">#${rank}</div>
+        <div class="rank-name">${user.name}</div>
+        <div class="rank-score">${user.score}</div>
+        <div class="rank-combo">x${user.combo}</div>
+        <div class="rank-level">LV ${user.level}</div>
+      `;
+
+      this.rankingContainer.appendChild(row);
+    });
+  },
+
+  renderTargetWord(activeWords, userInput) {
+    if (!this.wordDisplay) return;
+
+    if (!userInput || userInput === '') {
+      this.wordDisplay.innerHTML = '';
+      this.addCursor();
+      this.lastInputLength = 0;
+      this.currentTargetWord = null;
       return;
     }
 
-    const buttonsInGroup = group.querySelectorAll(".td-toggle");
+    const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
 
-    buttonsInGroup.forEach((item) => {
-      item.classList.remove("is-active");
+    let targetWord = wordsList.find((word) => word && word.startsWith(userInput));
+    let detectError = false;
+
+    if (!targetWord) {
+      detectError = true;
+      targetWord = this.currentTargetWord || wordsList[0];
+    } else {
+      this.currentTargetWord = targetWord;
+    }
+
+    if (!targetWord) return;
+
+    if (this.wordDisplay.children.length !== targetWord.length + 1) {
+      this.wordDisplay.innerHTML = '';
+
+      for (let i = 0; i < targetWord.length; i += 1) {
+        const span = document.createElement('span');
+        this.wordDisplay.appendChild(span);
+      }
+
+      this.addCursor();
+    }
+
+    const spans = this.wordDisplay.querySelectorAll('span:not(.cursor)');
+    const cursor = this.wordDisplay.querySelector('.cursor');
+
+    spans.forEach((span, index) => {
+      if (detectError && index < userInput.length) {
+        span.className = 'text-error';
+        span.textContent = userInput[index] || targetWord[index];
+      } else if (index < userInput.length) {
+        span.className = userInput[index] === targetWord[index] ? 'text-typed' : 'text-error';
+        span.textContent = targetWord[index];
+      } else {
+        span.className = 'text-untyped';
+        span.textContent = targetWord[index];
+      }
     });
 
-    button.classList.add("is-active");
-  });
-});
+    if (cursor && spans.length > 0) {
+      if (userInput.length < spans.length) {
+        this.wordDisplay.insertBefore(cursor, spans[userInput.length]);
+      } else {
+        this.wordDisplay.appendChild(cursor);
+      }
+    }
 
-// Scene 화면 전환
-const sceneButtons = document.querySelectorAll("[data-go]");
-const scenes = document.querySelectorAll("[data-scene]");
+    if (detectError && typeof Effects !== 'undefined') {
+      Effects.triggerErrorShake();
+    }
 
-function showScene(sceneName) {
-  scenes.forEach((scene) => {
-    const isTargetScene = scene.dataset.scene === sceneName;
-    scene.classList.toggle("is-active", isTargetScene);
-  });
-}
+    this.lastInputLength = userInput.length;
+  },
 
-sceneButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const targetScene = button.dataset.go;
-    showScene(targetScene);
-  });
+  addCursor() {
+    if (!this.wordDisplay) return;
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    this.wordDisplay.appendChild(cursor);
+  },
+
+  updateHUD(state) {
+    if (this.score) this.score.textContent = `SCORE: ${state.score}`;
+    if (this.level) this.level.textContent = `LV.${state.level}`;
+    if (this.missed) this.missed.textContent = `MISSED: ${state.missed}`;
+
+    if (this.wpmDisplay) {
+      this.wpmDisplay.textContent = `WPM: ${state.wpm}`;
+    }
+
+    this.updateHPBar(state.currentHP, state.maxHP || 100);
+  },
+
+  updateHPBar(currentHP, maxHP) {
+    if (!this.hpFill || !this.hpText) return;
+
+    const percent = maxHP > 0 ? Math.max(0, Math.floor((currentHP / maxHP) * 100)) : 0;
+
+    this.hpFill.style.width = `${percent}%`;
+    this.hpText.innerText = `${percent}%`;
+
+    this.hpFill.classList.remove('ok', 'warn', 'danger');
+
+    if (percent >= 65) {
+      this.hpFill.classList.add('ok');
+    } else if (percent >= 30) {
+      this.hpFill.classList.add('warn');
+    } else {
+      this.hpFill.classList.add('danger');
+    }
+  },
+
+  showToast(title, message, iconText) {
+    if (!this.toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+
+    toast.innerHTML = `
+      <div class="toast-accent"></div>
+      <div class="toast-icon">${iconText}</div>
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        <div class="toast-desc">${message}</div>
+      </div>
+    `;
+
+    this.toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+
+      toast.addEventListener('animationend', () => {
+        toast.remove();
+      });
+    }, 3000);
+  },
+
+  showGameOver(state) {
+    if (!this.gameOverScreen) return;
+
+    let accuracy = 0;
+
+    if (state.totalWordAttempts > 0) {
+      accuracy = Math.floor((state.successWords / state.totalWordAttempts) * 100);
+    }
+
+    let highScore = parseInt(localStorage.getItem('typing_high_score'), 10) || 0;
+    let isNewRecord = false;
+
+    if (state.score > highScore && state.score > 0) {
+      localStorage.setItem('typing_high_score', state.score);
+      isNewRecord = true;
+    }
+
+    let gradeText = 'F';
+
+    if (typeof Grade !== 'undefined') {
+      gradeText = Grade.calc(state.score, accuracy);
+    }
+
+    let stampClass = 'stamp-f';
+
+    switch (gradeText) {
+      case 'A+':
+        stampClass = 'stamp-a-plus';
+        break;
+      case 'A':
+        stampClass = 'stamp-a';
+        break;
+      case 'A-':
+        stampClass = 'stamp-a-minus';
+        break;
+      case 'B':
+        stampClass = 'stamp-b';
+        break;
+      case 'C':
+        stampClass = 'stamp-c';
+        break;
+      case 'F':
+      default:
+        stampClass = 'stamp-f';
+        break;
+    }
+
+    const resultScore = document.getElementById('result-score');
+    const resultCombo = document.getElementById('result-combo');
+    const resultLevel = document.getElementById('result-level');
+    const resultWpm = document.getElementById('result-wpm');
+    const resultAccuracy = document.getElementById('result-accuracy');
+    const resultWords = document.getElementById('result-words');
+    const resultStamp = document.getElementById('result-stamp');
+    const resultGrade = document.getElementById('result-grade');
+    const resultNewRecord = document.getElementById('result-new-record');
+
+    if (resultScore) resultScore.textContent = state.score.toLocaleString();
+    if (resultCombo) resultCombo.textContent = `x${state.maxCombo}`;
+    if (resultLevel) resultLevel.textContent = `LV.${state.level}`;
+    if (resultWpm) resultWpm.textContent = state.wpm;
+    if (resultAccuracy) resultAccuracy.textContent = `${accuracy}%`;
+    if (resultWords) resultWords.textContent = state.successWords;
+
+    if (resultStamp) {
+      resultStamp.className = `stamp ${stampClass} show`;
+    }
+
+    if (resultGrade) {
+      resultGrade.textContent = gradeText;
+    }
+
+    if (resultNewRecord) {
+      resultNewRecord.style.display = isNewRecord ? 'block' : 'none';
+    }
+
+    this.showScene('gameover');
+    this.gameOverScreen.classList.add('active');
+  },
+
+  hideGameOver() {
+    if (!this.gameOverScreen) return;
+
+    this.gameOverScreen.classList.remove('active');
+    this.showScene('play');
+  },
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  UI.initControls();
 });

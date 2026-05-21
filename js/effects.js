@@ -5,6 +5,10 @@
  *
  * 현재 공개 API:
  *   Effects.chalkDust(x, y, container?)   단어 파괴 분필 가루 파티클 8개
+ *   Effects.typedPulse(element?)          정타 시 노트 펄스 (scale 1.02)
+ *   Effects.errorFlash(element?)          오타 시 노트 박스 플래시 (typing-error)
+ *   Effects.toggleGlow(active, type)      콤보 글로우 (combo5/combo10)
+ *   Effects.triggerErrorShake()           오타 시 body shake
  *
  * 설계 원칙:
  * - DOM 파티클 사용 (Canvas 미사용 — 프로젝트 정책)
@@ -82,6 +86,39 @@ const Effects = {
   },
 
   /**
+   * 정타 시 입력 노트가 살짝 펄스(scale 1.02 → 1)한다.
+   * CSS: .notebook-input.typed-pulse 키프레임
+   * @param {HTMLElement} [element] - 대상 요소 (기본: .notebook-input)
+   */
+  typedPulse(element) {
+    if (Effects._reducedMotion()) return;
+    const target = element || document.querySelector('.notebook-input');
+    if (!target) return;
+    const dur = (typeof CONFIG !== 'undefined' && CONFIG.EFFECTS && CONFIG.EFFECTS.TYPED_PULSE_DURATION) || 80;
+    target.classList.remove('typed-pulse');
+    void target.offsetWidth; // reflow — 연속 호출 시 애니메이션 재시작 보장
+    target.classList.add('typed-pulse');
+    setTimeout(() => target.classList.remove('typed-pulse'), dur + 20);
+  },
+
+  /**
+   * 오타 시 입력 노트가 typing-error 색으로 박스 플래시한다.
+   * CSS: .notebook-input.error-flash 키프레임
+   * 김지우의 triggerErrorShake(body 흔들림)와는 다른 시각 채널이라 공존 OK.
+   * @param {HTMLElement} [element] - 대상 요소 (기본: .notebook-input)
+   */
+  errorFlash(element) {
+    if (Effects._reducedMotion()) return;
+    const target = element || document.querySelector('.notebook-input');
+    if (!target) return;
+    const dur = (typeof CONFIG !== 'undefined' && CONFIG.EFFECTS && CONFIG.EFFECTS.ERROR_SHAKE_DURATION) || 200;
+    target.classList.remove('error-flash');
+    void target.offsetWidth;
+    target.classList.add('error-flash');
+    setTimeout(() => target.classList.remove('error-flash'), dur + 20);
+  },
+
+  /**
    * (내부) 사용자가 OS 설정에서 모션 줄이기를 켰는지.
    * matchMedia 미지원 환경(아주 오래된 브라우저)에선 false 반환.
    */
@@ -92,4 +129,27 @@ const Effects = {
       return false;
     }
   },
+
+    toggleGlow(active, type) {
+        const notebook = document.querySelector('.notebook-input');
+        if (!notebook) return;
+        notebook.classList.remove('glow-combo5', 'glow-combo10');
+        if (active) {
+            if (type === 'combo10') {
+                notebook.classList.add('glow-combo10');
+            } else {
+                notebook.classList.add('glow-combo5');  
+            }
+        }
+    },
+
+    triggerErrorShake() {
+        const body = document.body;    
+        body.classList.remove('shake');
+        void body.offsetWidth; 
+        body.classList.add('shake');
+        setTimeout(() => {
+            body.classList.remove('shake');
+        }, 300);
+    }
 };

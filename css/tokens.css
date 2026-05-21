@@ -45,10 +45,12 @@
   --color-warn:            #b45309;
   --color-danger:          #c2410c;
   --color-info:            #1e6091;
+  --color-typing-error:    var(--color-danger); /* 오타 플래시 — danger의 의미 분리 alias */
 
   /* ── Color · Grade (학점 도장) ────────────────────────────────────────── */
   --color-grade-aplus:     #15803d;
   --color-grade-a:         #166534;
+  --color-grade-aminus:    #4d7c0f; /* W2 추가 — 임시값, 디자인 확정 시 교체 */
   --color-grade-b:         #ca8a04;
   --color-grade-c:         #ea580c;
   --color-grade-f:         #c2410c;
