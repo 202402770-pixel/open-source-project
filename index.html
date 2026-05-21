@@ -1,118 +1,238 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Type Defender</title>
 
-  <!-- Pretendard Variable (UI) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
-
-  <!-- Google Fonts: Black Han Sans (타이틀) · Gaegu (칠판 손글씨) · JetBrains Mono (숫자) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+  />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
+  />
 
   <link rel="stylesheet" href="./css/tokens.css" />
   <link rel="stylesheet" href="./css/style.css" />
 </head>
+
 <body>
-  <div class="start"></div>
+  <main class="game-app">
+    <!-- Start Screen -->
+    <section class="scene start-scene is-active" data-scene="start">
+      <div class="start-card">
+        <p class="eyebrow">TYPE DEFENDER</p>
+        <h1>강의 필기 디펜스</h1>
 
-  <div class="play">
-    <div class="hud">
-      <div id="score" class="score-display">SCORE: 0</div>
-      <div class="hp-container">
-        <span class="hp-label">HP</span>
-        <div class="hp-track">
-          <div id="hp-fill" class="hp-fill ok" style="width: 100%;"></div>
+        <p class="start-description">
+          교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내세요.
+        </p>
+
+        <div class="start-options">
+          <div>
+            <p class="option-label">Game Mode</p>
+            <div class="td-toggle-group" role="group" aria-label="게임 모드 선택">
+              <button class="td-toggle is-active" type="button">CLASSIC</button>
+              <button class="td-toggle" type="button">TIME ATTACK</button>
+              <button class="td-toggle" type="button">ZEN</button>
+              <button class="td-toggle" type="button">DAILY</button>
+            </div>
+          </div>
+
+          <div>
+            <p class="option-label">Difficulty</p>
+            <div class="td-toggle-group" role="group" aria-label="난이도 선택">
+              <button class="td-toggle is-active" type="button">EASY</button>
+              <button class="td-toggle" type="button">NORMAL</button>
+              <button class="td-toggle" type="button">HARD</button>
+            </div>
+          </div>
         </div>
-        <span id="hp-text" class="hp-percent">100%</span>
-      </div>
-    </div>
 
-    <div class="notebook-input">
-      <div class="typing-area">
-        <span class="pencil-icon">✏️</span>
-        <input type="text" id="hidden-input" autofocus
-               style="position: absolute; opacity: 0; pointer-events: none;"
-               autocomplete="off">
-        <div id="word-display" class="word-display"></div>
+        <div class="home-actions">
+          <button class="td-btn td-btn--primary td-btn--lg" type="button" data-go="play">
+            받아적을게요
+          </button>
+          <a class="td-btn td-btn--ghost" href="./components.html">
+            W1 컴포넌트 보기
+          </a>
+        </div>
       </div>
-      <div class="meta-info">
-        <span id="lang">JavaScript</span>
-        <span id="level">LV.1</span>
-        <span id="missed">MISSED: 0</span>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <div class="game-over">
-    <div class="scorecard-wrapper">
-      <div class="scorecard">
-        <h1 class="scorecard-title">성적표</h1>
-        
-        <div id="result-stamp" class="stamp show">
+    <!-- Play Screen -->
+    <section class="scene play-scene" data-scene="play">
+      <header class="play-hud">
+        <div class="hud-stats">
+          <span id="score" class="hud-pill">SCORE: 0</span>
+          <span id="level" class="hud-pill">LV.1</span>
+          <span id="missed" class="hud-pill">MISSED: 0</span>
+          <span id="wpm" class="hud-pill">WPM: 0</span>
+        </div>
+
+        <div class="hp-panel" aria-label="체력">
+          <span class="hp-label">HP</span>
+          <div class="hp-meter">
+            <div id="hp-fill" class="hp-fill ok" style="width: 100%;"></div>
+          </div>
+          <span id="hp-text" class="hp-text">100%</span>
+        </div>
+      </header>
+
+      <section class="classroom-stage">
+        <div class="blackboard">
+          <div class="blackboard__top">
+            <div>
+              <span class="board-label">LECTURE BOARD</span>
+              <h2>자료구조 핵심 키워드</h2>
+            </div>
+
+            <div class="board-timer">
+              <span>TIME</span>
+              <strong>01:24</strong>
+            </div>
+          </div>
+
+          <div class="word-field" aria-label="떨어지는 단어 영역">
+            <div class="fall-lane fall-lane--top"></div>
+            <div class="fall-lane fall-lane--middle"></div>
+            <div class="fall-lane fall-lane--bottom"></div>
+
+            <div id="word-display" class="word-display" aria-label="현재 입력 대상 단어"></div>
+          </div>
+
+          <div class="board-footer">
+            <span>Tip: 정확히 입력하면 콤보가 유지됩니다.</span>
+            <span>MISS 0</span>
+          </div>
+        </div>
+
+        <div class="classroom-illustration play-illustration">
+          <div class="professor">
+            <div class="professor__head"></div>
+            <div class="professor__body"></div>
+            <div class="professor__arm"></div>
+          </div>
+
+          <div class="desk-row">
+            <div class="student-desk"></div>
+            <div class="student-desk"></div>
+            <div class="student-desk student-desk--you">YOU</div>
+            <div class="student-desk"></div>
+            <div class="student-desk"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="notebook-panel">
+        <div class="notebook-header">
+          <div>
+            <span class="notebook-label">NOTEBOOK</span>
+            <label for="hidden-input">받아쓰기 입력</label>
+          </div>
+          <span class="typing-hint">Enter를 누르면 제출됩니다.</span>
+        </div>
+
+        <div class="notebook-input">
+          <input
+            id="hidden-input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="떨어지는 단어를 입력하세요"
+            aria-label="받아쓰기 입력"
+          />
+          <button class="td-btn td-btn--secondary" type="button">Enter</button>
+        </div>
+
+        <div class="notebook-lines" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+
+      <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+      <div class="play-actions">
+        <button id="show-ranking-btn" class="td-btn td-btn--secondary" type="button">
+          순위표
+        </button>
+        <button class="td-btn td-btn--ghost" type="button" data-go="gameover">
+          데모 종료
+        </button>
+      </div>
+    </section>
+
+    <!-- Game Over Screen -->
+    <section class="scene game-over gameover-scene" data-scene="gameover">
+      <div class="result-card">
+        <p class="eyebrow">RESULT</p>
+        <h2>성적표</h2>
+
+        <div id="result-stamp" class="stamp stamp-f">
           <span id="result-grade">F</span>
         </div>
-        
-        <div id="result-new-record" class="new-record" style="display: none;">★ NEW RECORD! ★</div>
-        
-        <div class="stats-container">
-          <div class="stat-row">
-            <span class="stat-label">점수</span>
-            <span id="result-score" class="stat-value">0</span> </div>
-          <div class="stat-row">
-            <span class="stat-label">최대콤보</span>
-            <span id="result-combo" class="stat-value">x0</span> </div>
-          <div class="stat-row">
-            <span class="stat-label">도달 레벨</span>
-            <span id="result-level" class="stat-value">LV.1</span> </div>
-          
-          <hr class="stat-divider">
-          
-          <div class="stat-row">
-            <span class="stat-label">평균 WPM</span>
-            <span id="result-wpm" class="stat-value">0</span> </div>
-          <div class="stat-row">
-            <span class="stat-label">정확도</span>
-            <span id="result-accuracy" class="stat-value">0%</span> </div>
-          <div class="stat-row">
-            <span class="stat-label">단어수</span>
-            <span id="result-words" class="stat-value">0</span> </div>
-        </div>
-        
-        <div class="action-buttons">
-          <button id="restart-btn" class="btn btn-primary">다시 수강</button>
-          <button class="btn btn-secondary" onclick="UI.toggleRankingModal(true)">순위표</button>
-          <button class="btn btn-secondary" onclick="alert('준비중입니다.')">도전과제</button>
-          <button class="btn btn-text" onclick="alert('준비중입니다.')">공유</button>
-        </div>
-      </div>
-    </div>
-    </div>
-    </div>
-  <div id="toast-container"></div>
-  <div id="ranking-modal" class="modal hidden">
-    <div class="modal-overlay"></div>
-    <div class="ranking-modal-content">
-      <h2 class="ranking-title">순위표</h2>
-      <div class="ranking-tabs">
-        <button class="tab-btn active" data-type="all">전체</button>
-        <button class="tab-btn" data-type="week">이번주</button>
-        <button class="tab-btn" data-type="today">오늘</button>
-      </div>
-      <div class="ranking-list" id="ranking-container">
-        </div>
-      <button id="close-ranking-btn" class="ranking-close-btn">CLOSE</button>
-    </div>
-  </div>
 
-  <!-- Scripts (의존성 순서대로 — CONFIG 먼저, main.js 마지막) -->
+        <p id="result-new-record" class="new-record">★ NEW RECORD! ★</p>
+
+        <div class="result-summary">
+          <p>점수 <strong id="result-score">0</strong></p>
+          <p>최대콤보 <strong id="result-combo">x0</strong></p>
+          <p>도달 레벨 <strong id="result-level">LV.1</strong></p>
+        </div>
+
+        <hr />
+
+        <div class="result-detail">
+          <p>평균 WPM <strong id="result-wpm">0</strong></p>
+          <p>정확도 <strong id="result-accuracy">0%</strong></p>
+          <p>단어수 <strong id="result-words">0</strong></p>
+        </div>
+
+        <div class="result-actions">
+          <button id="restart-btn" class="td-btn td-btn--primary" type="button">
+            다시 수강
+          </button>
+          <button class="td-btn td-btn--secondary" type="button" data-go="play">
+            계속 연습
+          </button>
+          <button class="td-btn td-btn--ghost" type="button" data-go="start">
+            처음으로
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ranking Modal -->
+    <section id="ranking-modal" class="ranking-modal hidden" aria-label="순위표">
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <h2>순위표</h2>
+          <button id="close-ranking-btn" class="td-btn td-btn--ghost" type="button">
+            CLOSE
+          </button>
+        </div>
+
+        <div class="ranking-tabs">
+          <button class="tab-btn active" type="button" data-type="all">전체</button>
+          <button class="tab-btn" type="button" data-type="week">이번주</button>
+          <button class="tab-btn" type="button" data-type="today">오늘</button>
+        </div>
+
+        <div id="ranking-container" class="ranking-container"></div>
+      </div>
+    </section>
+  </main>
+
   <script src="./js/config.js"></script>
   <script src="./js/themes.js"></script>
-  <script src="./js/effects.js"></script>
   <script src="./js/game-api.js"></script>
+  <script src="./js/effects.js"></script>
   <script src="./js/wordData.js"></script>
   <script src="./js/achievements.js"></script>
   <script src="./js/grade.js"></script>

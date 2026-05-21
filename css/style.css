@@ -1315,8 +1315,346 @@ body.shake {
 }
 
 /* =========================
+   W2 Main Screens
+========================= */
+
+.game-app {
+  min-height: 100vh;
+}
+
+.scene {
+  display: none;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.scene.is-active {
+  display: block;
+}
+
+/* Start Screen */
+
+.start-scene {
+  place-items: center;
+}
+
+.start-scene.is-active {
+  display: grid;
+}
+
+.start-card {
+  width: min(860px, 100%);
+  padding: 48px;
+  border-radius: 32px;
+  background: var(--color-paper);
+  box-shadow: var(--shadow-soft);
+}
+
+.start-card h1 {
+  margin: 0 0 16px;
+  font-size: clamp(44px, 7vw, 80px);
+  line-height: 1;
+}
+
+.start-description {
+  max-width: 640px;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.start-options {
+  display: grid;
+  gap: 20px;
+  margin: 32px 0;
+}
+
+.option-label {
+  margin: 0 0 8px;
+  font-weight: 900;
+  color: var(--color-board-mid);
+}
+
+/* Play Screen */
+
+.play-scene.is-active {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 20px;
+}
+
+.play-hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.hud-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.hp-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--color-paper);
+  border: 2px solid var(--color-board-frame);
+  box-shadow: var(--shadow-soft);
+}
+
+.hp-label {
+  font-weight: 900;
+  color: var(--color-board-mid);
+}
+
+.hp-bar {
+  display: flex;
+  gap: 6px;
+}
+
+.hp-heart {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-danger);
+}
+
+.hp-heart:not(.is-active) {
+  opacity: 0.25;
+}
+
+.classroom-stage {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 20px;
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+.blackboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 360px;
+  padding: 24px;
+  border: 12px solid var(--color-board-frame);
+  border-radius: 24px;
+  background: var(--color-board-mid);
+  color: var(--color-chalk);
+  box-shadow: var(--shadow-soft);
+}
+
+.blackboard__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  font-weight: 900;
+}
+
+.board-label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--color-chalk-yellow);
+}
+
+.blackboard h2 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 40px);
+  color: var(--color-chalk);
+}
+
+.board-timer {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--color-chalk);
+}
+
+.board-timer span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--color-chalk-yellow);
+}
+
+.board-timer strong {
+  font-size: 22px;
+}
+
+.word-field {
+  position: relative;
+  height: 280px;
+  margin-top: 24px;
+  overflow: hidden;
+  border: 2px dashed rgba(244, 244, 235, 0.28);
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.fall-lane {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  border-top: 1px dashed rgba(244, 244, 235, 0.18);
+}
+
+.fall-lane--top {
+  top: 33%;
+}
+
+.fall-lane--middle {
+  top: 66%;
+}
+
+.fall-lane--bottom {
+  top: 99%;
+}
+
+.falling-word {
+  position: absolute;
+  z-index: 1;
+}
+
+.falling-word--one {
+  top: 32px;
+  left: 12%;
+}
+
+.falling-word--two {
+  top: 110px;
+  left: 44%;
+}
+
+.falling-word--three {
+  top: 190px;
+  left: 64%;
+}
+
+.board-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-chalk);
+  opacity: 0.9;
+}
+
+.play-illustration {
+  padding: 20px;
+}
+
+.notebook-panel {
+  width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 24px;
+  background: var(--color-paper);
+  box-shadow: var(--shadow-soft);
+}
+
+.notebook-panel label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 900;
+}
+
+.notebook-input {
+  display: flex;
+  gap: 12px;
+}
+
+.notebook-input input {
+  flex: 1;
+  min-width: 0;
+  border: 2px solid var(--color-board-frame);
+  border-radius: 999px;
+  padding: 12px 18px;
+  font: inherit;
+}
+
+.play-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Game Over Screen */
+
+.gameover-scene.is-active {
+  display: grid;
+  place-items: center;
+}
+
+.result-card {
+  width: min(560px, 100%);
+  padding: 40px;
+  border-radius: 32px;
+  background: var(--color-paper);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.result-card h2 {
+  margin: 0 0 20px;
+  font-size: 48px;
+}
+
+.grade-stamp {
+  display: inline-grid;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  margin: 12px 0 20px;
+  border: 8px solid var(--color-danger);
+  border-radius: 50%;
+  color: var(--color-danger);
+  font-size: 44px;
+  font-weight: 900;
+  transform: rotate(-12deg);
+}
+
+/* =========================
    Responsive
 ========================= */
+
+@media (max-width: 720px) {
+  .scene {
+    padding: 20px;
+  }
+
+  .start-card {
+    padding: 28px;
+  }
+
+  .notebook-input {
+    flex-direction: column;
+  }
+
+  .blackboard {
+    min-height: 300px;
+  }
+
+  .blackboard__top,
+  .board-footer {
+    flex-direction: column;
+  }
+
+  .board-timer {
+    justify-items: start;
+  }
+}
 
 @media (max-width: 640px) {
   .home-card {
@@ -1385,4 +1723,84 @@ body.shake {
   .notebook-input.error-flash {
     animation: none;
   }
+}
+/* =========================
+   W2 Detail Polish - Notebook
+========================= */
+
+.notebook-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.notebook-panel::before {
+  content: "";
+  position: absolute;
+  left: 28px;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--color-danger);
+  opacity: 0.35;
+}
+
+.notebook-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.notebook-label {
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+}
+
+.notebook-header label {
+  margin: 0;
+  font-size: 22px;
+  color: var(--color-board-mid);
+}
+
+.typing-hint {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.notebook-input {
+  position: relative;
+  z-index: 1;
+}
+
+.notebook-input input {
+  background: var(--color-paper);
+}
+
+.notebook-input input:focus {
+  outline: 3px solid rgba(217, 119, 6, 0.24);
+  border-color: var(--color-accent);
+}
+
+.notebook-lines {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-left: 24px;
+}
+
+.notebook-lines span {
+  display: block;
+  height: 1px;
+  background: rgba(139, 115, 85, 0.35);
 }
