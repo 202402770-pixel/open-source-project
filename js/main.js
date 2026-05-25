@@ -5,12 +5,23 @@ async function start() {
     game = new Game();
 
     Input.init(
-        (val) => UI.renderTargetWord(game.getActiveWords(), val),
+        (val) => {
+            if(game.isGameOver) return;
+            UI.renderTargetWord(game.getActiveWords(), val)
+            },
         (word) => {
+            if(game.isGameOver) return;
             game.checkAnswer(word);
             UI.renderTargetWord(game.getActiveWords(), "");
         }
     );
+    UI.initRanking();
+    const showRankingBtn = document.getElementById('show-ranking-btn');
+        if (showRankingBtn) {
+            showRankingBtn.addEventListener('click', () => {
+                UI.toggleRankingModal(true);
+            });
+        }
 
     UI.updateHUD(game);
     UI.renderTargetWord(game.getActiveWords(), "");
