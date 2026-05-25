@@ -423,7 +423,7 @@ const UI = {
     let gradeText = 'F';
 
     if (typeof Grade !== 'undefined') {
-      gradeText = Grade.calc(state.score, accuracy);
+      gradeText = Grade.calc(state.score, accuracy, state.wpm);
     }
 
     if (gradeText === 'A+') {

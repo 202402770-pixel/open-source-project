@@ -184,12 +184,14 @@ Library     (Desktop)    Settings     Performance + 발표
 
 #### 박태준
 - [ ] **학점 계산 함수** — `score`, `accuracy`, `wpm` 입력 → A+/A/A-/B/C/F 출력
-  - 임계값을 `js/config.js`에 명시 (A+ ≥95%+10000점 등)
+  - 임계값을 `js/config.js`에 명시 (A+ ≥95% + 10000점 + 50 WPM 등)
+  - WPM 임계값: A+ 50 / A 40 / A- 30 / B 20 / C 0 — 평균 영문 타이핑 속도 기준 (W2 박태준 추가 결정 2026-05-23)
 - [ ] **콤보 시스템** + 콤보 ≥10일 때 노트 글로우 효과
 - [ ] **키 입력 효과** (`js/input.js`)
   - 정타: 노트 0.08s 펄스
   - 오타: 노트 좌우 6px shake (0.2s) + `--color-typing-error` 플래시
 - [ ] **Word 클래스 리팩터링** — DOM 구조 단순화, 파괴 시 W1 파티클 효과 호출
+- [ ] **단어 미스 데미지 config화** — `CONFIG.CORE.MISS_DAMAGE = 1` (매직 넘버 → CONFIG 패턴, 난이도별 차등은 W3+ 폴리시 사안. W2 박태준 추가 결정 2026-05-23)
 - [ ] **언어 전환 시 진행 단어 처리 정책** — 게임 중 언어 변경 시 활성 단어를 어떻게 할지 결정 (drop 권장: 모두 즉시 destroy + 새 언어로 spawn 재개) → `config.js`에 정책 명시 + `setWordLanguage()` 호출 시 적용
 - [ ] PR 리뷰 + 머지 (병목 방지)
 

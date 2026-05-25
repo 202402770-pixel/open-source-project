@@ -72,7 +72,7 @@ class Game {
         this.missed++;
         this.combo = 0;
         Effects.toggleGlow(false);
-        this.takeDamage(1); // 기획서: 단어 미스 시 HP -1 (WORK_PLAN.md §3 W2)
+        this.takeDamage(CONFIG.CORE.MISS_DAMAGE); // 기획서: 단어 미스 시 HP -1 (WORK_PLAN.md §3 W2)
     }
 
     levelUp() {
