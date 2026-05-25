@@ -21,6 +21,7 @@ const CONFIG = {
     SPEED_MULT_PER_LEVEL: 0.15,      // 레벨당 속도 가산 비율
     SPAWN_REDUCTION_PER_LEVEL: 150,  // 레벨당 spawn 주기 단축 (ms)
     PLAY_AREA_TOP_PADDING: 0,        // 단어 spawn 시작 y (px)
+    MISS_DAMAGE: 1,                  // 단어 미스 시 HP 감소량 (기획서 -1, 박태준 추가 결정 2026-05-23)
   },
 
   /* ────────────────────────────────────────────────────────────────────
@@ -64,14 +65,19 @@ const CONFIG = {
 
   /* ────────────────────────────────────────────────────────────────────
    * Grade Thresholds (Game Over 학점 계산용)
-   * 학점 = 정확도 + 점수의 함수. W2 박태준이 calcGrade()에서 사용.
+   * 학점 = 정확도 + 점수 + WPM 의 함수. W2 박태준이 calcGrade()에서 사용.
+   * minWpm 임계값은 평균 영문 타이핑 속도 기준 (박태준 추가 결정 2026-05-23).
+   *   - 50 WPM: 능숙 (상위권)
+   *   - 40 WPM: 평균 영문 타이핑
+   *   - 30 WPM: 보통
+   *   - 20 WPM: 초보
    * ──────────────────────────────────────────────────────────────────── */
   GRADE: {
-    APLUS: { minAccuracy: 95, minScore: 10000 },
-    A:     { minAccuracy: 90, minScore: 5000 },
-    A_MINUS: { minAccuracy: 85, minScore: 3000 },
-    B:     { minAccuracy: 75, minScore: 0 },
-    C:     { minAccuracy: 50, minScore: 0 },
+    APLUS:   { minAccuracy: 95, minScore: 10000, minWpm: 50 },
+    A:       { minAccuracy: 90, minScore: 5000,  minWpm: 40 },
+    A_MINUS: { minAccuracy: 85, minScore: 3000,  minWpm: 30 },
+    B:       { minAccuracy: 75, minScore: 0,     minWpm: 20 },
+    C:       { minAccuracy: 50, minScore: 0,     minWpm: 0  },
     // 위 기준 모두 미달이면 F
   },
 
