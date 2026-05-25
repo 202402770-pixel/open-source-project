@@ -11,6 +11,22 @@ const UI = {
     return document.getElementById('score');
   },
 
+  get achievementModal() {
+    return document.getElementById('achievement-modal');
+  },
+
+  get achievementContainer() {
+    return document.getElementById('achievement-container');
+  },
+
+  get achievementProgress() {
+    return document.getElementById('achievement-progress');
+  },
+
+  get achievementTabs() {
+    return document.querySelectorAll('.achieve-tab-btn');
+  },
+
   get level() {
     return document.getElementById('level');
   },
@@ -33,6 +49,59 @@ const UI = {
 
   get wpmDisplay() {
     return document.getElementById('wpm');
+  },
+
+  initAchievements() {
+    if (this.achievementTabs) {
+      this.achievementTabs.forEach((tab) => {
+        tab.addEventListener('click', (e) => {
+          this.achievementTabs.forEach((t) => t.classList.remove('active'));
+          e.target.classList.add('active');
+          this.renderAchievements(e.target.dataset.filter);
+        });
+      });
+    }
+  },
+
+  toggleAchievementModal(show) {
+    if (!this.achievementModal) return;
+    if (show) {
+      if (this.achievementTabs[0] && !this.achievementTabs[0].dataset.initialized) {
+        this.initAchievements();
+        this.achievementTabs[0].dataset.initialized = 'true';
+      }
+      this.achievementModal.classList.remove('hidden');
+      this.renderAchievements('all');
+      this.achievementTabs.forEach((t) => t.classList.remove('active'));
+      const allTab = document.querySelector('.achieve-tab-btn[data-filter="all"]');
+      if (allTab) allTab.classList.add('active');
+    } else {
+      this.achievementModal.classList.add('hidden');
+    }
+  },
+
+  renderAchievements(filter) {
+    if (!this.achievementContainer) return;
+    this.achievementContainer.innerHTML = '';
+    const challenges = Achievements.CHALLENGES;
+    const acquiredCount = challenges.filter((c) => c.isCompleted).length;
+    if (this.achievementProgress) {
+      this.achievementProgress.innerText = `${acquiredCount} / ${challenges.length}`;
+    }
+    challenges.forEach((challenge) => {
+      if (filter === 'acquired' && !challenge.isCompleted) return;
+      if (filter === 'unacquired' && challenge.isCompleted) return;
+      const statusClass = challenge.isCompleted ? 'acquired' : 'unacquired';
+      const iconText = challenge.isCompleted ? challenge.icon : '🔒';
+      const card = document.createElement('div');
+      card.className = `achieve-card ${statusClass}`;
+      card.innerHTML = `
+        <div class="achieve-icon">${iconText}</div>
+        <div class="achieve-name">${challenge.title}</div>
+        <div class="achieve-desc">${challenge.description}</div>
+      `;
+      this.achievementContainer.appendChild(card);
+    });
   },
 
   get gameOverScreen() {
