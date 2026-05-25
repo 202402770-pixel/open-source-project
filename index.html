@@ -194,18 +194,19 @@
           <p>단어수 <strong id="result-words">0</strong></p>
         </div>
 
+        <!-- Game Over 액션 4종 — DESIGN.md §4.5 -->
         <div class="result-actions">
           <button id="restart-btn" class="td-btn td-btn--primary" type="button">
             다시 수강
           </button>
-          <button class="td-btn td-btn--secondary" type="button" data-go="play">
-            계속 연습
+          <button class="td-btn td-btn--secondary" type="button" onclick="UI.toggleRankingModal(true)">
+            순위표
           </button>
           <button class="td-btn td-btn--secondary" type="button" onclick="UI.toggleAchievementModal(true)">
             도전과제
           </button>
-          <button class="td-btn td-btn--ghost" type="button" data-go="start">
-            처음으로
+          <button class="td-btn td-btn--ghost" type="button" onclick="alert('준비중입니다.')">
+            공유
           </button>
         </div>
       </div>

@@ -5,8 +5,10 @@ class Game {
         this.maxCombo = 0;
         this.level = 1;
         this.missed = 0;
-        this.maxHP = 100;
-        this.currentHP = 100;
+        // HP 5칸 (WORK_PLAN.md §3 W2 "Classic: HP 5에서 시작, 단어 미스 시 -1")
+        // 시각 표시는 percent 게이지 (DESIGN.md §3.5) — ui.updateHPBar가 비율 계산
+        this.maxHP = 5;
+        this.currentHP = 5;
         this.levelAttempts = 0;
         this.levelMissed = 0;
         this.totalWordAttempts = 0;
@@ -57,11 +59,9 @@ class Game {
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
+        // 콤보 글로우 단일 임계값 (DESIGN.md §5.1 + §6 "콤보 ≥ 10이면 노트 종이 글로우")
         if (this.combo >= CONFIG.SCORING.COMBO_GLOW_THRESHOLD) {
             Effects.toggleGlow(true, 'combo10');
-        }
-        else if(this.combo >= 5){
-            Effects.toggleGlow(true, 'combo5');
         }
         if (this.activeWords.length === 0) {
             this.levelUp();
@@ -72,7 +72,7 @@ class Game {
         this.missed++;
         this.combo = 0;
         Effects.toggleGlow(false);
-        this.takeDamage(20);
+        this.takeDamage(1); // 기획서: 단어 미스 시 HP -1 (WORK_PLAN.md §3 W2)
     }
 
     levelUp() {
