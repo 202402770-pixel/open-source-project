@@ -1037,6 +1037,7 @@ body.shake {
 }
 
 .new-record {
+  display: none; /* 기본 숨김. showGameOver()가 신기록 시 'block'으로 토글 */
   color: var(--color-accent);
   font-weight: 800;
   font-size: 14px;
