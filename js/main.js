@@ -1,12 +1,16 @@
 let game;
 
 async function start() {
+    Sound.init();
     await WordData.loadWords();
     game = new Game();
 
     Input.init(
         (val) => {
             if(game.isGameOver) return;
+            if (val.length > UI.lastInputLength) {
+                Sound.play('chalk', 0.8);
+            }
             UI.renderTargetWord(game.getActiveWords(), val)
             },
         (word) => {

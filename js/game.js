@@ -76,6 +76,7 @@ class Game {
     }
 
     levelUp() {
+        Sound.play('levelUp', 1.0)
         if (this.levelAttempts > 0) {
             const accuracy = ((this.levelAttempts - this.levelMissed) / this.levelAttempts) * 100;
         }
