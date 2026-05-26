@@ -57,6 +57,9 @@
           <button class="td-btn td-btn--primary td-btn--lg" type="button" data-go="play">
             받아적을게요
           </button>
+          <button id="show-tutorial-btn" class="td-btn td-btn--secondary" type="button">
+            도움말
+          </button>
           <a class="td-btn td-btn--ghost" href="./components.html">
             W1 컴포넌트 보기
           </a>
@@ -236,7 +239,10 @@
     <div id="achievement-modal" class="modal hidden">
       <div class="modal-overlay" onclick="UI.toggleAchievementModal(false)"></div>
       <div class="achievement-modal-content">
-        <h2 class="achievement-title">도전과제 <span class="achievement-progress" id="achievement-progress">0 / 12</span></h2>
+        <h2 class="achievement-title">
+          도전과제
+          <span class="achievement-progress" id="achievement-progress">0 / 12</span>
+        </h2>
         <div class="achievement-tabs">
           <button class="achieve-tab-btn active" data-filter="all">전체</button>
           <button class="achieve-tab-btn" data-filter="acquired">획득</button>
@@ -246,6 +252,79 @@
         <button class="ranking-close-btn" onclick="UI.toggleAchievementModal(false)">CLOSE</button>
       </div>
     </div>
+
+    <!-- Tutorial Modal -->
+    <section id="tutorial-modal" class="tutorial-modal hidden" aria-label="튜토리얼">
+      <div class="tutorial-backdrop"></div>
+
+      <article class="tutorial-card">
+        <div class="tutorial-header">
+          <p class="eyebrow">TUTORIAL</p>
+          <button class="tutorial-skip-btn" type="button" data-tutorial-action="skip">
+            다음에 볼게요
+          </button>
+        </div>
+
+        <div class="tutorial-slides">
+          <div class="tutorial-slide is-active" data-tutorial-slide>
+            <span class="tutorial-step">1 / 5</span>
+            <h2>칠판의 단어를 확인하세요</h2>
+            <p>
+              교수님이 칠판에 핵심 단어를 적으면, 단어가 아래로 떨어지기 시작합니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">2 / 5</span>
+            <h2>노트에 빠르게 받아 적으세요</h2>
+            <p>
+              화면 아래 입력창에 단어를 정확히 입력하고 Enter를 누르면 점수를 얻습니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">3 / 5</span>
+            <h2>오타와 미스를 조심하세요</h2>
+            <p>
+              단어를 놓치면 HP가 줄어듭니다. HP가 모두 사라지면 성적표가 공개됩니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">4 / 5</span>
+            <h2>콤보와 레벨을 올리세요</h2>
+            <p>
+              연속으로 맞히면 콤보가 유지되고, 레벨이 오를수록 더 빠른 강의가 시작됩니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">5 / 5</span>
+            <h2>이제 강의를 막아낼 시간입니다</h2>
+            <p>
+              준비가 끝났다면 바로 수강을 시작하세요. 도움말 버튼으로 언제든 다시 볼 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="tutorial-dots" aria-label="튜토리얼 진행 상태">
+          <span class="tutorial-dot is-active"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+        </div>
+
+        <div class="tutorial-actions">
+          <button class="td-btn td-btn--ghost" type="button" data-tutorial-action="prev">
+            이전
+          </button>
+          <button class="td-btn td-btn--primary" type="button" data-tutorial-action="next">
+            다음
+          </button>
+        </div>
+      </article>
+    </section>
   </main>
 
   <script src="./js/config.js"></script>

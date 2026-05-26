@@ -184,6 +184,108 @@ const UI = {
     });
   },
 
+  initTutorial() {
+    this.tutorialIndex = 0;
+    this.tutorialDoneKey = 'tutorial_done';
+
+    this.tutorialModal = document.getElementById('tutorial-modal');
+    this.tutorialSlides = document.querySelectorAll('[data-tutorial-slide]');
+    this.tutorialDots = document.querySelectorAll('.tutorial-dot');
+    this.tutorialNextBtn = document.querySelector('[data-tutorial-action="next"]');
+    this.tutorialPrevBtn = document.querySelector('[data-tutorial-action="prev"]');
+    this.tutorialSkipBtn = document.querySelector('[data-tutorial-action="skip"]');
+    this.showTutorialBtn = document.getElementById('show-tutorial-btn');
+
+    if (!this.tutorialModal || this.tutorialSlides.length === 0) return;
+
+    if (this.tutorialNextBtn) {
+      this.tutorialNextBtn.addEventListener('click', () => this.nextTutorialSlide());
+    }
+
+    if (this.tutorialPrevBtn) {
+      this.tutorialPrevBtn.addEventListener('click', () => this.prevTutorialSlide());
+    }
+
+    if (this.tutorialSkipBtn) {
+      this.tutorialSkipBtn.addEventListener('click', () => {
+        localStorage.setItem(this.tutorialDoneKey, 'true');
+        this.closeTutorial();
+      });
+    }
+
+    if (this.showTutorialBtn) {
+      this.showTutorialBtn.addEventListener('click', () => {
+        this.openTutorial(0);
+      });
+    }
+
+    const isTutorialDone = localStorage.getItem(this.tutorialDoneKey) === 'true';
+
+    if (!isTutorialDone) {
+      this.openTutorial(0);
+    }
+  },
+
+  openTutorial(index = 0) {
+    if (!this.tutorialModal) return;
+
+    this.tutorialIndex = index;
+    this.tutorialModal.classList.remove('hidden');
+    this.renderTutorialSlide();
+  },
+
+  closeTutorial() {
+    if (!this.tutorialModal) return;
+
+    this.tutorialModal.classList.add('hidden');
+  },
+
+  renderTutorialSlide() {
+    if (!this.tutorialSlides || this.tutorialSlides.length === 0) return;
+
+    this.tutorialSlides.forEach((slide, index) => {
+      slide.classList.toggle('is-active', index === this.tutorialIndex);
+    });
+
+    if (this.tutorialDots) {
+      this.tutorialDots.forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === this.tutorialIndex);
+      });
+    }
+
+    if (this.tutorialPrevBtn) {
+      this.tutorialPrevBtn.disabled = this.tutorialIndex === 0;
+    }
+
+    if (this.tutorialNextBtn) {
+      const isLastSlide = this.tutorialIndex === this.tutorialSlides.length - 1;
+      this.tutorialNextBtn.textContent = isLastSlide ? '반격할게요' : '다음';
+    }
+  },
+
+  nextTutorialSlide() {
+    if (!this.tutorialSlides || this.tutorialSlides.length === 0) return;
+
+    const isLastSlide = this.tutorialIndex === this.tutorialSlides.length - 1;
+
+    if (isLastSlide) {
+      localStorage.setItem(this.tutorialDoneKey, 'true');
+      this.closeTutorial();
+      this.showScene('play');
+      return;
+    }
+
+    this.tutorialIndex += 1;
+    this.renderTutorialSlide();
+  },
+
+  prevTutorialSlide() {
+    if (this.tutorialIndex <= 0) return;
+
+    this.tutorialIndex -= 1;
+    this.renderTutorialSlide();
+  },
+
   showScene(sceneName) {
     if (!sceneName) return;
 
@@ -497,4 +599,5 @@ const UI = {
 
 document.addEventListener('DOMContentLoaded', () => {
   UI.initControls();
+  UI.initTutorial();
 });

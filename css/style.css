@@ -849,7 +849,7 @@ body.shake {
   font-family: 'Nanum Pen Script', cursive;
   display: flex;
   align-items: center;
-  gap: 2px; 
+  gap: 2px;
   white-space: nowrap;
 }
 
@@ -866,24 +866,24 @@ body.shake {
 
 /* 2-2. HP Bar */
 .hp-container {
-  position: absolute; 
-  top: 30px;          
-  right: 40px;       
+  position: absolute;
+  top: 30px;
+  right: 40px;
   display: flex;
   align-items: center;
   gap: 15px;
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
-  color: var(--color-text); 
+  color: var(--color-text);
   font-size: 1.2rem;
-  background-color: var(--color-paper); 
-  padding: 10px 20px; 
-  border-radius: 10px; 
+  background-color: var(--color-paper);
+  padding: 10px 20px;
+  border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .hp-track {
-  width: 250px; 
+  width: 250px;
   height: 16px;
   background-color: var(--color-paper-line);
   border-radius: 8px;
@@ -912,16 +912,16 @@ body.shake {
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 15px; 
+    gap: 15px;
     z-index: 9999;
     align-items: flex-end;
 }
 
 .toast {
-    background-color: var(--color-paper); 
+    background-color: var(--color-paper);
     border: 1px solid var(--color-paper-line);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
     width: 340px;
@@ -939,7 +939,7 @@ body.shake {
 .toast-accent {
     width: 4px;
     height: 44px;
-    background-color: var(--color-accent); 
+    background-color: var(--color-accent);
     border-radius: 4px;
     margin-left: 16px;
 }
@@ -1703,6 +1703,7 @@ body.shake {
   overflow-y: auto;
   padding-right: 4px;
 }
+
 .achievement-grid::-webkit-scrollbar { display: none; }
 
 .achieve-card {
@@ -1737,21 +1738,25 @@ body.shake {
 .achieve-card.acquired {
   border: 1px solid var(--color-paper-line);
 }
+
 .achieve-card.acquired .achieve-icon {
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
+
 .achieve-card.acquired .achieve-name { color: var(--color-text); }
 .achieve-card.acquired .achieve-desc { color: var(--color-text-soft); }
 
 .achieve-card.unacquired {
   border: 1px dashed var(--color-paper-line);
 }
+
 .achieve-card.unacquired .achieve-icon {
   color: var(--color-paper-line);
   border-color: var(--color-paper-line);
   background-color: #f5f0e1;
 }
+
 .achieve-card.unacquired .achieve-name { color: var(--color-text-mute); }
 .achieve-card.unacquired .achieve-desc { color: var(--color-text-mute); opacity: 0.7; }
 
@@ -1854,6 +1859,7 @@ body.shake {
     animation: none;
   }
 }
+
 /* =========================
    W2 Detail Polish - Notebook
 ========================= */
@@ -1933,4 +1939,168 @@ body.shake {
   display: block;
   height: 1px;
   background: rgba(139, 115, 85, 0.35);
+}
+
+/* =========================
+   W3 Tutorial Modal
+========================= */
+
+.tutorial-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.tutorial-modal.hidden {
+  display: none;
+}
+
+.tutorial-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(35, 24, 14, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.tutorial-card {
+  position: relative;
+  width: min(560px, 100%);
+  padding: 28px;
+  border: 3px solid var(--color-board-frame);
+  border-radius: 24px;
+  background: var(--color-paper);
+  box-shadow: 0 24px 60px rgba(35, 24, 14, 0.28);
+}
+
+.tutorial-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.tutorial-skip-btn {
+  border: 0;
+  background: transparent;
+  color: var(--color-wood-dark);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tutorial-skip-btn:hover {
+  color: var(--color-accent);
+}
+
+.tutorial-slides {
+  min-height: 210px;
+}
+
+.tutorial-slide {
+  display: none;
+}
+
+.tutorial-slide.is-active {
+  display: block;
+  animation: tutorial-fade-in 0.22s ease-out;
+}
+
+.tutorial-step {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--color-accent);
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+.tutorial-slide h2 {
+  margin: 0 0 12px;
+  color: var(--color-text);
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  line-height: 1.2;
+}
+
+.tutorial-slide p {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 1rem;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.tutorial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.tutorial-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(74, 59, 42, 0.25);
+  transition: width 160ms ease, background-color 160ms ease;
+}
+
+.tutorial-dot.is-active {
+  width: 28px;
+  background: var(--color-accent);
+}
+
+.tutorial-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tutorial-actions .td-btn {
+  min-width: 110px;
+}
+
+.tutorial-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@keyframes tutorial-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .tutorial-modal {
+    padding: 16px;
+  }
+
+  .tutorial-card {
+    padding: 22px;
+  }
+
+  .tutorial-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tutorial-actions {
+    flex-direction: column-reverse;
+  }
+
+  .tutorial-actions .td-btn {
+    width: 100%;
+  }
 }
