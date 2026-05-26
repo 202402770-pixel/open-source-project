@@ -60,6 +60,9 @@
           <button id="show-tutorial-btn" class="td-btn td-btn--secondary" type="button">
             도움말
           </button>
+          <button id="show-settings-btn" class="td-btn td-btn--secondary" type="button">
+            설정
+          </button>
           <a class="td-btn td-btn--ghost" href="./components.html">
             W1 컴포넌트 보기
           </a>
@@ -168,6 +171,9 @@
         <button id="show-ranking-btn" class="td-btn td-btn--secondary" type="button">
           순위표
         </button>
+        <button id="show-settings-play-btn" class="td-btn td-btn--secondary" type="button">
+          설정
+        </button>
         <button class="td-btn td-btn--ghost" type="button" data-go="gameover">
           데모 종료
         </button>
@@ -200,7 +206,6 @@
           <p>단어수 <strong id="result-words">0</strong></p>
         </div>
 
-        <!-- Game Over 액션 4종 — DESIGN.md §4.5 -->
         <div class="result-actions">
           <button id="restart-btn" class="td-btn td-btn--primary" type="button">
             다시 수강
@@ -255,6 +260,180 @@
         <button class="ranking-close-btn" onclick="UI.toggleAchievementModal(false)">CLOSE</button>
       </div>
     </div>
+
+    <!-- Settings Modal -->
+    <section id="settings-modal" class="settings-modal hidden" aria-label="설정" aria-hidden="true">
+      <div class="settings-backdrop" data-settings-close></div>
+
+      <article class="settings-card">
+        <div class="settings-header">
+          <div>
+            <p class="eyebrow">SETTINGS</p>
+            <h2>강의실 설정</h2>
+          </div>
+          <button id="close-settings-btn" class="td-btn td-btn--ghost" type="button">
+            CLOSE
+          </button>
+        </div>
+
+        <div class="settings-tabs" role="tablist" aria-label="설정 탭">
+          <button class="settings-tab is-active" type="button" data-settings-tab="lecture">
+            강의
+          </button>
+          <button class="settings-tab" type="button" data-settings-tab="appearance">
+            외관
+          </button>
+          <button class="settings-tab" type="button" data-settings-tab="sound">
+            사운드
+          </button>
+        </div>
+
+        <!-- Lecture Tab -->
+        <section class="settings-panel is-active" data-settings-panel="lecture">
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="settings-language">언어</label>
+              <select id="settings-language">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+                <option value="jp">日本語</option>
+                <option value="cn">中文</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ru">Русский</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+
+            <div class="settings-field">
+              <span class="settings-label">난이도</span>
+              <div class="settings-segment" role="group" aria-label="난이도 설정">
+                <button class="settings-choice is-active" type="button" data-setting-group="difficulty" data-setting-value="easy">
+                  EASY
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="difficulty" data-setting-value="normal">
+                  NORMAL
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="difficulty" data-setting-value="hard">
+                  HARD
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field settings-field--full">
+              <label for="settings-custom-words">Custom Words</label>
+              <textarea
+                id="settings-custom-words"
+                rows="5"
+                placeholder="직접 연습할 단어를 쉼표 또는 줄바꿈으로 입력하세요. 예: stack, queue, graph"
+              ></textarea>
+              <p class="settings-help">
+                Custom 언어 선택 시 입력한 단어 목록을 사용할 수 있도록 저장합니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Appearance Tab -->
+        <section class="settings-panel" data-settings-panel="appearance">
+          <div class="settings-grid">
+            <div class="settings-field settings-field--full">
+              <span class="settings-label">테마</span>
+              <div class="theme-choice-grid">
+                <button class="theme-choice is-active" type="button" data-setting-group="theme" data-setting-value="classroom">
+                  Classroom
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="neon">
+                  Neon
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="retro">
+                  Retro
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="cyber">
+                  Cyber
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="minimal">
+                  Minimal
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field">
+              <span class="settings-label">폰트 크기</span>
+              <div class="settings-segment" role="group" aria-label="폰트 크기 설정">
+                <button class="settings-choice" type="button" data-setting-group="fontSize" data-setting-value="small">
+                  작게
+                </button>
+                <button class="settings-choice is-active" type="button" data-setting-group="fontSize" data-setting-value="medium">
+                  보통
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="fontSize" data-setting-value="large">
+                  크게
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field settings-check-list">
+              <label class="settings-check">
+                <input id="settings-reduced-motion" type="checkbox" />
+                <span>모션 줄이기</span>
+              </label>
+
+              <label class="settings-check">
+                <input id="settings-high-contrast" type="checkbox" />
+                <span>고대비</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sound Tab -->
+        <section class="settings-panel" data-settings-panel="sound">
+          <div class="settings-grid">
+            <div class="settings-field settings-field--full">
+              <label for="settings-sfx-volume">효과음 볼륨</label>
+              <div class="settings-range-row">
+                <input id="settings-sfx-volume" type="range" min="0" max="100" value="70" />
+                <output id="settings-sfx-volume-value">70%</output>
+              </div>
+            </div>
+
+            <div class="settings-field settings-field--full">
+              <label for="settings-bgm-volume">BGM 볼륨</label>
+              <div class="settings-range-row">
+                <input id="settings-bgm-volume" type="range" min="0" max="100" value="30" />
+                <output id="settings-bgm-volume-value">30%</output>
+              </div>
+            </div>
+
+            <div class="settings-field settings-check-list">
+              <label class="settings-check">
+                <input id="settings-keyboard-sound" type="checkbox" checked />
+                <span>키보드 소리</span>
+              </label>
+
+              <label class="settings-check">
+                <input id="settings-levelup-sound" type="checkbox" checked />
+                <span>레벨업 소리</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <div class="settings-footer">
+          <button id="reset-settings-btn" class="td-btn td-btn--ghost" type="button">
+            기본값으로
+          </button>
+          <button id="save-settings-btn" class="td-btn td-btn--primary" type="button">
+            저장하기
+          </button>
+        </div>
+      </article>
+    </section>
 
     <!-- Pause Modal -->
     <section id="pause-modal" class="pause-modal hidden" aria-label="일시정지 메뉴" aria-hidden="true">
