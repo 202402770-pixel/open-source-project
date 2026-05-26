@@ -65,14 +65,17 @@ const UI = {
 
   toggleAchievementModal(show) {
     if (!this.achievementModal) return;
+
     if (show) {
       if (this.achievementTabs[0] && !this.achievementTabs[0].dataset.initialized) {
         this.initAchievements();
         this.achievementTabs[0].dataset.initialized = 'true';
       }
+
       this.achievementModal.classList.remove('hidden');
       this.renderAchievements('all');
       this.achievementTabs.forEach((t) => t.classList.remove('active'));
+
       const allTab = document.querySelector('.achieve-tab-btn[data-filter="all"]');
       if (allTab) allTab.classList.add('active');
     } else {
@@ -82,17 +85,23 @@ const UI = {
 
   renderAchievements(filter) {
     if (!this.achievementContainer) return;
+
     this.achievementContainer.innerHTML = '';
+
     const challenges = Achievements.CHALLENGES;
     const acquiredCount = challenges.filter((c) => c.isCompleted).length;
+
     if (this.achievementProgress) {
       this.achievementProgress.innerText = `${acquiredCount} / ${challenges.length}`;
     }
+
     challenges.forEach((challenge) => {
       if (filter === 'acquired' && !challenge.isCompleted) return;
       if (filter === 'unacquired' && challenge.isCompleted) return;
+
       const statusClass = challenge.isCompleted ? 'acquired' : 'unacquired';
       const iconText = challenge.isCompleted ? challenge.icon : '🔒';
+
       const card = document.createElement('div');
       card.className = `achieve-card ${statusClass}`;
       card.innerHTML = `
@@ -100,6 +109,7 @@ const UI = {
         <div class="achieve-name">${challenge.title}</div>
         <div class="achieve-desc">${challenge.description}</div>
       `;
+
       this.achievementContainer.appendChild(card);
     });
   },
@@ -284,6 +294,63 @@ const UI = {
 
     this.tutorialIndex -= 1;
     this.renderTutorialSlide();
+  },
+
+  initPauseControls(gameInstance) {
+    this.currentGame = gameInstance;
+
+    const pauseBtn = document.getElementById('pause-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+    const menuBtn = document.getElementById('pause-menu-btn');
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.togglePause();
+      });
+    }
+
+    if (resumeBtn) {
+      resumeBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.resume();
+      });
+    }
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.goToMenu();
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (!this.currentGame || this.currentGame.isGameOver) return;
+
+      event.preventDefault();
+      this.currentGame.togglePause();
+    });
+  },
+
+  showPauseOverlay() {
+    const pauseModal = document.getElementById('pause-modal');
+
+    if (!pauseModal) return;
+
+    pauseModal.classList.remove('hidden');
+    pauseModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('is-paused');
+  },
+
+  hidePauseOverlay() {
+    const pauseModal = document.getElementById('pause-modal');
+
+    if (!pauseModal) return;
+
+    pauseModal.classList.add('hidden');
+    pauseModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('is-paused');
+
+    const hiddenInput = document.getElementById('hidden-input');
+    if (hiddenInput) hiddenInput.focus();
   },
 
   showScene(sceneName) {

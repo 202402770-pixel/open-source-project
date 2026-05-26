@@ -2104,3 +2104,84 @@ body.shake {
     width: 100%;
   }
 }
+/* =========================
+   W3 Pause Overlay
+========================= */
+
+body.is-paused .scene.is-active {
+  filter: sepia(0.35) brightness(0.72);
+}
+
+.pause-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.pause-modal.hidden {
+  display: none;
+}
+
+.pause-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(35, 24, 14, 0.52);
+  backdrop-filter: blur(4px);
+}
+
+.pause-card {
+  position: relative;
+  width: min(520px, 100%);
+  padding: 32px;
+  border: 3px solid var(--color-board-frame);
+  border-radius: 28px;
+  background: var(--color-paper);
+  box-shadow: 0 24px 60px rgba(35, 24, 14, 0.3);
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
+.pause-card h2 {
+  margin: 0 0 12px;
+  color: var(--color-text);
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  line-height: 1.1;
+}
+
+.pause-description {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.pause-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.pause-hint {
+  margin: 20px 0 0;
+  color: var(--color-text-mute);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .pause-card {
+    padding: 24px;
+  }
+
+  .pause-actions {
+    flex-direction: column;
+  }
+
+  .pause-actions .td-btn {
+    width: 100%;
+  }
+}
