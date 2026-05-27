@@ -31,6 +31,22 @@ class Game {
         }
     }
 
+    setLanguage(lang) {
+        // 1. 활성 단어 전부 파괴 (drop 정책)
+        this.activeWords = [];
+        // 2. WordData 언어 변경 (WordData 객체에 해당 기능이 있다고 가정)
+        if (typeof WordData !== 'undefined' && WordData.setLanguage) {
+            WordData.setLanguage(lang);
+        }
+        // 3. 새 언어의 단어로 스폰 재개
+        const nextWords = WordData.getWordsByLevel(this.level);
+        if (nextWords && nextWords.length > 0) {
+            this.activeWords = [...nextWords];
+        }
+        // 4. UI 갱신 (화면의 기존 단어 지우기)
+        UI.renderTargetWord(this.activeWords, "");
+    }
+    
     getActiveWords() {
         return this.activeWords;
     }
