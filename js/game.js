@@ -56,6 +56,9 @@ class Game {
         this.combo++;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.activeWords.splice(targetIndex, 1);
+        if (window.GameAPI && window.GameAPI.onWordDestroyed) {
+        GameAPI.onWordDestroyed(0, 0);
+        }
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
