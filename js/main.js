@@ -1,9 +1,42 @@
 let game;
+let selectedMode = 'classic'; // 기본 모드
 
-async function start() {
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 게임 모드 선택 버튼 연동
+    const modeGroup = document.querySelector('[aria-label="게임 모드 선택"]');
+    if (modeGroup) {
+        const modeButtons = modeGroup.querySelectorAll('.td-toggle');
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // 클릭된 버튼의 텍스트를 확인하여 모드 설정
+                const modeText = e.target.textContent.trim().toUpperCase();
+                if (modeText === 'CLASSIC') selectedMode = 'classic';
+                else if (modeText === 'TIME ATTACK') selectedMode = 'timeattack';
+                else if (modeText === 'ZEN') selectedMode = 'zen';
+                else if (modeText === 'DAILY') selectedMode = 'daily';
+            });
+        });
+    }
+
+    // 2. '받아적을게요' (플레이) 버튼 연동
+    const playBtn = document.querySelector('[data-go="play"]');
+    if (playBtn) {
+        playBtn.addEventListener('click', () => {
+            start(selectedMode);
+        });
+    }
+
+    // 3. 재시작 버튼 연동 (기존 로직)
+    const restartBtn = document.getElementById('restart-btn');
+    if (restartBtn) {
+        restartBtn.addEventListener('click', () => location.reload());
+    }
+});
+
+async function start(mode = 'classic') {
     Sound.init();
     await WordData.loadWords();
-    game = new Game();
+    game = new Game(mode);
 
     Input.init(
         (val) => {
@@ -36,10 +69,10 @@ async function start() {
 function gameLoop() {
     if (game.isGameOver) return;
     game.calculateWPM();
+    if (typeof game.checkTime === 'function') {
+        game.checkTime();
+    }
     UI.updateHUD(game);
     
     requestAnimationFrame(gameLoop);
 }
-
-window.onload = start;
-document.getElementById('restart-btn').addEventListener('click', () => location.reload());
