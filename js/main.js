@@ -43,6 +43,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // PR-E: 페이지 가시성 변화 시 게임 자동 일시정지 (탭 전환 / 백그라운드 등)
+    document.addEventListener('visibilitychange', () => {
+        if (!game || game.isGameOver) return;
+        if (document.hidden) {
+            if (typeof game.softPause === 'function') game.softPause();
+        } else {
+            if (typeof game.softResume === 'function') game.softResume();
+        }
+    });
+
     // 4. 재시작 버튼 — PR-B: 페이지 리로드 제거. 같은 모드/난이도로 즉시 새 게임.
     const restartBtn = document.getElementById('restart-btn');
     if (restartBtn) {
@@ -62,6 +72,7 @@ async function start(mode = 'classic', difficulty = 'easy') {
     Sound.init();
     await WordData.loadWords();
     game = new Game(mode, difficulty);
+    if (typeof window !== 'undefined') window.game = game; // PR-E: UI/softPause용 노출
 
     Input.init(
         (val) => {

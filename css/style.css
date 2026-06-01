@@ -1376,6 +1376,13 @@ body.shake {
   box-shadow: var(--shadow-soft);
 }
 
+/* PR-E: 큰 데스크톱 viewport(≥1400px)에서 Start 카드 광활 dead space 줄임 */
+@media (min-width: 1600px) {
+  .start-card {
+    width: min(1100px, 92vw);
+  }
+}
+
 .start-card h1 {
   margin: 0 0 16px;
   font-size: clamp(44px, 7vw, 80px);
@@ -3030,5 +3037,54 @@ body.boss-shake {
 @media (prefers-reduced-motion: reduce) {
   .rotate-hint .rotate-icon {
     animation: none;
+  }
+}
+
+/* =========================
+   PR-E: 데스크톱 viewport(≥1024px) viewport-fit
+   1366×768 / 1920×1080 등 일반 데스크톱에서 세로 스크롤 방지.
+   칠판/노트북이 한 화면에 들어오도록 dead space 줄임.
+   모바일(<1024px)은 기존 stack layout 유지.
+========================= */
+@media (min-width: 1024px) {
+  .play-scene.is-active {
+    max-height: 100vh;
+    padding: 20px 32px;
+    gap: 14px;
+    overflow: hidden;
+  }
+
+  .play-scene.is-active .classroom-stage {
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .play-scene.is-active .blackboard {
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .play-scene.is-active .word-field {
+    height: clamp(160px, 28vh, 320px);
+    margin-top: 16px;
+  }
+
+  /* 시안 E의 강의실 ambient — viewport에 맞춰 컴팩트하게 */
+  .play-scene.is-active .classroom-illustration {
+    padding: 16px;
+    gap: 16px;
+    max-height: 22vh;
+    overflow: hidden;
+  }
+
+  .play-scene.is-active .notebook-panel {
+    padding: 16px 20px;
+    max-height: 30vh;
+    overflow: hidden;
+  }
+
+  /* 노트북 dead space (빈 줄들) 제거 — viewport-fit 우선 */
+  .play-scene.is-active .notebook-lines {
+    display: none;
   }
 }
