@@ -31,6 +31,22 @@ class Game {
         }
     }
 
+    setLanguage(lang) {
+        // 1. 활성 단어 전부 파괴 (drop 정책)
+        this.activeWords = [];
+        // 2. WordData 언어 변경 (WordData 객체에 해당 기능이 있다고 가정)
+        if (typeof WordData !== 'undefined' && WordData.setLanguage) {
+            WordData.setLanguage(lang);
+        }
+        // 3. 새 언어의 단어로 스폰 재개
+        const nextWords = WordData.getWordsByLevel(this.level);
+        if (nextWords && nextWords.length > 0) {
+            this.activeWords = [...nextWords];
+        }
+        // 4. UI 갱신 (화면의 기존 단어 지우기)
+        UI.renderTargetWord(this.activeWords, "");
+    }
+    
     getActiveWords() {
         return this.activeWords;
     }
@@ -56,6 +72,19 @@ class Game {
         this.combo++;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.activeWords.splice(targetIndex, 1);
+        if (window.GameAPI && window.GameAPI.onWordDestroyed) {
+            // word-display DOM의 화면 중앙 좌표 — 분필 가루가 단어 위치에서 발생
+            const wd = document.getElementById('word-display');
+            if (wd) {
+                const rect = wd.getBoundingClientRect();
+                GameAPI.onWordDestroyed(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2
+                );
+            } else {
+                GameAPI.onWordDestroyed(0, 0);
+            }
+        }
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
