@@ -2706,3 +2706,273 @@ body.boss-shake {
 .attendance-cell.pending .attendance-cell-mark {
   color: transparent;
 }
+
+/* ====================================================================
+   W4 박태준 — 모바일 반응형 폴리시 (전재형 + 김지우 W4 분량 통합)
+   브레이크포인트:
+     ≤ 768px : 메인 화면 컴팩트 (HUD 2행, 책상 일부 숨김)
+     ≤ 480px : 모달 전체 폭, 터치 영역 강화
+     ≤ 320px : 가로 회전 안내 화면 (rotate-hint)
+   터치 영역: 모든 버튼 min-height 44px (Apple HIG)
+==================================================================== */
+
+/* 모든 버튼·토글 최소 터치 영역 — 모바일 + 데스크톱 공통 */
+.td-btn,
+.td-toggle,
+.tab-btn,
+.achieve-tab-btn,
+.ranking-close-btn {
+  min-height: 44px;
+}
+
+/* ── 768px 이하: 메인 화면 모바일 (Figma 11:4 / 12:2 / 13:2) ── */
+@media (max-width: 768px) {
+  /* Start Screen */
+  .start-card {
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .start-card h1 {
+    font-size: 2rem;
+  }
+
+  .start-options {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .home-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .home-actions > * {
+    width: 100%;
+  }
+
+  /* Play Screen — HUD 2행 3열 */
+  .play-hud {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .hud-stats {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .hud-pill {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    font-size: 0.85rem;
+  }
+
+  .hp-panel {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* 칠판 컴팩트 */
+  .blackboard {
+    padding: 16px;
+  }
+
+  .blackboard h2 {
+    font-size: 1.1rem;
+  }
+
+  .word-field {
+    min-height: 200px;
+  }
+
+  /* 책상 5→2 (양 옆 학생 숨김, YOU 가운데) */
+  .desk-row {
+    gap: 12px;
+  }
+  .desk-row .student-desk:nth-child(1),
+  .desk-row .student-desk:nth-child(5) {
+    display: none;
+  }
+
+  /* 노트북 입력 */
+  .notebook-panel {
+    padding: 16px;
+  }
+
+  .notebook-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .typing-hint {
+    font-size: 0.75rem;
+  }
+
+  /* play-actions 세로 정렬 */
+  .play-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .play-actions .td-btn {
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  /* Game Over 카드 */
+  .result-card {
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .result-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .result-actions .td-btn {
+    width: 100%;
+  }
+
+  /* 모달 — 화면 폭 100% 사용 (Tutorial/Pause/Settings/Ranking/Achievement/Attendance 공통) */
+  .ranking-modal .ranking-card,
+  .achievement-modal-content,
+  .attendance-modal-content,
+  .tutorial-content,
+  .pause-card,
+  .settings-card {
+    width: calc(100vw - 32px);
+    max-width: 540px;
+    padding: 24px;
+  }
+
+  /* Ranking — 컬럼 압축 */
+  .rank-item {
+    grid-template-columns: 40px 1fr 60px 50px;
+    gap: 8px;
+    font-size: 0.85rem;
+  }
+  .rank-item .rank-level {
+    display: none; /* 모바일에서 레벨 컬럼 숨김 — 점수+콤보만 */
+  }
+
+  /* Achievement — 그리드 2 column */
+  .achievement-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 60vh;
+  }
+
+  /* Attendance — 7칸 그리드 유지 (작은 셀로) */
+  .attendance-grid {
+    gap: 6px;
+  }
+  .attendance-cell {
+    border-radius: 6px;
+  }
+
+  /* Settings 탭 바 — 가로 스크롤 */
+  .settings-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .settings-tabs::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ── 480px 이하: 모달 전체 폭 + 폰트 축소 ── */
+@media (max-width: 480px) {
+  .start-card h1 {
+    font-size: 1.6rem;
+  }
+
+  .word-display {
+    font-size: 2rem;
+  }
+
+  /* 모달 화면 폭 100% (마진 0) */
+  .ranking-modal .ranking-card,
+  .achievement-modal-content,
+  .attendance-modal-content,
+  .tutorial-content,
+  .pause-card,
+  .settings-card {
+    width: 100vw;
+    max-width: none;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  /* Achievement — 모바일 1 column */
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 320px 이하: 가로 회전 안내 화면 ── */
+@media (max-width: 320px) and (orientation: portrait) {
+  .game-app > .scene,
+  .game-app > .modal,
+  .game-app > .ranking-modal {
+    display: none !important;
+  }
+
+  .rotate-hint {
+    display: flex !important;
+  }
+}
+
+/* 기본 — 가로 회전 안내는 숨김 (위 미디어 쿼리가 활성화할 때만 표시) */
+.rotate-hint {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  background-color: var(--color-paper);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.rotate-hint h2 {
+  font-family: "Black Han Sans", sans-serif;
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.rotate-hint p {
+  font-size: 1rem;
+  color: var(--color-text-soft);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.rotate-hint .rotate-icon {
+  font-size: 4rem;
+  animation: rotate-icon-spin 2s ease-in-out infinite;
+}
+
+@keyframes rotate-icon-spin {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(90deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotate-hint .rotate-icon {
+    animation: none;
+  }
+}
