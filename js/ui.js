@@ -238,7 +238,7 @@ const UI = {
 
   settingsDefaults: {
     lecture: {
-      language: 'ko',
+      language: 'en',
       difficulty: 'easy',
       customWords: '',
     },
@@ -508,23 +508,54 @@ const UI = {
       });
     });
 
-    const sfxRange = document.getElementById('settings-sfx-volume');
-    const bgmRange = document.getElementById('settings-bgm-volume');
-
-    if (sfxRange) {
-      sfxRange.addEventListener('input', () => {
-        this.updateRangeOutput('settings-sfx-volume', 'settings-sfx-volume-value');
-      });
-    }
-
-    if (bgmRange) {
-      bgmRange.addEventListener('input', () => {
-        this.updateRangeOutput('settings-bgm-volume', 'settings-bgm-volume-value');
-      });
-    }
+    this.bindLivePreview();
 
     this.updateSettingsForm();
     this.applySettings();
+    this.syncStartModalDifficulty(this.settingsState.lecture.difficulty);
+  },
+
+  bindLivePreview() {
+    const livePreviewBindings = [
+      { id: 'settings-reduced-motion', group: 'appearance', key: 'reducedMotion', event: 'change', prop: 'checked' },
+      { id: 'settings-high-contrast', group: 'appearance', key: 'highContrast', event: 'change', prop: 'checked' },
+      { id: 'settings-keyboard-sound', group: 'sound', key: 'keyboardSound', event: 'change', prop: 'checked' },
+      { id: 'settings-levelup-sound', group: 'sound', key: 'levelupSound', event: 'change', prop: 'checked' },
+      { id: 'settings-sfx-volume', group: 'sound', key: 'sfxVolume', event: 'input', prop: 'value', parse: Number, outputId: 'settings-sfx-volume-value' },
+      { id: 'settings-bgm-volume', group: 'sound', key: 'bgmVolume', event: 'input', prop: 'value', parse: Number, outputId: 'settings-bgm-volume-value' },
+    ];
+
+    livePreviewBindings.forEach(({ id, group, key, event, prop, parse, outputId }) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener(event, () => {
+        const raw = el[prop];
+        const value = parse ? parse(raw) : raw;
+        this.settingsState[group][key] = value;
+        if (outputId) this.updateRangeOutput(id, outputId);
+        this.saveSettings();
+        this.applySettings();
+      });
+    });
+
+    const language = document.getElementById('settings-language');
+    if (language) {
+      language.addEventListener('change', () => {
+        this.settingsState.lecture.language = language.value;
+        this.saveSettings();
+      });
+    }
+
+    const customWords = document.getElementById('settings-custom-words');
+    if (customWords) {
+      customWords.addEventListener('input', () => {
+        this.settingsState.lecture.customWords = customWords.value;
+      });
+      customWords.addEventListener('change', () => {
+        this.saveSettings();
+        this.applySettings();
+      });
+    }
   },
 
   cloneSettings(settings) {
@@ -634,19 +665,45 @@ const UI = {
   setSettingsChoice(group, value) {
     if (group === 'difficulty') {
       this.settingsState.lecture.difficulty = value;
+      this.syncStartModalDifficulty(value);
+      this.saveSettings();
     }
 
     if (group === 'theme') {
       this.settingsState.appearance.theme = value;
+      this.saveSettings();
       this.applySettings();
     }
 
     if (group === 'fontSize') {
       this.settingsState.appearance.fontSize = value;
+      this.saveSettings();
       this.applySettings();
     }
 
     this.updateChoiceGroup(group, value);
+  },
+
+  syncStartModalDifficulty(value) {
+    const difficultyGroup = document.querySelector('[aria-label="난이도 선택"]');
+    if (!difficultyGroup) return;
+    const buttons = difficultyGroup.querySelectorAll('.td-toggle');
+    buttons.forEach((btn) => {
+      const txt = (btn.textContent || '').trim().toUpperCase();
+      const btnValue = txt === 'NORMAL' ? 'normal' : txt === 'HARD' ? 'hard' : 'easy';
+      btn.classList.toggle('is-active', btnValue === value);
+    });
+  },
+
+  setDifficultyFromStart(value) {
+    if (!this.settingsState) return;
+    this.settingsState.lecture.difficulty = value;
+    this.updateChoiceGroup('difficulty', value);
+    this.saveSettings();
+  },
+
+  getActiveDifficulty() {
+    return (this.settingsState && this.settingsState.lecture.difficulty) || 'easy';
   },
 
   updateChoiceGroup(group, value) {
@@ -723,6 +780,10 @@ const UI = {
         keyboardSound: sound.keyboardSound,
         levelupSound: sound.levelupSound,
       });
+    }
+
+    if (typeof WordData !== 'undefined' && typeof WordData.setCustomWords === 'function') {
+      WordData.setCustomWords(this.settingsState.lecture.customWords);
     }
   },
 

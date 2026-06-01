@@ -1,6 +1,5 @@
 let game;
 let selectedMode = 'classic';        // 기본 모드 (시작 화면 active)
-let selectedDifficulty = 'easy';     // 기본 난이도 (시작 화면 active)
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. 게임 모드 선택 버튼 연동
@@ -18,16 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. 난이도 선택 버튼 연동 (이슈 #35)
+    // 2. 난이도 선택 버튼 연동 (이슈 #35) — Settings와 양방향 동기화
     const difficultyGroup = document.querySelector('[aria-label="난이도 선택"]');
     if (difficultyGroup) {
         const difficultyButtons = difficultyGroup.querySelectorAll('.td-toggle');
         difficultyButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const txt = e.target.textContent.trim().toUpperCase();
-                if (txt === 'EASY') selectedDifficulty = 'easy';
-                else if (txt === 'NORMAL') selectedDifficulty = 'normal';
-                else if (txt === 'HARD') selectedDifficulty = 'hard';
+                const value = txt === 'NORMAL' ? 'normal' : txt === 'HARD' ? 'hard' : 'easy';
+                if (typeof UI !== 'undefined' && typeof UI.setDifficultyFromStart === 'function') {
+                    UI.setDifficultyFromStart(value);
+                }
             });
         });
     }
@@ -36,7 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const playBtn = document.querySelector('[data-go="play"]');
     if (playBtn) {
         playBtn.addEventListener('click', () => {
-            start(selectedMode, selectedDifficulty);
+            const difficulty = typeof UI !== 'undefined' && typeof UI.getActiveDifficulty === 'function'
+                ? UI.getActiveDifficulty()
+                : 'easy';
+            start(selectedMode, difficulty);
         });
     }
 

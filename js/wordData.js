@@ -1,5 +1,16 @@
 // 테스트를 위해 임시로 넣어놓은 데이터입니다.
 const WordData = {
+    customWords: null,
+
+    setCustomWords(input) {
+        const raw = typeof input === 'string' ? input : '';
+        const words = raw
+            .split(/[,\n]/)
+            .map(w => w.trim())
+            .filter(Boolean);
+        this.customWords = words.length > 0 ? words : null;
+    },
+
     data: {
         "1": ["mouse", "keyboard", "monitor", "hardware", "printer", "speaker"],
         "2": ["internet", "file", "folder", "desktop", "website", "icon"],
@@ -23,6 +34,7 @@ const WordData = {
     },
 
     getWordsByLevel(level) {
+        if (this.customWords) return [...this.customWords];
         return this.data[String(level)] || [];
     },
 
@@ -40,6 +52,7 @@ const WordData = {
 
     // 3. 데일리 시드에 맞춰 섞인 단어 목록 반환
     getDailyWords(level) {
+        if (this.customWords) return [...this.customWords];
         const words = this.data[String(level)] || [];
         if (words.length === 0) return [];
         
