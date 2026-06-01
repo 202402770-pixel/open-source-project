@@ -10,16 +10,39 @@
   <meta name="theme-color" content="#1a5c3a" />
   <meta name="description" content="교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내는 타이핑 디펜스 게임" />
 
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
-  />
+  <!-- 폰트 CDN preconnect — PR-C: 모바일 perf -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Pretendard Variable — 비동기 stylesheet 로드 (render-blocking 제거) -->
+  <!-- tokens.css에 system-ui fallback 정의돼 있어 폰트 도착 전에도 렌더 가능 -->
   <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="preload"
+    as="style"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+    onload="this.onload=null;this.rel='stylesheet'"
   />
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+    />
+  </noscript>
+
+  <!-- Google Fonts (Black Han Sans / Gaegu / JetBrains Mono) — 비동기 stylesheet -->
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gaegu:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    />
+  </noscript>
 
   <link rel="stylesheet" href="./css/tokens.css" />
   <link rel="stylesheet" href="./css/style.css" />
@@ -561,19 +584,20 @@
     </section>
   </main>
 
-  <script src="./js/config.js"></script>
-  <script src="./js/sound.js"></script>
-  <script src="./js/themes.js"></script>
-  <script src="./js/game-api.js"></script>
-  <script src="./js/effects.js"></script>
-  <script src="./js/wordData.js"></script>
-  <script src="./js/achievements.js"></script>
-  <script src="./js/grade.js"></script>
-  <script src="./js/ui.js"></script>
-  <script src="./js/input.js"></script>
-  <script src="./js/game.js"></script>
-  <script src="./js/effects-bindings.js"></script>
-  <script src="./js/main.js"></script>
+  <!-- PR-C: defer로 parser-blocking 제거 + 로드 순서 보존 -->
+  <script defer src="./js/config.js"></script>
+  <script defer src="./js/sound.js"></script>
+  <script defer src="./js/themes.js"></script>
+  <script defer src="./js/game-api.js"></script>
+  <script defer src="./js/effects.js"></script>
+  <script defer src="./js/wordData.js"></script>
+  <script defer src="./js/achievements.js"></script>
+  <script defer src="./js/grade.js"></script>
+  <script defer src="./js/ui.js"></script>
+  <script defer src="./js/input.js"></script>
+  <script defer src="./js/game.js"></script>
+  <script defer src="./js/effects-bindings.js"></script>
+  <script defer src="./js/main.js"></script>
 
   <!-- Service Worker 등록 — W4 박태준 PWA 인프라 -->
   <script>
