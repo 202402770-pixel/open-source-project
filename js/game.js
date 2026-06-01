@@ -18,6 +18,8 @@ class Game {
         this.totalTypedChars = 0;
         this.wpm = 0;
         this.activeWords = [...WordData.getWordsByLevel(this.level)];
+        this.bossWord = null;
+        this.bossKills = 0;
         Achievements.init();
         Achievements.checkAttendance();
 
@@ -28,6 +30,34 @@ class Game {
         const currentHour = new Date().getHours();
         if (currentHour >= 0 && currentHour < 6) {
             Achievements.check(ACHIEVEMENT_IDS.NIGHT_STUDY, 1);
+        }
+
+        // 첫 레벨에서도 보스 등장 가능성 체크 (실제 발화는 MIN_LEVEL 조건이 막음)
+        this._maybeSpawnBoss();
+    }
+
+    /**
+     * 레벨 진입 시 5% 확률로 활성 단어 1개를 보스로 마킹 (Lv 3+).
+     * 보스 등장 시 종소리 + 화면 흔들림 + 토스트 발화.
+     * Figma 21:2 / WORK_PLAN.md §3 W3 박태준
+     */
+    _maybeSpawnBoss() {
+        const cfg = CONFIG.BOSS || {};
+        if (this.level < (cfg.MIN_LEVEL || 3)) return;
+        if (Math.random() >= (cfg.PROBABILITY || 0.05)) return;
+        if (!this.activeWords || this.activeWords.length === 0) return;
+
+        const idx = Math.floor(Math.random() * this.activeWords.length);
+        this.bossWord = this.activeWords[idx];
+
+        if (typeof Sound !== 'undefined' && Sound.play) {
+            Sound.play('bell', 1.0);
+        }
+        if (typeof Effects !== 'undefined' && Effects.screenShake) {
+            Effects.screenShake();
+        }
+        if (typeof UI !== 'undefined' && UI.showToast) {
+            UI.showToast('기말고사 핵심 키워드!', `"${this.bossWord}" 등장`, 'BOSS');
         }
     }
 
@@ -69,6 +99,15 @@ class Game {
         this.totalTypedChars += word.length;
         this.successWords++;
         this.score += CONFIG.SCORING.WORD_DESTROY_BASE;
+
+        // 보스 단어 처치 — +200 보너스 + BOSS_HUNTER 카운트
+        if (this.bossWord && word === this.bossWord) {
+            this.score += CONFIG.SCORING.BOSS_BONUS;
+            this.bossKills += 1;
+            Achievements.check(ACHIEVEMENT_IDS.BOSS_HUNTER, this.bossKills);
+            this.bossWord = null;
+        }
+
         this.combo++;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.activeWords.splice(targetIndex, 1);
@@ -116,6 +155,7 @@ class Game {
         const nextWords = WordData.getWordsByLevel(this.level);
         if (nextWords && nextWords.length > 0){
             this.activeWords = [...nextWords];
+            this._maybeSpawnBoss();
         } else {
             this.gameClear();
         }

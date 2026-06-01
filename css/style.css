@@ -1934,3 +1934,24 @@ body.shake {
   height: 1px;
   background: rgba(139, 115, 85, 0.35);
 }
+
+/* =========================
+   Boss Shake (W3 박태준 — 보스 단어 등장)
+   강도는 --shake-intensity (Effects.screenShake에서 set), 지속은 CONFIG.BOSS.SHAKE_DURATION
+========================= */
+
+@keyframes boss-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(calc(-1 * var(--shake-intensity, 6px))); }
+  40%, 80% { transform: translateX(var(--shake-intensity, 6px)); }
+}
+
+body.boss-shake {
+  animation: boss-shake 200ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.boss-shake {
+    animation: none;
+  }
+}
