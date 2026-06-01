@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Type Defender</title>
 
+  <!-- PWA — W4 박태준 -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#1a5c3a" />
+  <meta name="description" content="교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내는 타이핑 디펜스 게임" />
+
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
@@ -560,5 +565,16 @@
   <script src="./js/game.js"></script>
   <script src="./js/effects-bindings.js"></script>
   <script src="./js/main.js"></script>
+
+  <!-- Service Worker 등록 — W4 박태준 PWA 인프라 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('[sw] 등록 실패:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
