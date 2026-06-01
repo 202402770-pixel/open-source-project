@@ -73,7 +73,17 @@ class Game {
         this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.activeWords.splice(targetIndex, 1);
         if (window.GameAPI && window.GameAPI.onWordDestroyed) {
-        GameAPI.onWordDestroyed(0, 0);
+            // word-display DOM의 화면 중앙 좌표 — 분필 가루가 단어 위치에서 발생
+            const wd = document.getElementById('word-display');
+            if (wd) {
+                const rect = wd.getBoundingClientRect();
+                GameAPI.onWordDestroyed(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2
+                );
+            } else {
+                GameAPI.onWordDestroyed(0, 0);
+            }
         }
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
         Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
