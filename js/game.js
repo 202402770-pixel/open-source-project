@@ -37,6 +37,10 @@ class Game {
         Achievements.init();
         if (this.mode === 'daily') {
             Achievements.checkAttendance();
+            // Daily 모드 진입 시 출석 도장 모달 표시 (W3 박태준 — Figma 21:59)
+            if (typeof UI !== 'undefined' && UI.toggleAttendanceModal) {
+                UI.toggleAttendanceModal(true);
+            }
         }
 
         let playCount = parseInt(localStorage.getItem(CONFIG.STORAGE.PLAY_COUNT)) || 0;

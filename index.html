@@ -243,6 +243,20 @@
       </div>
     </section>
 
+    <!-- Daily Attendance Modal (W3 박태준 — Figma 21:59) -->
+    <div id="attendance-modal" class="modal hidden">
+      <div class="modal-overlay" onclick="UI.toggleAttendanceModal(false)"></div>
+      <div class="attendance-modal-content">
+        <h2 class="attendance-title">
+          출석 도장
+          <span class="attendance-streak" id="attendance-streak">0일 연속</span>
+        </h2>
+        <p class="attendance-desc">Daily 모드 7일 연속 출석으로 "개근" 도전과제 달성!</p>
+        <div class="attendance-grid" id="attendance-grid" role="list" aria-label="최근 7일 출석"></div>
+        <button class="ranking-close-btn" onclick="UI.toggleAttendanceModal(false)">CLOSE</button>
+      </div>
+    </div>
+
     <!-- Achievement Modal -->
     <div id="achievement-modal" class="modal hidden">
       <div class="modal-overlay" onclick="UI.toggleAchievementModal(false)"></div>
