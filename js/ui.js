@@ -3,6 +3,10 @@ const UI = {
   currentTargetWord: null,
   controlsBound: false,
 
+  get combo() {
+    return document.getElementById('combo');
+  },
+  
   get wordDisplay() {
     return document.getElementById('word-display');
   },
@@ -799,13 +803,24 @@ const UI = {
       }
     }
 
+    if (userInput.length > this.lastInputLength && window.GameAPI) {
+      const addedChar = userInput[userInput.length - 1];
+      
+      // 방금 입력한 마지막 문자가 타겟 단어의 동일 인덱스 문자와 일치하는지 확인
+      if (!detectError && targetWord[userInput.length - 1] === addedChar) {
+          if (typeof GameAPI.onCorrectChar === 'function') GameAPI.onCorrectChar(addedChar);
+      } else {
+          if (typeof GameAPI.onWrongChar === 'function') GameAPI.onWrongChar(addedChar);
+      }
+    }
+
     if (detectError && typeof Effects !== 'undefined') {
       Effects.triggerErrorShake();
     }
 
     this.lastInputLength = userInput.length;
-  },
-
+  },  
+  
   addCursor() {
     if (!this.wordDisplay) return;
 
@@ -818,12 +833,22 @@ const UI = {
     if (this.score) this.score.textContent = `SCORE: ${state.score}`;
     if (this.level) this.level.textContent = `LV.${state.level}`;
     if (this.missed) this.missed.textContent = `MISSED: ${state.missed}`;
-
+    
     if (this.wpmDisplay) {
-      this.wpmDisplay.textContent = `WPM: ${state.wpm}`;
+        this.wpmDisplay.textContent = `WPM: ${state.wpm}`;
     }
 
-    this.updateHPBar(state.currentHP, state.maxHP || 100);
+    // Zen 모드일 경우 HP 등 불필요한 HUD 숨김 처리
+    if (state.mode === 'zen') {
+        if (this.hpFill && this.hpFill.parentElement) {
+            this.hpFill.parentElement.style.display = 'none';
+        }
+    } else {
+        if (this.hpFill && this.hpFill.parentElement) {
+            this.hpFill.parentElement.style.display = 'block'; // 일반 모드 노출
+        }
+        this.updateHPBar(state.currentHP, state.maxHP || 100);
+    }
   },
 
   updateHPBar(currentHP, maxHP) {

@@ -31,3 +31,7 @@ build/
 
 # OMC (oh-my-claudecode) harness state — internal tooling, not project code
 .omc/
+
+# Personal session / weekly memos — 작업자 로컬 메모, repo에 포함되지 않게
+*_SESSION_PROMPT.md
+weekly-update-*.md
