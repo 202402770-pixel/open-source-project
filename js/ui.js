@@ -914,15 +914,27 @@ const UI = {
   renderTargetWord(activeWords, userInput) {
     if (!this.wordDisplay) return;
 
+    const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
+
     if (!userInput || userInput === '') {
+      // PR-G: 입력 전에도 첫 활성 단어를 placeholder로 표시 — 사용자가
+      // 무엇을 입력해야 할지 시각적으로 알 수 있도록.
       this.wordDisplay.innerHTML = '';
-      this.addCursor();
       this.lastInputLength = 0;
       this.currentTargetWord = null;
+
+      const placeholder = wordsList.find((w) => w && w.length > 0);
+      if (placeholder) {
+        for (let i = 0; i < placeholder.length; i += 1) {
+          const span = document.createElement('span');
+          span.className = 'text-placeholder';
+          span.textContent = placeholder[i];
+          this.wordDisplay.appendChild(span);
+        }
+      }
+      this.addCursor();
       return;
     }
-
-    const wordsList = Array.isArray(activeWords) ? activeWords : [activeWords];
 
     let targetWord = wordsList.find((word) => word && word.startsWith(userInput));
     let detectError = false;
@@ -1062,6 +1074,43 @@ const UI = {
         toast.remove();
       });
     }, duration || 3000);
+  },
+
+  /**
+   * PR-G: 도전과제 잠금해제 전용 토스트 — 일반 토스트보다 두드러진 외형.
+   * - "도전과제 달성" eyebrow
+   * - 황금 액센트 + box-shadow glow
+   * - bell 사운드 (사용자 설정 levelupSound로 게이팅, Sound.canPlay 자동 판정)
+   * - 5초간 표시 (일반 3초 → 5초)
+   */
+  showAchievementToast(title, message, iconText) {
+    if (!this.toastContainer) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast toast--achievement';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+
+    toast.innerHTML = `
+      <div class="toast-accent toast-accent--gold"></div>
+      <div class="toast-icon toast-icon--badge">${iconText}</div>
+      <div class="toast-content">
+        <div class="toast-eyebrow">도전과제 달성</div>
+        <div class="toast-title">${title}</div>
+        <div class="toast-desc">${message}</div>
+      </div>
+    `;
+
+    this.toastContainer.appendChild(toast);
+
+    if (typeof Sound !== 'undefined' && typeof Sound.play === 'function') {
+      Sound.play('bell', 0.55);
+    }
+
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      toast.addEventListener('animationend', () => toast.remove());
+    }, 5000);
   },
 
   showGameOver(state) {

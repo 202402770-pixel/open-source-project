@@ -55,7 +55,12 @@ const Achievements = {
     complete(target) {
         target.isCompleted = true;
         this.save();
-        UI.showToast(target.title, target.description, target.icon);
+        // PR-G: 도전과제 잠금해제 전용 토스트 (특별한 시각 + bell 사운드 + 긴 표시)
+        if (typeof UI !== 'undefined' && typeof UI.showAchievementToast === 'function') {
+            UI.showAchievementToast(target.title, target.description, target.icon);
+        } else {
+            UI.showToast(target.title, target.description, target.icon);
+        }
     },
 
     save() {
