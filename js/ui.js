@@ -870,7 +870,7 @@ const UI = {
     }
   },
 
-  showToast(title, message, iconText) {
+  showToast(title, message, iconText, duration) {
     if (!this.toastContainer) return;
 
     const toast = document.createElement('div');
@@ -893,7 +893,7 @@ const UI = {
       toast.addEventListener('animationend', () => {
         toast.remove();
       });
-    }, 3000);
+    }, duration || 3000);
   },
 
   showGameOver(state) {

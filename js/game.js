@@ -256,6 +256,23 @@ class Game {
 
         if (nextWords && nextWords.length > 0){
             this.activeWords = [...nextWords];
+
+            // 레벨업 트랜지션 — 칠판 wipe + 단원 텍스트 교체 + LV.X 토스트
+            // Figma 21:29 / WORK_PLAN.md §3 W3 박태준
+            const nextLevel = this.level;
+            if (typeof Effects !== 'undefined' && Effects.boardWipe) {
+                Effects.boardWipe(() => {
+                    // wipe 중간 시점(300ms)에 단원 텍스트 교체
+                    const lectureTitle = document.querySelector('.blackboard h2');
+                    if (lectureTitle) {
+                        lectureTitle.textContent = `LV.${nextLevel} 단원`;
+                    }
+                });
+            }
+            if (typeof UI !== 'undefined' && UI.showToast) {
+                UI.showToast(`LV.${nextLevel}`, '새 단원 시작!', `LV${nextLevel}`, 1200);
+            }
+
             this._maybeSpawnBoss();
         } else {
             this.gameClear();
