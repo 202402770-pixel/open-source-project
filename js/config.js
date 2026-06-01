@@ -22,15 +22,18 @@ const CONFIG = {
     SPAWN_REDUCTION_PER_LEVEL: 150,  // 레벨당 spawn 주기 단축 (ms)
     PLAY_AREA_TOP_PADDING: 0,        // 단어 spawn 시작 y (px)
     MISS_DAMAGE: 1,                  // 단어 미스 시 HP 감소량 (기획서 -1, 박태준 추가 결정 2026-05-23)
+    WORD_LIFETIME_MS: 8000,          // PR-D: 단어 한 개 입력 제한 시간 (ms). DIFFICULTY.wordLifetimeMult로 조정
+    WORD_LIFETIME_WARN_RATIO: 0.65,  // PR-D: 경고 표시 시작 비율 (65% 경과 시 .danger 클래스)
+    WORD_LIFETIME_CRITICAL_RATIO: 0.85, // PR-D: 임박 표시 비율 (85% 경과 시 .critical 클래스)
   },
 
   /* ────────────────────────────────────────────────────────────────────
    * Difficulty Multipliers (Easy / Normal / Hard)
    * ──────────────────────────────────────────────────────────────────── */
   DIFFICULTY: {
-    easy:   { speedMult: 0.7, spawnMult: 1.4, startHP: 7 },
-    normal: { speedMult: 1.0, spawnMult: 1.0, startHP: 5 },
-    hard:   { speedMult: 1.4, spawnMult: 0.6, startHP: 3 },
+    easy:   { speedMult: 0.7, spawnMult: 1.4, startHP: 7, wordLifetimeMult: 1.5 },
+    normal: { speedMult: 1.0, spawnMult: 1.0, startHP: 5, wordLifetimeMult: 1.0 },
+    hard:   { speedMult: 1.4, spawnMult: 0.6, startHP: 3, wordLifetimeMult: 0.7 },
   },
 
   /* ────────────────────────────────────────────────────────────────────
