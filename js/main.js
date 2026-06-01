@@ -43,10 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. 재시작 버튼 연동
+    // 4. 재시작 버튼 — PR-B: 페이지 리로드 제거. 같은 모드/난이도로 즉시 새 게임.
     const restartBtn = document.getElementById('restart-btn');
     if (restartBtn) {
-        restartBtn.addEventListener('click', () => location.reload());
+        restartBtn.addEventListener('click', async () => {
+            if (game) game.isGameOver = true; // 기존 gameLoop 중단
+            game = null;
+            const difficulty = typeof UI !== 'undefined' && typeof UI.getActiveDifficulty === 'function'
+                ? UI.getActiveDifficulty()
+                : 'easy';
+            await start(selectedMode, difficulty);
+            UI.showScene('play');
+        });
     }
 });
 

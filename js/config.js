@@ -50,7 +50,8 @@ const CONFIG = {
     WORD_DESTROY_BASE: 10,           // 정답 기본 점수
     COMBO_MULTIPLIER: 2,             // 콤보 가산 비율 (10 + combo * 2)
     BOSS_BONUS: 200,                 // 보스 단어 처치 보너스
-    COMBO_GLOW_THRESHOLD: 10,        // 콤보 N 이상에서 노트 글로우
+    COMBO_GLOW_THRESHOLD: 10,        // 콤보 N 이상에서 노트 글로우 (1단계 진입)
+    COMBO_GLOW_TIERS: [10, 20, 30],  // PR-B 단계화: 콤보 10/20/30 — glow-combo10/20/30
   },
 
   /* ────────────────────────────────────────────────────────────────────
