@@ -2579,3 +2579,46 @@ body.boss-shake {
     animation: none;
   }
 }
+
+/* =========================
+   Board Wipe (W3 박태준 — 레벨업 트랜지션)
+   칠판 위로 흰 분필가루 띠가 가로로 쓸고 지나감
+   지속은 CONFIG.EFFECTS.LEVELUP_TRANSITION (600ms)
+========================= */
+
+.blackboard {
+  position: relative;
+  overflow: hidden;
+}
+
+.blackboard.wipe::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 244, 235, 0.0) 20%,
+    rgba(244, 244, 235, 0.55) 50%,
+    rgba(244, 244, 235, 0.0) 80%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: board-wipe 600ms ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes board-wipe {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blackboard.wipe::before {
+    animation: none;
+  }
+}

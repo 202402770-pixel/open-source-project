@@ -154,6 +154,34 @@ const Effects = {
     },
 
   /**
+   * 레벨업 트랜지션 — 칠판에 흰 분필가루 띠가 가로로 쓸고 지나감 (W3 박태준).
+   * CSS: .blackboard.wipe + @keyframes board-wipe
+   * 지속은 CONFIG.EFFECTS.LEVELUP_TRANSITION 따름.
+   * 중간 시점에 콜백 발화 — 단원 텍스트 교체에 사용 가능.
+   *
+   * @param {Function} [callback] - wipe 중간 시점(dur/2)에 호출. 단원 텍스트 갱신용
+   */
+  boardWipe(callback) {
+    const dur = (typeof CONFIG !== 'undefined' && CONFIG.EFFECTS && CONFIG.EFFECTS.LEVELUP_TRANSITION) || 600;
+    if (Effects._reducedMotion()) {
+      if (typeof callback === 'function') callback();
+      return;
+    }
+    const board = document.querySelector('.blackboard');
+    if (!board) {
+      if (typeof callback === 'function') callback();
+      return;
+    }
+    board.classList.remove('wipe');
+    void board.offsetWidth; // reflow — 연속 호출 시 애니메이션 재시작
+    board.classList.add('wipe');
+    if (typeof callback === 'function') {
+      setTimeout(callback, dur / 2);
+    }
+    setTimeout(() => board.classList.remove('wipe'), dur + 20);
+  },
+
+  /**
    * 보스 단어 등장 시 화면 흔들림 (W3 박태준).
    * CSS: body.boss-shake + @keyframes boss-shake
    * 지속/강도는 CONFIG.BOSS.SHAKE_DURATION / SHAKE_INTENSITY 따름.
