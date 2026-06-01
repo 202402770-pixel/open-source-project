@@ -29,6 +29,7 @@ class Game {
 
         this.isGameOver = false;
         this.isPaused = false;
+        this.softPaused = false; // PR-E: 모달/페이지 가시성 일시정지 (overlay 없음)
 
         this.startTime = Date.now();
         this.totalTypedChars = 0;
@@ -155,20 +156,45 @@ class Game {
 
     /**
      * PR-D: gameLoop마다 호출. 만료된 단어 expire 처리.
+     * PR-E 핫픽스: 한 번에 가장 오래된 단어 1개만 처리 (6단어 동시 만료 → 즉사 방지).
+     * softPaused 시 no-op (모달/페이지 가시성 일시정지).
      */
     checkWordTimeouts() {
-        if (this.isPaused || this.isGameOver) return;
+        if (this.isPaused || this.softPaused || this.isGameOver) return;
         const lifetime = this.getWordLifetimeMs();
         if (!isFinite(lifetime)) return;
 
         const now = Date.now();
-        const expired = this.activeWords.filter((w) => {
+        let oldestWord = null;
+        let oldestTime = Infinity;
+        this.activeWords.forEach((w) => {
             const t = this.wordSpawnTimes[w] || now;
-            return (now - t) > lifetime;
+            if ((now - t) > lifetime && t < oldestTime) {
+                oldestTime = t;
+                oldestWord = w;
+            }
         });
-        if (expired.length === 0) return;
+        if (oldestWord) this._expireWord(oldestWord);
+    }
 
-        expired.forEach((w) => this._expireWord(w));
+    /**
+     * PR-E: 모달/페이지 가시성 일시정지. Pause overlay 없이 시간만 멈춤.
+     * 일시정지 동안 흐른 시간만큼 wordSpawnTimes를 미래로 미루어 보정.
+     */
+    softPause() {
+        if (this.isPaused || this.isGameOver || this.softPaused) return;
+        this.softPaused = true;
+        this._softPauseStart = Date.now();
+    }
+
+    softResume() {
+        if (!this.softPaused) return;
+        this.softPaused = false;
+        const elapsed = Date.now() - (this._softPauseStart || Date.now());
+        Object.keys(this.wordSpawnTimes).forEach((w) => {
+            this.wordSpawnTimes[w] += elapsed;
+        });
+        this._softPauseStart = null;
     }
 
     _expireWord(word) {

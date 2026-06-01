@@ -331,12 +331,14 @@ const UI = {
     this.tutorialIndex = index;
     this.tutorialModal.classList.remove('hidden');
     this.renderTutorialSlide();
+    this._softPauseGameIfPlaying(); // PR-E: 게임 진행 중 도움말 보기 안전
   },
 
   closeTutorial() {
     if (!this.tutorialModal) return;
 
     this.tutorialModal.classList.add('hidden');
+    this._softResumeGameIfPlaying();
   },
 
   renderTutorialSlide() {
@@ -738,12 +740,28 @@ const UI = {
     });
   },
 
+  // PR-E: 모달 열림 시 게임 자동 softPause (overlay 없이 시간만 정지)
+  _softPauseGameIfPlaying() {
+    if (window.game && !window.game.isGameOver && !window.game.isPaused
+      && typeof window.game.softPause === 'function') {
+      window.game.softPause();
+    }
+  },
+
+  _softResumeGameIfPlaying() {
+    if (window.game && !window.game.isGameOver
+      && typeof window.game.softResume === 'function') {
+      window.game.softResume();
+    }
+  },
+
   openSettings() {
     if (!this.settingsModal) return;
 
     this.updateSettingsForm();
     this.settingsModal.classList.remove('hidden');
     this.settingsModal.setAttribute('aria-hidden', 'false');
+    this._softPauseGameIfPlaying();
   },
 
   closeSettings() {
@@ -751,6 +769,7 @@ const UI = {
 
     this.settingsModal.classList.add('hidden');
     this.settingsModal.setAttribute('aria-hidden', 'true');
+    this._softResumeGameIfPlaying();
 
     const hiddenInput = document.getElementById('hidden-input');
     if (hiddenInput) hiddenInput.focus();
