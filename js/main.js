@@ -108,11 +108,17 @@ async function start(mode = 'classic', difficulty = 'easy') {
 }
 
 function gameLoop() {
-    if (game.isGameOver) return;
+    if (!game || game.isGameOver) return;
     if (!game.isPaused) {
         game.calculateWPM();
         if (typeof game.checkTime === 'function') {
             game.checkTime();
+        }
+        if (typeof game.checkWordTimeouts === 'function') {
+            game.checkWordTimeouts(); // PR-D: 단어 만료 체크 (+takeDamage)
+        }
+        if (UI && typeof UI.updateWordDanger === 'function') {
+            UI.updateWordDanger(game); // PR-D: 임박 만료 비율을 .notebook-input에 시각 표시
         }
         UI.updateHUD(game);
     }

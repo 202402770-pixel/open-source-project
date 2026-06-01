@@ -36,6 +36,9 @@ class Game {
         this.activeWords = this.mode === 'daily'
             ? [...WordData.getDailyWords(this.level)]
             : [...WordData.getWordsByLevel(this.level)];
+        // PR-D: 단어별 spawn time 기록 — checkWordTimeouts에서 사용
+        this.wordSpawnTimes = {};
+        this._recordSpawnTimes(this.activeWords);
         this.bossWord = null;
         this.bossKills = 0;
         Achievements.init();
@@ -121,6 +124,8 @@ class Game {
             : WordData.getWordsByLevel(this.level);
         if (nextWords && nextWords.length > 0) {
             this.activeWords = [...nextWords];
+            this.wordSpawnTimes = {};
+            this._recordSpawnTimes(this.activeWords); // PR-D: 언어 전환 후 새 단어 spawn time
         }
         // 4. UI 갱신 (화면의 기존 단어 지우기)
         UI.renderTargetWord(this.activeWords, "");
@@ -128,6 +133,92 @@ class Game {
 
     getActiveWords() {
         return this.activeWords;
+    }
+
+    /**
+     * PR-D: 단어 한 개의 시간 제한 (ms) — 난이도별 wordLifetimeMult 적용.
+     * Zen 모드는 시간 제한 없음 (Infinity 반환).
+     */
+    getWordLifetimeMs() {
+        const modeConfig = CONFIG.MODES[this.mode] || {};
+        if (modeConfig.hasHP === false) return Infinity; // Zen
+        const base = (CONFIG.CORE && CONFIG.CORE.WORD_LIFETIME_MS) || 8000;
+        const diffConfig = CONFIG.DIFFICULTY[this.difficulty] || CONFIG.DIFFICULTY.normal;
+        const mult = (diffConfig && diffConfig.wordLifetimeMult) || 1;
+        return base * mult;
+    }
+
+    _recordSpawnTimes(words) {
+        const now = Date.now();
+        (words || []).forEach((w) => { this.wordSpawnTimes[w] = now; });
+    }
+
+    /**
+     * PR-D: gameLoop마다 호출. 만료된 단어 expire 처리.
+     */
+    checkWordTimeouts() {
+        if (this.isPaused || this.isGameOver) return;
+        const lifetime = this.getWordLifetimeMs();
+        if (!isFinite(lifetime)) return;
+
+        const now = Date.now();
+        const expired = this.activeWords.filter((w) => {
+            const t = this.wordSpawnTimes[w] || now;
+            return (now - t) > lifetime;
+        });
+        if (expired.length === 0) return;
+
+        expired.forEach((w) => this._expireWord(w));
+    }
+
+    _expireWord(word) {
+        const idx = this.activeWords.indexOf(word);
+        if (idx === -1) return;
+
+        this.activeWords.splice(idx, 1);
+        delete this.wordSpawnTimes[word];
+        this.missed++;
+        this.levelMissed++;
+        this.takeDamage(CONFIG.CORE.MISS_DAMAGE);
+
+        if (typeof Effects !== 'undefined' && Effects.triggerErrorShake) {
+            Effects.triggerErrorShake();
+        }
+
+        const modeConfig = CONFIG.MODES[this.mode];
+        if (modeConfig && modeConfig.hasCombo) {
+            this.combo = 0;
+            if (typeof Effects !== 'undefined' && Effects.toggleGlow) Effects.toggleGlow(false);
+            if (window.GameAPI && typeof GameAPI.onComboChange === 'function') {
+                GameAPI.onComboChange(this.combo);
+            }
+        }
+
+        if (typeof UI !== 'undefined' && UI.renderTargetWord) {
+            UI.renderTargetWord(this.activeWords, "");
+        }
+
+        if (this.activeWords.length === 0) {
+            this.levelUp();
+        }
+    }
+
+    /**
+     * PR-D: 활성 단어 중 가장 임박한 만료 비율 (0~1). UI 경고 표시용.
+     * 1에 가까울수록 곧 만료. Zen 모드 또는 활성 단어 없으면 0.
+     */
+    getMostImpendingExpiryRatio() {
+        if (this.activeWords.length === 0) return 0;
+        const lifetime = this.getWordLifetimeMs();
+        if (!isFinite(lifetime)) return 0;
+        const now = Date.now();
+        let maxRatio = 0;
+        this.activeWords.forEach((w) => {
+            const t = this.wordSpawnTimes[w] || now;
+            const ratio = Math.min(1, (now - t) / lifetime);
+            if (ratio > maxRatio) maxRatio = ratio;
+        });
+        return maxRatio;
     }
 
     pause() {
@@ -201,6 +292,7 @@ class Game {
         }
 
         this.activeWords.splice(targetIndex, 1);
+        delete this.wordSpawnTimes[word]; // PR-D: 정답 시 만료 시간 제거
 
         // 분필 가루 — word-display DOM 중앙 좌표
         if (window.GameAPI && window.GameAPI.onWordDestroyed) {
@@ -278,6 +370,8 @@ class Game {
 
         if (nextWords && nextWords.length > 0){
             this.activeWords = [...nextWords];
+            this.wordSpawnTimes = {};
+            this._recordSpawnTimes(this.activeWords); // PR-D: 새 레벨 단어에 spawn time 기록
 
             // 레벨업 트랜지션 — 칠판 wipe + 단원 텍스트 교체 + LV.X 토스트
             // Figma 21:29 / WORK_PLAN.md §3 W3 박태준

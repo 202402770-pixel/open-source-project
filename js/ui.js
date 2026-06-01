@@ -872,6 +872,26 @@ const UI = {
     });
   },
 
+  /**
+   * PR-D: 활성 단어의 만료 임박 비율을 .notebook-input에 시각 표시.
+   *   65~85%: .danger (붉은 외곽)
+   *   85%+:   .critical (펄스 + 강한 글로우)
+   * Zen 모드 / 만료 없을 시 모든 경고 클래스 제거.
+   */
+  updateWordDanger(gameInstance) {
+    if (!gameInstance || typeof gameInstance.getMostImpendingExpiryRatio !== 'function') return;
+    const notebook = document.querySelector('.notebook-input');
+    if (!notebook) return;
+
+    const ratio = gameInstance.getMostImpendingExpiryRatio();
+    const warnRatio = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_LIFETIME_WARN_RATIO) || 0.65;
+    const critRatio = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_LIFETIME_CRITICAL_RATIO) || 0.85;
+
+    notebook.classList.remove('danger', 'critical');
+    if (ratio >= critRatio) notebook.classList.add('critical');
+    else if (ratio >= warnRatio) notebook.classList.add('danger');
+  },
+
   renderTargetWord(activeWords, userInput) {
     if (!this.wordDisplay) return;
 
