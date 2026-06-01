@@ -2,13 +2,15 @@
   "name": "type-defender",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내는 타이핑 디펜스 게임",
   "scripts": {
     "serve": "python3 -m http.server 8000",
     "verify": "bash scripts/verify.sh",
     "verify:lighthouse": "bash scripts/verify-lighthouse.sh",
-    "verify:playwright": "playwright test scripts/verify-e2e.spec.js",
-    "playwright:install": "playwright install chromium"
+    "verify:playwright": "playwright test",
+    "playwright:install": "playwright install chromium",
+    "lint:words": "node scripts/wordData-lint.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.0",
