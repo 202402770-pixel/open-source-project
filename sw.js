@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v3'; // PR-E: viewport-fit + softPause + 만료 1개씩 — CSS/JS 갱신
+const CACHE_VERSION = 'td-v4'; // PR-F: 모바일 viewport-fit + 단어 spawn stagger
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋
