@@ -1,5 +1,6 @@
 let game;
-let selectedMode = 'classic'; // 기본 모드
+let selectedMode = 'classic';        // 기본 모드 (시작 화면 active)
+let selectedDifficulty = 'easy';     // 기본 난이도 (시작 화면 active)
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. 게임 모드 선택 버튼 연동
@@ -8,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const modeButtons = modeGroup.querySelectorAll('.td-toggle');
         modeButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // 클릭된 버튼의 텍스트를 확인하여 모드 설정
                 const modeText = e.target.textContent.trim().toUpperCase();
                 if (modeText === 'CLASSIC') selectedMode = 'classic';
                 else if (modeText === 'TIME ATTACK') selectedMode = 'timeattack';
@@ -18,25 +18,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. '받아적을게요' (플레이) 버튼 연동
-    const playBtn = document.querySelector('[data-go="play"]');
-    if (playBtn) {
-        playBtn.addEventListener('click', () => {
-            start(selectedMode);
+    // 2. 난이도 선택 버튼 연동 (이슈 #35)
+    const difficultyGroup = document.querySelector('[aria-label="난이도 선택"]');
+    if (difficultyGroup) {
+        const difficultyButtons = difficultyGroup.querySelectorAll('.td-toggle');
+        difficultyButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const txt = e.target.textContent.trim().toUpperCase();
+                if (txt === 'EASY') selectedDifficulty = 'easy';
+                else if (txt === 'NORMAL') selectedDifficulty = 'normal';
+                else if (txt === 'HARD') selectedDifficulty = 'hard';
+            });
         });
     }
 
-    // 3. 재시작 버튼 연동 (기존 로직)
+    // 3. '받아적을게요' (플레이) 버튼 — 선택된 모드/난이도로 게임 시작
+    const playBtn = document.querySelector('[data-go="play"]');
+    if (playBtn) {
+        playBtn.addEventListener('click', () => {
+            start(selectedMode, selectedDifficulty);
+        });
+    }
+
+    // 4. 재시작 버튼 연동
     const restartBtn = document.getElementById('restart-btn');
     if (restartBtn) {
         restartBtn.addEventListener('click', () => location.reload());
     }
 });
 
-async function start(mode = 'classic') {
+async function start(mode = 'classic', difficulty = 'easy') {
     Sound.init();
     await WordData.loadWords();
-    game = new Game(mode);
+    game = new Game(mode, difficulty);
 
     Input.init(
         (val) => {
