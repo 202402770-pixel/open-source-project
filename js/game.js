@@ -1,6 +1,7 @@
 class Game {
-    constructor(mode = 'classic') {
+    constructor(mode = 'classic', difficulty = 'easy') {
         this.mode = mode;
+        this.difficulty = difficulty;
         this.score = 0;
         this.combo = 0;
         this.maxCombo = 0;
@@ -8,15 +9,18 @@ class Game {
         this.missed = 0;
         // HP 5칸 (WORK_PLAN.md §3 W2 "Classic: HP 5에서 시작, 단어 미스 시 -1")
         // 시각 표시는 percent 게이지 (DESIGN.md §3.5) — ui.updateHPBar가 비율 계산
-        // 모드별 HP/타이머 분기 (PR #40)
+        // 모드별 HP/타이머 분기 (PR #40) + 난이도별 startHP/multiplier (이슈 #35)
         const modeConfig = CONFIG.MODES[this.mode];
+        const diffConfig = CONFIG.DIFFICULTY[this.difficulty] || CONFIG.DIFFICULTY.normal;
         if (!modeConfig) {
             console.error(`[Error] 알 수 없는 모드입니다: ${this.mode}`);
         } else {
-            const defaultHP = CONFIG.DIFFICULTY.normal.startHP;
-            this.maxHP = modeConfig.hasHP ? defaultHP : Infinity;
+            this.maxHP = modeConfig.hasHP ? diffConfig.startHP : Infinity;
             this.currentHP = this.maxHP;
             this.timeLimit = modeConfig.timeLimit;
+            // 난이도 multiplier — 후속 spawn/낙하 로직에서 활용
+            this.speedMult = diffConfig.speedMult;
+            this.spawnMult = diffConfig.spawnMult;
         }
         this.levelAttempts = 0;
         this.levelMissed = 0;
