@@ -8,9 +8,10 @@ class Game {
         this.missed = 0;
         // HP 5칸 (WORK_PLAN.md §3 W2 "Classic: HP 5에서 시작, 단어 미스 시 -1")
         // 시각 표시는 percent 게이지 (DESIGN.md §3.5) — ui.updateHPBar가 비율 계산
-        const modeConfig = CONFIG.MODES[this.mode]; // config를 이용하여 변수 정의
+        // 모드별 HP/타이머 분기 (PR #40)
+        const modeConfig = CONFIG.MODES[this.mode];
         if (!modeConfig) {
-            console.error(`[Error] 알 수 없는 모드입니다: ${this.mode}`); // 예외 처리
+            console.error(`[Error] 알 수 없는 모드입니다: ${this.mode}`);
         } else {
             const defaultHP = CONFIG.DIFFICULTY.normal.startHP;
             this.maxHP = modeConfig.hasHP ? defaultHP : Infinity;
@@ -21,7 +22,10 @@ class Game {
         this.levelMissed = 0;
         this.totalWordAttempts = 0;
         this.successWords = 0;
+
         this.isGameOver = false;
+        this.isPaused = false;
+
         this.startTime = Date.now();
         this.totalTypedChars = 0;
         this.wpm = 0;
@@ -38,7 +42,7 @@ class Game {
         let playCount = parseInt(localStorage.getItem(CONFIG.STORAGE.PLAY_COUNT)) || 0;
         playCount++;
         localStorage.setItem(CONFIG.STORAGE.PLAY_COUNT, playCount);
-        
+
         const currentHour = new Date().getHours();
         if (currentHour >= 0 && currentHour < 6) {
             Achievements.check(ACHIEVEMENT_IDS.NIGHT_STUDY, 1);
@@ -49,7 +53,8 @@ class Game {
     }
 
     takeDamage(amount) {
-        if (this.mode === 'zen') return; // Zen 모드는 HP 무한
+        if (this.isPaused) return;             // PR #38: 일시정지 중엔 데미지 없음
+        if (this.mode === 'zen') return;       // PR #40: Zen 모드는 HP 무한
         this.currentHP -= amount;
         if (this.currentHP < 0) this.currentHP = 0;
         UI.updateHPBar(this.currentHP, this.maxHP);
@@ -117,25 +122,61 @@ class Game {
         return this.activeWords;
     }
 
+    pause() {
+        if (this.isGameOver || this.isPaused) return;
+
+        this.isPaused = true;
+        UI.showPauseOverlay();
+    }
+
+    resume() {
+        if (this.isGameOver || !this.isPaused) return;
+
+        this.isPaused = false;
+        UI.hidePauseOverlay();
+    }
+
+    togglePause() {
+        if (this.isGameOver) return;
+
+        if (this.isPaused) {
+            this.resume();
+        } else {
+            this.pause();
+        }
+    }
+
+    goToMenu() {
+        this.isPaused = false;
+        UI.hidePauseOverlay();
+        location.reload();
+    }
+
     checkAnswer(inputWord) {
-        if(!inputWord || inputWord.trim() === "") return;
+        if (this.isPaused) return;
+        if (!inputWord || inputWord.trim() === "") return;
+
         this.levelAttempts++;
-        this.totalWordAttempts++
+        this.totalWordAttempts++;
+
         const targetIndex = this.activeWords.indexOf(inputWord);
+
         if (targetIndex !== -1) {
             this.handleSuccess(targetIndex, inputWord);
         } else if (inputWord !== "") {
             this.levelMissed++;
             this.handleFailure();
         }
+
         UI.updateHUD(this);
     }
 
     handleSuccess(targetIndex, word) {
+        if (this.isPaused) return;
+
         this.totalTypedChars += word.length;
         this.successWords++;
         this.score += CONFIG.SCORING.WORD_DESTROY_BASE;
-
         // 보스 단어 처치 — +200 보너스 + BOSS_HUNTER 카운트
         if (this.bossWord && word === this.bossWord) {
             this.score += CONFIG.SCORING.BOSS_BONUS;
@@ -146,7 +187,7 @@ class Game {
 
         this.activeWords.splice(targetIndex, 1);
 
-        // 분필 가루 — word-display DOM 중앙 좌표 (박태준 fixup)
+        // 분필 가루 — word-display DOM 중앙 좌표
         if (window.GameAPI && window.GameAPI.onWordDestroyed) {
             const wd = document.getElementById('word-display');
             if (wd) {
@@ -183,6 +224,8 @@ class Game {
     }
 
     handleFailure() {
+        if (this.isPaused) return;
+
         this.missed++;
         this.takeDamage(CONFIG.CORE.MISS_DAMAGE); // 기획서: 단어 미스 시 HP -1 (WORK_PLAN.md §3 W2)
         const modeConfig = CONFIG.MODES[this.mode];
@@ -196,18 +239,21 @@ class Game {
     }
 
     levelUp() {
-        Sound.play('levelUp', 1.0)
+        Sound.play('levelUp', 1.0);
+
         if (this.levelAttempts > 0) {
             const accuracy = ((this.levelAttempts - this.levelMissed) / this.levelAttempts) * 100;
         }
+
         this.levelAttempts = 0;
         this.levelMissed = 0;
         this.level++;
+
         Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
         const nextWords = this.mode === 'daily'
             ? WordData.getDailyWords(this.level)
             : WordData.getWordsByLevel(this.level);
-            
+
         if (nextWords && nextWords.length > 0){
             this.activeWords = [...nextWords];
             this._maybeSpawnBoss();
@@ -218,6 +264,9 @@ class Game {
 
     gameClear() {
         this.isGameOver = true;
+        this.isPaused = false;
+
+        UI.hidePauseOverlay();
         Achievements.check(ACHIEVEMENT_IDS.GRADUATION, this.level);
         UI.showToast("게임 클리어!", "모든 단어를 방어했습니다.", "축");
         UI.showGameOver(this);
@@ -225,16 +274,22 @@ class Game {
 
     gameOver() {
         if (this.isGameOver) return;
+
         this.isGameOver = true;
+        this.isPaused = false;
+
+        UI.hidePauseOverlay();
         UI.showToast("게임 오버!", "다시 도전해 보세요.", "死");
         UI.showGameOver(this);
     }
 
-    calculateWPM(){
-        if(this.isGameOver) return;
+    calculateWPM() {
+        if (this.isGameOver || this.isPaused) return;
+
         const minutes = (Date.now() - this.startTime) / 60000;
-        if(minutes > 0.05){
-            this.wpm = Math.floor((this.totalTypedChars/5)/minutes);
+
+        if (minutes > 0.05) {
+            this.wpm = Math.floor((this.totalTypedChars / 5) / minutes);
             Achievements.check(ACHIEVEMENT_IDS.SPEED_RUNNER, this.wpm);
         } else {
             this.wpm = 0;

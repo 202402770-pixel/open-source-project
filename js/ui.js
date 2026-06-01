@@ -69,14 +69,17 @@ const UI = {
 
   toggleAchievementModal(show) {
     if (!this.achievementModal) return;
+
     if (show) {
       if (this.achievementTabs[0] && !this.achievementTabs[0].dataset.initialized) {
         this.initAchievements();
         this.achievementTabs[0].dataset.initialized = 'true';
       }
+
       this.achievementModal.classList.remove('hidden');
       this.renderAchievements('all');
       this.achievementTabs.forEach((t) => t.classList.remove('active'));
+
       const allTab = document.querySelector('.achieve-tab-btn[data-filter="all"]');
       if (allTab) allTab.classList.add('active');
     } else {
@@ -86,17 +89,23 @@ const UI = {
 
   renderAchievements(filter) {
     if (!this.achievementContainer) return;
+
     this.achievementContainer.innerHTML = '';
+
     const challenges = Achievements.CHALLENGES;
     const acquiredCount = challenges.filter((c) => c.isCompleted).length;
+
     if (this.achievementProgress) {
       this.achievementProgress.innerText = `${acquiredCount} / ${challenges.length}`;
     }
+
     challenges.forEach((challenge) => {
       if (filter === 'acquired' && !challenge.isCompleted) return;
       if (filter === 'unacquired' && challenge.isCompleted) return;
+
       const statusClass = challenge.isCompleted ? 'acquired' : 'unacquired';
       const iconText = challenge.isCompleted ? challenge.icon : '🔒';
+
       const card = document.createElement('div');
       card.className = `achieve-card ${statusClass}`;
       card.innerHTML = `
@@ -104,6 +113,7 @@ const UI = {
         <div class="achieve-name">${challenge.title}</div>
         <div class="achieve-desc">${challenge.description}</div>
       `;
+
       this.achievementContainer.appendChild(card);
     });
   },
@@ -161,6 +171,26 @@ const UI = {
     ],
   },
 
+  settingsDefaults: {
+    lecture: {
+      language: 'ko',
+      difficulty: 'easy',
+      customWords: '',
+    },
+    appearance: {
+      theme: 'classroom',
+      fontSize: 'medium',
+      reducedMotion: false,
+      highContrast: false,
+    },
+    sound: {
+      sfxVolume: 70,
+      bgmVolume: 30,
+      keyboardSound: true,
+      levelupSound: true,
+    },
+  },
+
   initControls() {
     if (this.controlsBound) return;
     this.controlsBound = true;
@@ -186,6 +216,449 @@ const UI = {
         this.showScene(targetScene);
       });
     });
+  },
+
+  initTutorial() {
+    this.tutorialIndex = 0;
+    this.tutorialDoneKey = 'tutorial_done';
+
+    this.tutorialModal = document.getElementById('tutorial-modal');
+    this.tutorialSlides = document.querySelectorAll('[data-tutorial-slide]');
+    this.tutorialDots = document.querySelectorAll('.tutorial-dot');
+    this.tutorialNextBtn = document.querySelector('[data-tutorial-action="next"]');
+    this.tutorialPrevBtn = document.querySelector('[data-tutorial-action="prev"]');
+    this.tutorialSkipBtn = document.querySelector('[data-tutorial-action="skip"]');
+    this.showTutorialBtn = document.getElementById('show-tutorial-btn');
+
+    if (!this.tutorialModal || this.tutorialSlides.length === 0) return;
+
+    if (this.tutorialNextBtn) {
+      this.tutorialNextBtn.addEventListener('click', () => this.nextTutorialSlide());
+    }
+
+    if (this.tutorialPrevBtn) {
+      this.tutorialPrevBtn.addEventListener('click', () => this.prevTutorialSlide());
+    }
+
+    if (this.tutorialSkipBtn) {
+      this.tutorialSkipBtn.addEventListener('click', () => {
+        localStorage.setItem(this.tutorialDoneKey, 'true');
+        this.closeTutorial();
+      });
+    }
+
+    if (this.showTutorialBtn) {
+      this.showTutorialBtn.addEventListener('click', () => {
+        this.openTutorial(0);
+      });
+    }
+
+    const isTutorialDone = localStorage.getItem(this.tutorialDoneKey) === 'true';
+
+    if (!isTutorialDone) {
+      this.openTutorial(0);
+    }
+  },
+
+  openTutorial(index = 0) {
+    if (!this.tutorialModal) return;
+
+    this.tutorialIndex = index;
+    this.tutorialModal.classList.remove('hidden');
+    this.renderTutorialSlide();
+  },
+
+  closeTutorial() {
+    if (!this.tutorialModal) return;
+
+    this.tutorialModal.classList.add('hidden');
+  },
+
+  renderTutorialSlide() {
+    if (!this.tutorialSlides || this.tutorialSlides.length === 0) return;
+
+    this.tutorialSlides.forEach((slide, index) => {
+      slide.classList.toggle('is-active', index === this.tutorialIndex);
+    });
+
+    if (this.tutorialDots) {
+      this.tutorialDots.forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === this.tutorialIndex);
+      });
+    }
+
+    if (this.tutorialPrevBtn) {
+      this.tutorialPrevBtn.disabled = this.tutorialIndex === 0;
+    }
+
+    if (this.tutorialNextBtn) {
+      const isLastSlide = this.tutorialIndex === this.tutorialSlides.length - 1;
+      this.tutorialNextBtn.textContent = isLastSlide ? '반격할게요' : '다음';
+    }
+  },
+
+  nextTutorialSlide() {
+    if (!this.tutorialSlides || this.tutorialSlides.length === 0) return;
+
+    const isLastSlide = this.tutorialIndex === this.tutorialSlides.length - 1;
+
+    if (isLastSlide) {
+      localStorage.setItem(this.tutorialDoneKey, 'true');
+      this.closeTutorial();
+      this.showScene('play');
+      return;
+    }
+
+    this.tutorialIndex += 1;
+    this.renderTutorialSlide();
+  },
+
+  prevTutorialSlide() {
+    if (this.tutorialIndex <= 0) return;
+
+    this.tutorialIndex -= 1;
+    this.renderTutorialSlide();
+  },
+
+  initPauseControls(gameInstance) {
+    this.currentGame = gameInstance;
+
+    const pauseBtn = document.getElementById('pause-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+    const menuBtn = document.getElementById('pause-menu-btn');
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.togglePause();
+      });
+    }
+
+    if (resumeBtn) {
+      resumeBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.resume();
+      });
+    }
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        if (this.currentGame) this.currentGame.goToMenu();
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (!this.currentGame || this.currentGame.isGameOver) return;
+
+      event.preventDefault();
+      this.currentGame.togglePause();
+    });
+  },
+
+  showPauseOverlay() {
+    const pauseModal = document.getElementById('pause-modal');
+
+    if (!pauseModal) return;
+
+    pauseModal.classList.remove('hidden');
+    pauseModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('is-paused');
+  },
+
+  hidePauseOverlay() {
+    const pauseModal = document.getElementById('pause-modal');
+
+    if (!pauseModal) return;
+
+    pauseModal.classList.add('hidden');
+    pauseModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('is-paused');
+
+    const hiddenInput = document.getElementById('hidden-input');
+    if (hiddenInput) hiddenInput.focus();
+  },
+
+  initSettings() {
+    this.settingsModal = document.getElementById('settings-modal');
+    this.settingsTabs = document.querySelectorAll('[data-settings-tab]');
+    this.settingsPanels = document.querySelectorAll('[data-settings-panel]');
+    this.settingsState = this.loadSettings();
+
+    const openButtons = [
+      document.getElementById('show-settings-btn'),
+      document.getElementById('show-settings-play-btn'),
+    ];
+
+    openButtons.forEach((button) => {
+      if (button) {
+        button.addEventListener('click', () => this.openSettings());
+      }
+    });
+
+    const closeBtn = document.getElementById('close-settings-btn');
+    const backdrop = document.querySelector('[data-settings-close]');
+    const saveBtn = document.getElementById('save-settings-btn');
+    const resetBtn = document.getElementById('reset-settings-btn');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.closeSettings());
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', () => this.closeSettings());
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        this.collectSettingsFromForm();
+        this.saveSettings();
+        this.applySettings();
+        this.closeSettings();
+        this.showToast('설정 저장', '강의실 설정이 저장되었습니다.', 'OK');
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        this.settingsState = this.cloneSettings(this.settingsDefaults);
+        this.updateSettingsForm();
+        this.saveSettings();
+        this.applySettings();
+        this.showToast('설정 초기화', '기본값으로 되돌렸습니다.', '↺');
+      });
+    }
+
+    this.settingsTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        this.switchSettingsTab(tab.dataset.settingsTab);
+      });
+    });
+
+    const choiceButtons = document.querySelectorAll('[data-setting-group]');
+
+    choiceButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = button.dataset.settingGroup;
+        const value = button.dataset.settingValue;
+        this.setSettingsChoice(group, value);
+      });
+    });
+
+    const sfxRange = document.getElementById('settings-sfx-volume');
+    const bgmRange = document.getElementById('settings-bgm-volume');
+
+    if (sfxRange) {
+      sfxRange.addEventListener('input', () => {
+        this.updateRangeOutput('settings-sfx-volume', 'settings-sfx-volume-value');
+      });
+    }
+
+    if (bgmRange) {
+      bgmRange.addEventListener('input', () => {
+        this.updateRangeOutput('settings-bgm-volume', 'settings-bgm-volume-value');
+      });
+    }
+
+    this.updateSettingsForm();
+    this.applySettings();
+  },
+
+  cloneSettings(settings) {
+    return JSON.parse(JSON.stringify(settings));
+  },
+
+  getStorageKey(keyName, fallback) {
+    if (typeof CONFIG !== 'undefined' && CONFIG.STORAGE && CONFIG.STORAGE[keyName]) {
+      return CONFIG.STORAGE[keyName];
+    }
+
+    return fallback;
+  },
+
+  loadSettings() {
+    const merged = this.cloneSettings(this.settingsDefaults);
+
+    const lectureKey = this.getStorageKey('SETTINGS_LECTURE', 'td_settings_lecture');
+    const appearanceKey = this.getStorageKey('SETTINGS_APPEAR', 'td_settings_appearance');
+    const soundKey = this.getStorageKey('SETTINGS_SOUND', 'td_settings_sound');
+
+    const lecture = this.readJsonStorage(lectureKey);
+    const appearance = this.readJsonStorage(appearanceKey);
+    const sound = this.readJsonStorage(soundKey);
+
+    if (lecture) Object.assign(merged.lecture, lecture);
+    if (appearance) Object.assign(merged.appearance, appearance);
+    if (sound) Object.assign(merged.sound, sound);
+
+    return merged;
+  },
+
+  readJsonStorage(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  },
+
+  saveSettings() {
+    const lectureKey = this.getStorageKey('SETTINGS_LECTURE', 'td_settings_lecture');
+    const appearanceKey = this.getStorageKey('SETTINGS_APPEAR', 'td_settings_appearance');
+    const soundKey = this.getStorageKey('SETTINGS_SOUND', 'td_settings_sound');
+
+    try {
+      localStorage.setItem(lectureKey, JSON.stringify(this.settingsState.lecture));
+      localStorage.setItem(appearanceKey, JSON.stringify(this.settingsState.appearance));
+      localStorage.setItem(soundKey, JSON.stringify(this.settingsState.sound));
+    } catch (_) {
+      console.warn('[Settings] localStorage 저장 실패');
+    }
+  },
+
+  updateSettingsForm() {
+    const language = document.getElementById('settings-language');
+    const customWords = document.getElementById('settings-custom-words');
+    const reducedMotion = document.getElementById('settings-reduced-motion');
+    const highContrast = document.getElementById('settings-high-contrast');
+    const sfxVolume = document.getElementById('settings-sfx-volume');
+    const bgmVolume = document.getElementById('settings-bgm-volume');
+    const keyboardSound = document.getElementById('settings-keyboard-sound');
+    const levelupSound = document.getElementById('settings-levelup-sound');
+
+    if (language) language.value = this.settingsState.lecture.language;
+    if (customWords) customWords.value = this.settingsState.lecture.customWords;
+
+    if (reducedMotion) reducedMotion.checked = this.settingsState.appearance.reducedMotion;
+    if (highContrast) highContrast.checked = this.settingsState.appearance.highContrast;
+
+    if (sfxVolume) sfxVolume.value = this.settingsState.sound.sfxVolume;
+    if (bgmVolume) bgmVolume.value = this.settingsState.sound.bgmVolume;
+    if (keyboardSound) keyboardSound.checked = this.settingsState.sound.keyboardSound;
+    if (levelupSound) levelupSound.checked = this.settingsState.sound.levelupSound;
+
+    this.updateChoiceGroup('difficulty', this.settingsState.lecture.difficulty);
+    this.updateChoiceGroup('theme', this.settingsState.appearance.theme);
+    this.updateChoiceGroup('fontSize', this.settingsState.appearance.fontSize);
+
+    this.updateRangeOutput('settings-sfx-volume', 'settings-sfx-volume-value');
+    this.updateRangeOutput('settings-bgm-volume', 'settings-bgm-volume-value');
+  },
+
+  collectSettingsFromForm() {
+    const language = document.getElementById('settings-language');
+    const customWords = document.getElementById('settings-custom-words');
+    const reducedMotion = document.getElementById('settings-reduced-motion');
+    const highContrast = document.getElementById('settings-high-contrast');
+    const sfxVolume = document.getElementById('settings-sfx-volume');
+    const bgmVolume = document.getElementById('settings-bgm-volume');
+    const keyboardSound = document.getElementById('settings-keyboard-sound');
+    const levelupSound = document.getElementById('settings-levelup-sound');
+
+    if (language) this.settingsState.lecture.language = language.value;
+    if (customWords) this.settingsState.lecture.customWords = customWords.value;
+
+    if (reducedMotion) this.settingsState.appearance.reducedMotion = reducedMotion.checked;
+    if (highContrast) this.settingsState.appearance.highContrast = highContrast.checked;
+
+    if (sfxVolume) this.settingsState.sound.sfxVolume = Number(sfxVolume.value);
+    if (bgmVolume) this.settingsState.sound.bgmVolume = Number(bgmVolume.value);
+    if (keyboardSound) this.settingsState.sound.keyboardSound = keyboardSound.checked;
+    if (levelupSound) this.settingsState.sound.levelupSound = levelupSound.checked;
+  },
+
+  setSettingsChoice(group, value) {
+    if (group === 'difficulty') {
+      this.settingsState.lecture.difficulty = value;
+    }
+
+    if (group === 'theme') {
+      this.settingsState.appearance.theme = value;
+      this.applySettings();
+    }
+
+    if (group === 'fontSize') {
+      this.settingsState.appearance.fontSize = value;
+      this.applySettings();
+    }
+
+    this.updateChoiceGroup(group, value);
+  },
+
+  updateChoiceGroup(group, value) {
+    const buttons = document.querySelectorAll(`[data-setting-group="${group}"]`);
+
+    buttons.forEach((button) => {
+      button.classList.toggle('is-active', button.dataset.settingValue === value);
+    });
+  },
+
+  updateRangeOutput(inputId, outputId) {
+    const input = document.getElementById(inputId);
+    const output = document.getElementById(outputId);
+
+    if (!input || !output) return;
+
+    output.textContent = `${input.value}%`;
+  },
+
+  switchSettingsTab(tabName) {
+    if (!tabName) return;
+
+    this.settingsTabs.forEach((tab) => {
+      tab.classList.toggle('is-active', tab.dataset.settingsTab === tabName);
+    });
+
+    this.settingsPanels.forEach((panel) => {
+      panel.classList.toggle('is-active', panel.dataset.settingsPanel === tabName);
+    });
+  },
+
+  openSettings() {
+    if (!this.settingsModal) return;
+
+    this.updateSettingsForm();
+    this.settingsModal.classList.remove('hidden');
+    this.settingsModal.setAttribute('aria-hidden', 'false');
+  },
+
+  closeSettings() {
+    if (!this.settingsModal) return;
+
+    this.settingsModal.classList.add('hidden');
+    this.settingsModal.setAttribute('aria-hidden', 'true');
+
+    const hiddenInput = document.getElementById('hidden-input');
+    if (hiddenInput) hiddenInput.focus();
+  },
+
+  applySettings() {
+    const appearance = this.settingsState.appearance;
+    const sound = this.settingsState.sound;
+
+    if (typeof Themes !== 'undefined') {
+      Themes.save(appearance.theme);
+    } else {
+      document.documentElement.setAttribute('data-theme', appearance.theme);
+    }
+
+    document.documentElement.setAttribute('data-font-size', appearance.fontSize);
+    document.documentElement.setAttribute(
+      'data-motion',
+      appearance.reducedMotion ? 'reduced' : 'default'
+    );
+    document.documentElement.setAttribute(
+      'data-contrast',
+      appearance.highContrast ? 'high' : 'default'
+    );
+
+    if (typeof Sound !== 'undefined' && typeof Sound.setSettings === 'function') {
+      Sound.setSettings({
+        sfxVolume: sound.sfxVolume / 100,
+        bgmVolume: sound.bgmVolume / 100,
+        keyboardSound: sound.keyboardSound,
+        levelupSound: sound.levelupSound,
+      });
+    }
   },
 
   showScene(sceneName) {
@@ -522,4 +995,6 @@ const UI = {
 
 document.addEventListener('DOMContentLoaded', () => {
   UI.initControls();
+  UI.initTutorial();
+  UI.initSettings();
 });

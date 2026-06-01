@@ -40,7 +40,7 @@ async function start(mode = 'classic') {
 
     Input.init(
         (val) => {
-            if (game.isGameOver) return;
+            if (game.isGameOver || game.isPaused) return;
             const inputChar = val.slice(-1);
             let isCorrect = false;
             if (val.length > UI.lastInputLength) {
@@ -58,32 +58,38 @@ async function start(mode = 'classic') {
             UI.renderTargetWord(game.getActiveWords(), val);
         },
         (word) => {
-            if(game.isGameOver) return;
+            if (game.isGameOver || game.isPaused) return;
+
             game.checkAnswer(word);
             UI.renderTargetWord(game.getActiveWords(), "");
         }
     );
+
     UI.initRanking();
+    UI.initPauseControls(game);
+
     const showRankingBtn = document.getElementById('show-ranking-btn');
-        if (showRankingBtn) {
-            showRankingBtn.addEventListener('click', () => {
-                UI.toggleRankingModal(true);
-            });
-        }
+
+    if (showRankingBtn) {
+        showRankingBtn.addEventListener('click', () => {
+            UI.toggleRankingModal(true);
+        });
+    }
 
     UI.updateHUD(game);
     UI.renderTargetWord(game.getActiveWords(), "");
-    
+
     gameLoop();
 }
 
 function gameLoop() {
     if (game.isGameOver) return;
-    game.calculateWPM();
-    if (typeof game.checkTime === 'function') {
-        game.checkTime();
+    if (!game.isPaused) {
+        game.calculateWPM();
+        if (typeof game.checkTime === 'function') {
+            game.checkTime();
+        }
+        UI.updateHUD(game);
     }
-    UI.updateHUD(game);
-    
     requestAnimationFrame(gameLoop);
 }

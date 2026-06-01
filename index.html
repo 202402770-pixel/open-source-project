@@ -57,6 +57,12 @@
           <button class="td-btn td-btn--primary td-btn--lg" type="button" data-go="play">
             받아적을게요
           </button>
+          <button id="show-tutorial-btn" class="td-btn td-btn--secondary" type="button">
+            도움말
+          </button>
+          <button id="show-settings-btn" class="td-btn td-btn--secondary" type="button">
+            설정
+          </button>
           <a class="td-btn td-btn--ghost" href="./components.html">
             W1 컴포넌트 보기
           </a>
@@ -159,8 +165,14 @@
       <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
       <div class="play-actions">
+        <button id="pause-btn" class="td-btn td-btn--secondary" type="button">
+          일시정지
+        </button>
         <button id="show-ranking-btn" class="td-btn td-btn--secondary" type="button">
           순위표
+        </button>
+        <button id="show-settings-play-btn" class="td-btn td-btn--secondary" type="button">
+          설정
         </button>
         <button class="td-btn td-btn--ghost" type="button" data-go="gameover">
           데모 종료
@@ -194,7 +206,6 @@
           <p>단어수 <strong id="result-words">0</strong></p>
         </div>
 
-        <!-- Game Over 액션 4종 — DESIGN.md §4.5 -->
         <div class="result-actions">
           <button id="restart-btn" class="td-btn td-btn--primary" type="button">
             다시 수강
@@ -236,7 +247,10 @@
     <div id="achievement-modal" class="modal hidden">
       <div class="modal-overlay" onclick="UI.toggleAchievementModal(false)"></div>
       <div class="achievement-modal-content">
-        <h2 class="achievement-title">도전과제 <span class="achievement-progress" id="achievement-progress">0 / 12</span></h2>
+        <h2 class="achievement-title">
+          도전과제
+          <span class="achievement-progress" id="achievement-progress">0 / 12</span>
+        </h2>
         <div class="achievement-tabs">
           <button class="achieve-tab-btn active" data-filter="all">전체</button>
           <button class="achieve-tab-btn" data-filter="acquired">획득</button>
@@ -246,6 +260,277 @@
         <button class="ranking-close-btn" onclick="UI.toggleAchievementModal(false)">CLOSE</button>
       </div>
     </div>
+
+    <!-- Settings Modal -->
+    <section id="settings-modal" class="settings-modal hidden" aria-label="설정" aria-hidden="true">
+      <div class="settings-backdrop" data-settings-close></div>
+
+      <article class="settings-card">
+        <div class="settings-header">
+          <div>
+            <p class="eyebrow">SETTINGS</p>
+            <h2>강의실 설정</h2>
+          </div>
+          <button id="close-settings-btn" class="td-btn td-btn--ghost" type="button">
+            CLOSE
+          </button>
+        </div>
+
+        <div class="settings-tabs" role="tablist" aria-label="설정 탭">
+          <button class="settings-tab is-active" type="button" data-settings-tab="lecture">
+            강의
+          </button>
+          <button class="settings-tab" type="button" data-settings-tab="appearance">
+            외관
+          </button>
+          <button class="settings-tab" type="button" data-settings-tab="sound">
+            사운드
+          </button>
+        </div>
+
+        <!-- Lecture Tab -->
+        <section class="settings-panel is-active" data-settings-panel="lecture">
+          <div class="settings-grid">
+            <div class="settings-field">
+              <label for="settings-language">언어</label>
+              <select id="settings-language">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+                <option value="jp">日本語</option>
+                <option value="cn">中文</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ru">Русский</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+
+            <div class="settings-field">
+              <span class="settings-label">난이도</span>
+              <div class="settings-segment" role="group" aria-label="난이도 설정">
+                <button class="settings-choice is-active" type="button" data-setting-group="difficulty" data-setting-value="easy">
+                  EASY
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="difficulty" data-setting-value="normal">
+                  NORMAL
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="difficulty" data-setting-value="hard">
+                  HARD
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field settings-field--full">
+              <label for="settings-custom-words">Custom Words</label>
+              <textarea
+                id="settings-custom-words"
+                rows="5"
+                placeholder="직접 연습할 단어를 쉼표 또는 줄바꿈으로 입력하세요. 예: stack, queue, graph"
+              ></textarea>
+              <p class="settings-help">
+                Custom 언어 선택 시 입력한 단어 목록을 사용할 수 있도록 저장합니다.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Appearance Tab -->
+        <section class="settings-panel" data-settings-panel="appearance">
+          <div class="settings-grid">
+            <div class="settings-field settings-field--full">
+              <span class="settings-label">테마</span>
+              <div class="theme-choice-grid">
+                <button class="theme-choice is-active" type="button" data-setting-group="theme" data-setting-value="classroom">
+                  Classroom
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="neon">
+                  Neon
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="retro">
+                  Retro
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="cyber">
+                  Cyber
+                </button>
+                <button class="theme-choice" type="button" data-setting-group="theme" data-setting-value="minimal">
+                  Minimal
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field">
+              <span class="settings-label">폰트 크기</span>
+              <div class="settings-segment" role="group" aria-label="폰트 크기 설정">
+                <button class="settings-choice" type="button" data-setting-group="fontSize" data-setting-value="small">
+                  작게
+                </button>
+                <button class="settings-choice is-active" type="button" data-setting-group="fontSize" data-setting-value="medium">
+                  보통
+                </button>
+                <button class="settings-choice" type="button" data-setting-group="fontSize" data-setting-value="large">
+                  크게
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-field settings-check-list">
+              <label class="settings-check">
+                <input id="settings-reduced-motion" type="checkbox" />
+                <span>모션 줄이기</span>
+              </label>
+
+              <label class="settings-check">
+                <input id="settings-high-contrast" type="checkbox" />
+                <span>고대비</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sound Tab -->
+        <section class="settings-panel" data-settings-panel="sound">
+          <div class="settings-grid">
+            <div class="settings-field settings-field--full">
+              <label for="settings-sfx-volume">효과음 볼륨</label>
+              <div class="settings-range-row">
+                <input id="settings-sfx-volume" type="range" min="0" max="100" value="70" />
+                <output id="settings-sfx-volume-value">70%</output>
+              </div>
+            </div>
+
+            <div class="settings-field settings-field--full">
+              <label for="settings-bgm-volume">BGM 볼륨</label>
+              <div class="settings-range-row">
+                <input id="settings-bgm-volume" type="range" min="0" max="100" value="30" />
+                <output id="settings-bgm-volume-value">30%</output>
+              </div>
+            </div>
+
+            <div class="settings-field settings-check-list">
+              <label class="settings-check">
+                <input id="settings-keyboard-sound" type="checkbox" checked />
+                <span>키보드 소리</span>
+              </label>
+
+              <label class="settings-check">
+                <input id="settings-levelup-sound" type="checkbox" checked />
+                <span>레벨업 소리</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <div class="settings-footer">
+          <button id="reset-settings-btn" class="td-btn td-btn--ghost" type="button">
+            기본값으로
+          </button>
+          <button id="save-settings-btn" class="td-btn td-btn--primary" type="button">
+            저장하기
+          </button>
+        </div>
+      </article>
+    </section>
+
+    <!-- Pause Modal -->
+    <section id="pause-modal" class="pause-modal hidden" aria-label="일시정지 메뉴" aria-hidden="true">
+      <div class="pause-backdrop"></div>
+
+      <article class="pause-card">
+        <p class="eyebrow">PAUSED</p>
+        <h2>강의가 잠시 멈췄습니다</h2>
+        <p class="pause-description">
+          숨을 고르고 다시 받아쓰기를 이어가세요.
+        </p>
+
+        <div class="pause-actions">
+          <button id="resume-btn" class="td-btn td-btn--primary" type="button">
+            계속하기
+          </button>
+          <button id="pause-menu-btn" class="td-btn td-btn--ghost" type="button">
+            메뉴로 나가기
+          </button>
+        </div>
+
+        <p class="pause-hint">ESC 키로도 일시정지 / 계속하기를 할 수 있습니다.</p>
+      </article>
+    </section>
+
+    <!-- Tutorial Modal -->
+    <section id="tutorial-modal" class="tutorial-modal hidden" aria-label="튜토리얼">
+      <div class="tutorial-backdrop"></div>
+
+      <article class="tutorial-card">
+        <div class="tutorial-header">
+          <p class="eyebrow">TUTORIAL</p>
+          <button class="tutorial-skip-btn" type="button" data-tutorial-action="skip">
+            다음에 볼게요
+          </button>
+        </div>
+
+        <div class="tutorial-slides">
+          <div class="tutorial-slide is-active" data-tutorial-slide>
+            <span class="tutorial-step">1 / 5</span>
+            <h2>칠판의 단어를 확인하세요</h2>
+            <p>
+              교수님이 칠판에 핵심 단어를 적으면, 단어가 아래로 떨어지기 시작합니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">2 / 5</span>
+            <h2>노트에 빠르게 받아 적으세요</h2>
+            <p>
+              화면 아래 입력창에 단어를 정확히 입력하고 Enter를 누르면 점수를 얻습니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">3 / 5</span>
+            <h2>오타와 미스를 조심하세요</h2>
+            <p>
+              단어를 놓치면 HP가 줄어듭니다. HP가 모두 사라지면 성적표가 공개됩니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">4 / 5</span>
+            <h2>콤보와 레벨을 올리세요</h2>
+            <p>
+              연속으로 맞히면 콤보가 유지되고, 레벨이 오를수록 더 빠른 강의가 시작됩니다.
+            </p>
+          </div>
+
+          <div class="tutorial-slide" data-tutorial-slide>
+            <span class="tutorial-step">5 / 5</span>
+            <h2>이제 강의를 막아낼 시간입니다</h2>
+            <p>
+              준비가 끝났다면 바로 수강을 시작하세요. 도움말 버튼으로 언제든 다시 볼 수 있습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="tutorial-dots" aria-label="튜토리얼 진행 상태">
+          <span class="tutorial-dot is-active"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+          <span class="tutorial-dot"></span>
+        </div>
+
+        <div class="tutorial-actions">
+          <button class="td-btn td-btn--ghost" type="button" data-tutorial-action="prev">
+            이전
+          </button>
+          <button class="td-btn td-btn--primary" type="button" data-tutorial-action="next">
+            다음
+          </button>
+        </div>
+      </article>
+    </section>
   </main>
 
   <script src="./js/config.js"></script>
