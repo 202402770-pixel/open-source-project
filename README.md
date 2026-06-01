@@ -6,7 +6,7 @@
 
 ## 🎮 데모
 
-- **데모 URL**: _(Vercel 배포 후 추가 예정)_
+- **데모 URL**: <https://open-source-project-virid.vercel.app>
 - **PWA**: 홈 화면에 추가하면 오프라인에서도 동작
 
 ## 🖼 스크린샷
