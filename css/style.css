@@ -177,6 +177,33 @@ body.component-page {
   animation: pulse-glow-yellow 1.5s infinite alternate;
 }
 
+/* PR-B: 콤보 단계화 — 20/30 추가 (점진 강도) */
+.notebook-input.glow-combo20 {
+  box-shadow: 0 0 38px var(--color-chalk-yellow),
+    0 0 12px var(--color-chalk-yellow),
+    0 8px 15px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-chalk-yellow);
+  animation: pulse-glow-yellow 1.2s infinite alternate;
+}
+
+.notebook-input.glow-combo30 {
+  box-shadow: 0 0 55px var(--color-accent),
+    0 0 22px var(--color-accent),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+  border-color: var(--color-accent);
+  animation: pulse-glow-accent 1s infinite alternate;
+}
+
+@keyframes pulse-glow-accent {
+  from {
+    filter: brightness(1);
+  }
+
+  to {
+    filter: brightness(1.12);
+  }
+}
+
 .meta-info {
   display: flex;
   gap: 30px;

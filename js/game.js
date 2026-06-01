@@ -155,9 +155,16 @@ class Game {
     }
 
     goToMenu() {
+        // PR-B: 페이지 리로드 제거. game state만 정리하고 Start scene으로 복귀.
         this.isPaused = false;
+        this.isGameOver = true; // gameLoop 중단 신호
         UI.hidePauseOverlay();
-        location.reload();
+        if (typeof UI !== 'undefined' && UI.showScene) {
+            UI.showScene('start');
+        }
+        if (typeof window !== 'undefined') {
+            window.game = null;
+        }
     }
 
     checkAnswer(inputWord) {
@@ -218,8 +225,9 @@ class Game {
             this.maxCombo = Math.max(this.maxCombo, this.combo);
             Achievements.check(ACHIEVEMENT_IDS.COMBO_10, this.combo);
             Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
+            // 콤보 단계화 (PR-B) — Effects.toggleGlow에 콤보 값 전달 시 자동 분기
             if (this.combo >= CONFIG.SCORING.COMBO_GLOW_THRESHOLD) {
-                Effects.toggleGlow(true, 'combo10');
+                Effects.toggleGlow(true, this.combo);
             }
             if (window.GameAPI && typeof GameAPI.onComboChange === 'function') {
                 GameAPI.onComboChange(this.combo);
@@ -236,6 +244,12 @@ class Game {
 
         this.missed++;
         this.takeDamage(CONFIG.CORE.MISS_DAMAGE); // 기획서: 단어 미스 시 HP -1 (WORK_PLAN.md §3 W2)
+
+        // PR-B: 단어 실패 시 화면 떨림 — 글자 단위 errorFlash 외 단어 단위 강한 피드백
+        if (typeof Effects !== 'undefined' && Effects.triggerErrorShake) {
+            Effects.triggerErrorShake();
+        }
+
         const modeConfig = CONFIG.MODES[this.mode];
         if (modeConfig && modeConfig.hasCombo) {
             this.combo = 0;

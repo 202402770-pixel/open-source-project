@@ -386,7 +386,10 @@ const UI = {
   },
 
   initPauseControls(gameInstance) {
+    // PR-B: idempotent — 두 번째 이후 호출은 game 객체만 갱신 (이벤트 리스너 중복 방지)
     this.currentGame = gameInstance;
+    if (this._pauseControlsInited) return;
+    this._pauseControlsInited = true;
 
     const pauseBtn = document.getElementById('pause-btn');
     const resumeBtn = document.getElementById('resume-btn');

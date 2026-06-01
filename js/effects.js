@@ -130,17 +130,39 @@ const Effects = {
     }
   },
 
-    toggleGlow(active, type) {
+    /**
+     * 콤보 글로우 — 단계화 (PR-B).
+     *
+     * @param {boolean} active - 글로우 켜기/끄기
+     * @param {number|string} [arg] -
+     *   숫자 전달 시 현재 콤보 값 (CONFIG.SCORING.COMBO_GLOW_TIERS로 자동 분기)
+     *   문자열 'combo5'/'combo10'/'combo20'/'combo30' 전달 시 직접 클래스 지정 (호환)
+     *
+     * 클래스 단계 (강도 점진):
+     *   glow-combo10 (콤보 10~19) — 노랑
+     *   glow-combo20 (콤보 20~29) — 진한 노랑 + 큰 글로우
+     *   glow-combo30 (콤보 30+)   — 액센트 색 + 최대 글로우
+     */
+    toggleGlow(active, arg) {
         const notebook = document.querySelector('.notebook-input');
         if (!notebook) return;
-        notebook.classList.remove('glow-combo5', 'glow-combo10');
-        if (active) {
-            if (type === 'combo10') {
-                notebook.classList.add('glow-combo10');
-            } else {
-                notebook.classList.add('glow-combo5');  
-            }
+        notebook.classList.remove('glow-combo5', 'glow-combo10', 'glow-combo20', 'glow-combo30');
+        if (!active) return;
+
+        // 숫자 인자 — 콤보 값으로 단계 자동 결정
+        if (typeof arg === 'number') {
+            const tiers = (typeof CONFIG !== 'undefined' && CONFIG.SCORING && CONFIG.SCORING.COMBO_GLOW_TIERS) || [10, 20, 30];
+            if (arg >= tiers[2]) notebook.classList.add('glow-combo30');
+            else if (arg >= tiers[1]) notebook.classList.add('glow-combo20');
+            else if (arg >= tiers[0]) notebook.classList.add('glow-combo10');
+            return;
         }
+
+        // 문자열 인자 — 직접 클래스 지정 (호환)
+        if (arg === 'combo30') notebook.classList.add('glow-combo30');
+        else if (arg === 'combo20') notebook.classList.add('glow-combo20');
+        else if (arg === 'combo10') notebook.classList.add('glow-combo10');
+        else notebook.classList.add('glow-combo5');
     },
 
     triggerErrorShake() {

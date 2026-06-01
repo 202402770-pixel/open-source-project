@@ -15,7 +15,17 @@
  */
 
 const Input = {
+    _initialized: false,
+    _onInput: null,
+    _onEnter: null,
+
     init(onInput, onEnter) {
+        // PR-B: idempotent 가드 — 재시작 시 두 번째 호출되어도 이벤트 리스너 중복 등록 방지.
+        // 콜백만 갱신해서 새 game 객체를 참조하도록 함.
+        this._onInput = onInput;
+        this._onEnter = onEnter;
+        if (this._initialized) return;
+
         const hiddenInput = document.getElementById('hidden-input');
         if (!hiddenInput) return;
 
@@ -60,16 +70,18 @@ const Input = {
         });
 
         hiddenInput.addEventListener('input', () => {
-            onInput(hiddenInput.value);
+            if (typeof this._onInput === 'function') this._onInput(hiddenInput.value);
         });
 
         hiddenInput.addEventListener('keydown', (e) => {
             if (e.isComposing) return;
             if (e.key === 'Enter') {
                 e.preventDefault();
-                onEnter(hiddenInput.value.trim());
+                if (typeof this._onEnter === 'function') this._onEnter(hiddenInput.value.trim());
                 hiddenInput.value = '';
             }
         });
+
+        this._initialized = true;
     }
 };
