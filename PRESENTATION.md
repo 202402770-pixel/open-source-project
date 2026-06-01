@@ -178,5 +178,5 @@ window.GameAPI = {
 
 **Q&A**
 
-데모 URL: _(Vercel 배포 후 추가)_
-리포지토리: https://github.com/202402770-pixel/open-source-project
+데모 URL: <https://open-source-project-virid.vercel.app>
+리포지토리: <https://github.com/202402770-pixel/open-source-project>
