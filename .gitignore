@@ -35,3 +35,10 @@ build/
 # Personal session / weekly memos — 작업자 로컬 메모, repo에 포함되지 않게
 *_SESSION_PROMPT.md
 weekly-update-*.md
+
+# Node / 검증 도구 결과 (W4 박태준 verify 자동화)
+node_modules/
+lighthouse-reports/
+playwright-report/
+test-results/
+package-lock.json

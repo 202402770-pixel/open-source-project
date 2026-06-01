@@ -63,6 +63,28 @@ type-defender/
 └── assets/sounds/             # bell.mp3 / chalk.mp3 / levelup.mp3
 ```
 
+## 🧪 검증 자동화 (W4 박태준)
+
+Lighthouse + Playwright E2E로 성능·PWA·접근성·모바일 동작을 자동 측정.
+
+```bash
+# 초기 셋업 (1회만)
+npm install
+npm run playwright:install   # chromium 다운로드 (~150MB)
+
+# 전체 검증 — Lighthouse + Playwright 동시
+npm run verify
+
+# 개별 실행
+npm run verify:lighthouse    # Lighthouse 데스크톱 + 모바일 점수
+npm run verify:playwright    # E2E (PWA / 모달 / 모바일 / 학점)
+```
+
+결과:
+- `lighthouse-reports/desktop.report.html` · `mobile.report.html` — Lighthouse 시각 리포트
+- 콘솔에 W4 DoD 점수 (성능 ≥85, 접근성 ≥90) 출력
+- Playwright 실패 시 `playwright-report/index.html`
+
 ## 🛠 실행 방법
 
 ```bash
