@@ -22,8 +22,8 @@ echo "[1/2] Lighthouse 측정"
 bash scripts/verify-lighthouse.sh
 
 echo ""
-echo "[2/2] Playwright E2E (PWA / 모바일 / 모달 / 학점)"
-npx playwright test scripts/verify-e2e.spec.js --reporter=list
+echo "[2/2] Playwright E2E (PWA / 모바일 / 320px / 모달 / 학점)"
+npx playwright test scripts/verify-e2e.spec.js scripts/verify-mobile.spec.js scripts/verify-rotate.spec.js --reporter=list
 
 echo ""
 echo "════════════════════════════════════════════"

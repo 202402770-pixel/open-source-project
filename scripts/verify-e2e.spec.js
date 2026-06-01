@@ -1,21 +1,15 @@
 // scripts/verify-e2e.spec.js
-// Playwright E2E 검증 — 박태준 W4 직접 실행 자동화
-//   - PWA: Service Worker 등록, manifest 정상, 오프라인 동작
-//   - 모바일: 가상 키보드 포커싱, .rotate-hint, 도전과제 모달 트리거
-//   - 게임 흐름: Start → Play → Game Over 한 사이클
-//
-// 실행:
-//   npm run playwright:install   # 초기 1회 (chromium 다운로드)
-//   npm run verify:playwright    # 정적 서버 띄운 상태에서 실행
+// Playwright E2E — 데스크톱 케이스 (PWA / 전역 / Effects / Grade / 모달)
+// 모바일·320px 케이스는 별도 파일 (verify-mobile.spec.js / verify-rotate.spec.js)
 
-import { test, expect, devices } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-const URL = process.env.URL || 'http://localhost:8000';
+const BASE_URL = process.env.URL || 'http://localhost:8000';
 
-test.describe('Type Defender — W4 검증', () => {
+test.describe('Type Defender — W4 데스크톱 검증', () => {
   test('PWA: Service Worker 등록', async ({ page }) => {
-    await page.goto(URL);
-    // SW가 등록되어 activate 상태가 되기까지 대기
+    await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
     const swReady = await page.evaluate(async () => {
       if (!('serviceWorker' in navigator)) return false;
       const reg = await navigator.serviceWorker.ready;
@@ -25,10 +19,11 @@ test.describe('Type Defender — W4 검증', () => {
   });
 
   test('PWA: manifest 정상 파싱', async ({ page }) => {
-    await page.goto(URL);
+    await page.goto(BASE_URL);
+    await page.waitForLoadState('networkidle');
     const manifestHref = await page.getAttribute('link[rel="manifest"]', 'href');
     expect(manifestHref).toBeTruthy();
-    const response = await page.request.get(new URL(manifestHref, URL).toString());
+    const response = await page.request.get(new URL(manifestHref, BASE_URL).toString());
     expect(response.ok()).toBe(true);
     const manifest = await response.json();
     expect(manifest.name).toBe('Type Defender');
@@ -37,17 +32,18 @@ test.describe('Type Defender — W4 검증', () => {
   });
 
   test('CONFIG/Effects/Sound/GameAPI 전역 노출', async ({ page }) => {
-    await page.goto(URL);
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
+    // 주의: top-level `const X`는 window에 attach 안 됨 (script scope) — typeof 직접 체크 사용
     const globals = await page.evaluate(() => ({
-      hasCONFIG: typeof window.CONFIG !== 'undefined',
-      hasEffects: typeof window.Effects !== 'undefined',
-      hasSound: typeof window.Sound !== 'undefined',
-      hasGameAPI: typeof window.GameAPI !== 'undefined',
-      hasUI: typeof window.UI !== 'undefined',
-      hasGrade: typeof window.Grade !== 'undefined',
-      configHP: window.CONFIG && window.CONFIG.DIFFICULTY.normal.startHP,
-      configMissDamage: window.CONFIG && window.CONFIG.CORE.MISS_DAMAGE,
+      hasCONFIG: typeof CONFIG !== 'undefined',
+      hasEffects: typeof Effects !== 'undefined',
+      hasSound: typeof Sound !== 'undefined',
+      hasGameAPI: typeof GameAPI !== 'undefined',
+      hasUI: typeof UI !== 'undefined',
+      hasGrade: typeof Grade !== 'undefined',
+      configHP: typeof CONFIG !== 'undefined' ? CONFIG.DIFFICULTY.normal.startHP : null,
+      configMissDamage: typeof CONFIG !== 'undefined' ? CONFIG.CORE.MISS_DAMAGE : null,
     }));
     expect(globals.hasCONFIG).toBe(true);
     expect(globals.hasEffects).toBe(true);
@@ -60,7 +56,7 @@ test.describe('Type Defender — W4 검증', () => {
   });
 
   test('Effects 함수 단독 발화', async ({ page }) => {
-    await page.goto(URL);
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     const errors = await page.evaluate(() => {
       const out = [];
@@ -77,7 +73,7 @@ test.describe('Type Defender — W4 검증', () => {
   });
 
   test('Grade.calc 학점 계산', async ({ page }) => {
-    await page.goto(URL);
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     const results = await page.evaluate(() => ({
       aplus: Grade.calc(12000, 97, 55),
@@ -96,14 +92,12 @@ test.describe('Type Defender — W4 검증', () => {
   });
 
   test('Achievements/Ranking/Attendance 모달 토글', async ({ page }) => {
-    await page.goto(URL);
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
-    // 모달 토글 직접 호출
     const modalStates = await page.evaluate(() => {
       const probe = (id, opener) => {
         opener();
-        const opened = !document.getElementById(id).classList.contains('hidden');
-        return opened;
+        return !document.getElementById(id).classList.contains('hidden');
       };
       return {
         ranking: probe('ranking-modal', () => UI.toggleRankingModal(true)),
@@ -114,46 +108,5 @@ test.describe('Type Defender — W4 검증', () => {
     expect(modalStates.ranking).toBe(true);
     expect(modalStates.achievement).toBe(true);
     expect(modalStates.attendance).toBe(true);
-  });
-});
-
-test.describe('모바일 검증 (iPhone 12)', () => {
-  test.use({ ...devices['iPhone 12'] });
-
-  test('모바일에서 메인 화면 정상 로드', async ({ page }) => {
-    await page.goto(URL);
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('.start-scene')).toBeVisible();
-  });
-
-  test('모바일 도전과제 모달 진입', async ({ page }) => {
-    await page.goto(URL);
-    await page.waitForLoadState('networkidle');
-    // 시작 화면에서 도전과제 모달 직접 토글 (시작 화면에는 진입 버튼 없으므로 console)
-    await page.evaluate(() => UI.toggleAchievementModal(true));
-    await expect(page.locator('#achievement-modal')).toBeVisible();
-    // achievement-card 12개 (도전과제 12개)
-    const cardCount = await page.locator('.achieve-card').count();
-    expect(cardCount).toBe(12);
-  });
-
-  test('모바일 출석 도장 모달 진입', async ({ page }) => {
-    await page.goto(URL);
-    await page.waitForLoadState('networkidle');
-    await page.evaluate(() => UI.toggleAttendanceModal(true));
-    await expect(page.locator('#attendance-modal')).toBeVisible();
-    // 7칸 그리드
-    const cellCount = await page.locator('.attendance-cell').count();
-    expect(cellCount).toBe(7);
-  });
-});
-
-test.describe('320px 가로 회전 안내', () => {
-  test.use({ viewport: { width: 320, height: 568 } });
-
-  test('320px portrait에서 .rotate-hint 표시', async ({ page }) => {
-    await page.goto(URL);
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('.rotate-hint')).toBeVisible();
   });
 });
