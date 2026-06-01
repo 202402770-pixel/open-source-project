@@ -599,9 +599,17 @@
   <script defer src="./js/effects-bindings.js"></script>
   <script defer src="./js/main.js"></script>
 
-  <!-- Service Worker 등록 — W4 박태준 PWA 인프라 -->
+  <!-- Service Worker 등록 — W4 박태준 PWA 인프라
+       PR-H: controllerchange listener 추가. 새 sw가 활성화되면 한 번만 자동 reload.
+       기존엔 첫 reload는 옛 캐시 응답 → 두 번 reload 해야 새 코드 받음 (박태준 dogfood로 발견). -->
   <script>
     if ('serviceWorker' in navigator) {
+      let _swRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (_swRefreshing) return;
+        _swRefreshing = true;
+        window.location.reload();
+      });
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch((err) => {
           console.warn('[sw] 등록 실패:', err);
