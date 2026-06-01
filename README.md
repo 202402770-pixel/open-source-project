@@ -18,12 +18,15 @@
 ## 🎯 게임 방법
 
 1. **모드 선택** — Classic / Time Attack / Zen / Daily 4가지
-2. **난이도 선택** — Easy / Normal / Hard (시작 HP 7 / 5 / 3)
-3. **단어 받아쓰기** — 화면에 표시되는 단어를 정확히 입력
-4. **콤보 유지** — 10 이상에서 노트 글로우, 미스 시 HP -1
-5. **레벨업** — 단어 모두 처치 시 다음 단원, 칠판 wipe 트랜지션
-6. **보스 단어** — Lv 3+ 5% 확률 등장 (종소리 + 화면 흔들림 + +200 보너스)
-7. **Game Over / Clear** — 학점 도장(A+/A/A-/B/C/F) + 통계 표시
+2. **난이도 선택** — Easy / Normal / Hard (시작 HP 7 / 5 / 3, 단어 시간 제한 12s / 8s / 5.6s)
+3. **단어 받아쓰기** — 칠판에 표시되는 placeholder 단어를 정확히 입력 (Enter 제출)
+4. **시간 제한** — 단어가 1.5초 시차로 spawn. 만료 임박 시 노트 빨간색 경고 (65%) → 펄스 (85%) → HP -1
+5. **콤보 유지** — 10 / 20 / 30 단계별 노트 글로우 (강도 점진). 미스 시 콤보 초기화 + 화면 떨림
+6. **레벨업** — 단어 모두 처치 시 다음 단원, 칠판 wipe 트랜지션
+7. **보스 단어** — Lv 3+ 5% 확률 등장 (종소리 + 화면 흔들림 + +200 보너스)
+8. **Game Over / Clear** — 학점 도장(A+/A/A-/B/C/F) + 통계 표시 + 재시작 (페이지 리로드 없이)
+
+설정에서 **테마 5종** (Classroom/Neon/Retro/Cyber/Minimal), **폰트 크기 3단계**, **모션 줄이기**, **고대비**, **사운드 볼륨**, **Custom Words** (직접 입력한 단어로 플레이) 즉시 적용 가능.
 
 ## 🧱 기술 스택
 
@@ -63,26 +66,26 @@ type-defender/
 └── assets/sounds/             # bell.mp3 / chalk.mp3 / levelup.mp3
 ```
 
-## 🧪 검증 자동화 (W4 박태준)
+## 🧪 검증 자동화
 
-Lighthouse + Playwright E2E로 성능·PWA·접근성·모바일 동작을 자동 측정.
+Lighthouse + Playwright E2E로 성능·PWA·접근성·모바일·게임 로직을 자동 측정.
 
 ```bash
 # 초기 셋업 (1회만)
 npm install
 npm run playwright:install   # chromium 다운로드 (~150MB)
 
-# 전체 검증 — Lighthouse + Playwright 동시
+# 전체 검증 — Lighthouse + Playwright 동시 (60건)
 npm run verify
-
-# 개별 실행
-npm run verify:lighthouse    # Lighthouse 데스크톱 + 모바일 점수
-npm run verify:playwright    # E2E (PWA / 모달 / 모바일 / 학점)
 ```
 
-결과:
-- `lighthouse-reports/desktop.report.html` · `mobile.report.html` — Lighthouse 시각 리포트
-- 콘솔에 W4 DoD 점수 (성능 ≥85, 접근성 ≥90) 출력
+**현재 점수**:
+- Lighthouse desktop **Performance 100** / Accessibility 90 / Best Practices 96 / SEO 100
+- Lighthouse mobile **Performance 98** / Accessibility 90
+- Playwright **60건 통과** (PWA / 모달 / 모바일 / 학점 / Settings / Feedback / Lifetime / Hotfix / Viewport)
+
+결과 파일:
+- `lighthouse-reports/desktop.report.html` · `mobile.report.html`
 - Playwright 실패 시 `playwright-report/index.html`
 
 ## 🛠 실행 방법
@@ -115,6 +118,10 @@ npx serve .
 2. 📐 [DESIGN.md](./DESIGN.md) — 토큰·인터랙션·접근성 명세
 3. 🗓 [WORK_PLAN.md](./WORK_PLAN.md) — 5주 분배표
 4. 🤝 [CONTRIBUTING.md](./CONTRIBUTING.md) — Git 컨벤션 (GitHub Flow + Conventional Commits 한국어 + Squash & Merge)
+
+## 📝 변경 이력
+
+[CHANGELOG.md](./CHANGELOG.md) — W1~W5 + 사용성 개선 시리즈 (PR-A~G) 정리.
 
 ## 📜 라이선스
 

@@ -143,6 +143,12 @@ body.component-page {
   color: var(--color-untyped);
 }
 
+/* PR-G: 입력 전 placeholder — 사용자가 무엇을 입력해야 할지 시각적으로 안내 */
+.text-placeholder {
+  color: var(--color-text-mute);
+  opacity: 0.4;
+}
+
 .text-typed {
   color: var(--color-typed);
   display: inline-block;
@@ -990,6 +996,51 @@ body.shake {
 
 .toast.fade-out {
     animation: fade-out-bottom 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+}
+
+/* PR-G: 도전과제 잠금해제 전용 토스트 — 황금 액센트 + glow + 더 큰 카드 */
+.toast.toast--achievement {
+    width: 380px;
+    height: auto;
+    min-height: 96px;
+    padding: 14px 20px 14px 0;
+    background: linear-gradient(135deg, var(--color-paper), #fff7e3);
+    border-color: #d4a017;
+    box-shadow: 0 0 24px rgba(212, 160, 23, 0.45),
+                0 8px 18px rgba(0, 0, 0, 0.12);
+    animation: slide-in-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both,
+               achievement-pulse 1.2s ease-out 0.4s 2;
+}
+
+.toast-accent--gold {
+    background-color: #d4a017;
+    height: 60px;
+}
+
+.toast-icon--badge {
+    border-color: #d4a017;
+    color: #92660d;
+    background: radial-gradient(circle, #fef3c7, transparent 70%);
+    font-weight: 900;
+}
+
+.toast-eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    color: #b87a00;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+@keyframes achievement-pulse {
+    0%, 100% { box-shadow: 0 0 24px rgba(212, 160, 23, 0.45), 0 8px 18px rgba(0, 0, 0, 0.12); }
+    50%      { box-shadow: 0 0 40px rgba(212, 160, 23, 0.75), 0 8px 22px rgba(0, 0, 0, 0.18); }
+}
+
+html[data-motion="reduced"] .toast.toast--achievement {
+    animation: slide-in-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .toast-accent {
