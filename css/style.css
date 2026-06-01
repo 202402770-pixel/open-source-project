@@ -3041,6 +3041,55 @@ body.boss-shake {
 }
 
 /* =========================
+   PR-F: 모바일(<1024px) viewport-fit
+   393×851 Pixel 5 등에서 세로 스크롤 1574px → 851px (한 화면).
+   기존 stack 유지하되 dead space 큰 두 영역 (classroom-illustration의 빈
+   책상 영역, notebook-lines의 빈 줄)을 컴팩트하게 또는 숨김.
+========================= */
+@media (max-width: 1023px) {
+  .play-scene.is-active {
+    min-height: 100dvh;
+    max-height: 100dvh;
+    padding: 12px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .play-scene.is-active .classroom-stage {
+    min-height: 0;
+    gap: 10px;
+  }
+
+  .play-scene.is-active .blackboard {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .play-scene.is-active .word-field {
+    height: clamp(100px, 18vh, 200px);
+    margin-top: 10px;
+  }
+
+  .play-scene.is-active .classroom-illustration {
+    max-height: 22vh;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .play-scene.is-active .notebook-panel {
+    max-height: 30vh;
+    padding: 12px 14px;
+    overflow: hidden;
+  }
+
+  /* notebook-lines (빈 종이 줄) — 모바일 dead space 제거 */
+  .play-scene.is-active .notebook-lines {
+    display: none;
+  }
+}
+
+/* =========================
    PR-E: 데스크톱 viewport(≥1024px) viewport-fit
    1366×768 / 1920×1080 등 일반 데스크톱에서 세로 스크롤 방지.
    칠판/노트북이 한 화면에 들어오도록 dead space 줄임.

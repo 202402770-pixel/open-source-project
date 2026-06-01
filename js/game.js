@@ -150,8 +150,14 @@ class Game {
     }
 
     _recordSpawnTimes(words) {
+        // PR-F: 단어별 spawn time을 STAGGER_MS 시차로 분산.
+        // 동일 spawn time이면 한 단어 만료 후 다음 frame에 다른 단어도 만료
+        // → 1초 내에 6단어 다 만료되어 즉사. 시차 두면 자연스러운 차례 만료.
         const now = Date.now();
-        (words || []).forEach((w) => { this.wordSpawnTimes[w] = now; });
+        const stagger = (CONFIG.CORE && CONFIG.CORE.WORD_SPAWN_STAGGER_MS) || 1500;
+        (words || []).forEach((w, i) => {
+            this.wordSpawnTimes[w] = now + i * stagger;
+        });
     }
 
     /**
@@ -232,6 +238,7 @@ class Game {
     /**
      * PR-D: 활성 단어 중 가장 임박한 만료 비율 (0~1). UI 경고 표시용.
      * 1에 가까울수록 곧 만료. Zen 모드 또는 활성 단어 없으면 0.
+     * PR-F: 미래 spawn time(stagger) 단어는 음수 비율이 나오므로 max(0, ratio).
      */
     getMostImpendingExpiryRatio() {
         if (this.activeWords.length === 0) return 0;
@@ -241,7 +248,7 @@ class Game {
         let maxRatio = 0;
         this.activeWords.forEach((w) => {
             const t = this.wordSpawnTimes[w] || now;
-            const ratio = Math.min(1, (now - t) / lifetime);
+            const ratio = Math.max(0, Math.min(1, (now - t) / lifetime));
             if (ratio > maxRatio) maxRatio = ratio;
         });
         return maxRatio;

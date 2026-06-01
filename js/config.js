@@ -25,6 +25,7 @@ const CONFIG = {
     WORD_LIFETIME_MS: 8000,          // PR-D: 단어 한 개 입력 제한 시간 (ms). DIFFICULTY.wordLifetimeMult로 조정
     WORD_LIFETIME_WARN_RATIO: 0.65,  // PR-D: 경고 표시 시작 비율 (65% 경과 시 .danger 클래스)
     WORD_LIFETIME_CRITICAL_RATIO: 0.85, // PR-D: 임박 표시 비율 (85% 경과 시 .critical 클래스)
+    WORD_SPAWN_STAGGER_MS: 1500,     // PR-F: 단어 사이 spawn 시차 (ms). 6단어가 동시 만료되어 즉사하던 PR-E 미흡 fix
   },
 
   /* ────────────────────────────────────────────────────────────────────
