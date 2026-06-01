@@ -144,12 +144,30 @@ const Effects = {
     },
 
     triggerErrorShake() {
-        const body = document.body;    
+        const body = document.body;
         body.classList.remove('shake');
-        void body.offsetWidth; 
+        void body.offsetWidth;
         body.classList.add('shake');
         setTimeout(() => {
             body.classList.remove('shake');
         }, 300);
-    }
+    },
+
+  /**
+   * 보스 단어 등장 시 화면 흔들림 (W3 박태준).
+   * CSS: body.boss-shake + @keyframes boss-shake
+   * 지속/강도는 CONFIG.BOSS.SHAKE_DURATION / SHAKE_INTENSITY 따름.
+   */
+  screenShake(duration, intensity) {
+    if (Effects._reducedMotion()) return;
+    const cfg = (typeof CONFIG !== 'undefined' && CONFIG.BOSS) || {};
+    const dur = duration || cfg.SHAKE_DURATION || 200;
+    const itn = intensity || cfg.SHAKE_INTENSITY || 6;
+    const body = document.body;
+    body.style.setProperty('--shake-intensity', `${itn}px`);
+    body.classList.remove('boss-shake');
+    void body.offsetWidth;
+    body.classList.add('boss-shake');
+    setTimeout(() => body.classList.remove('boss-shake'), dur + 20);
+  }
 };
