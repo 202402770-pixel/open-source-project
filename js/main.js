@@ -62,6 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.showScene('play');
         });
     }
+
+    // PR-M: Game Over → 메뉴로 (모드 변경 가능)
+    const backToMenuBtn = document.getElementById('back-to-menu-btn');
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
+            if (game) game.isGameOver = true;
+            game = null;
+            if (typeof window !== 'undefined') window.game = null;
+            if (typeof UI !== 'undefined' && UI.showScene) UI.showScene('start');
+        });
+    }
 });
 
 async function start(mode = 'classic', difficulty = 'easy') {

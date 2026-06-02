@@ -390,11 +390,11 @@ class Game {
             if (typeof Effects !== 'undefined' && Effects.boardWipe) {
                 Effects.boardWipe(() => {
                     const lectureTitle = document.querySelector('.blackboard h2');
-                    if (lectureTitle) lectureTitle.textContent = `LV.${nextLevel} 단원`;
+                    if (lectureTitle) lectureTitle.textContent = `LEVEL ${nextLevel}`;
                 });
             }
             if (typeof UI !== 'undefined' && UI.showToast) {
-                UI.showToast(`LV.${nextLevel}`, '새 단원 시작!', `LV${nextLevel}`, 1200);
+                UI.showToast(`LV.${nextLevel}`, '레벨 업!', `LV${nextLevel}`, 1200);
             }
         } else {
             this.gameClear();

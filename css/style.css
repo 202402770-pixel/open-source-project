@@ -486,19 +486,53 @@ body.shake {
 ========================= */
 
 .stamp {
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3.5rem;
+  font-size: 4rem;
   font-weight: 900;
   font-family: "Arial Black", Impact, sans-serif;
-  border: 10px solid;
+  border: 12px solid;
   background-color: transparent;
   transform: rotate(-12deg);
   opacity: 0;
+  text-shadow: 0 0 16px currentColor;
+}
+
+/* PR-M: 학점 도장 — 학점별 glow 강도 차등 */
+.stamp-a-plus {
+  box-shadow: 0 0 32px var(--color-grade-aplus, #d97706),
+              inset 0 0 16px rgba(217, 119, 6, 0.2);
+  animation: stamp-glow-pulse 1.4s ease-in-out infinite alternate;
+}
+.stamp-a {
+  box-shadow: 0 0 22px var(--color-grade-a, #15803d);
+}
+.stamp-a-minus {
+  box-shadow: 0 0 18px var(--color-grade-aminus, #15803d);
+}
+.stamp-b {
+  box-shadow: 0 0 14px var(--color-grade-b, #6b7280);
+}
+.stamp-c {
+  box-shadow: 0 0 12px var(--color-grade-c, #6b7280);
+}
+.stamp-f {
+  box-shadow: 0 0 18px var(--color-grade-f, #b91c1c);
+}
+
+@keyframes stamp-glow-pulse {
+  from { box-shadow: 0 0 32px var(--color-grade-aplus, #d97706),
+                     inset 0 0 16px rgba(217, 119, 6, 0.2); }
+  to   { box-shadow: 0 0 50px var(--color-grade-aplus, #d97706),
+                     inset 0 0 22px rgba(217, 119, 6, 0.35); }
+}
+
+html[data-motion="reduced"] .stamp-a-plus {
+  animation: none;
 }
 
 .stamp span {

@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v11'; // PR-L: 키보드 입력 시각 cue (노트북 panel typing-status)
+const CACHE_VERSION = 'td-v12'; // PR-M: 메타포 정리 + 단어 mono 폰트 + 학점 도장 glow
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋
