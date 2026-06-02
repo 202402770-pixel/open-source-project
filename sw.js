@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v12'; // PR-M: 메타포 정리 + 단어 mono 폰트 + 학점 도장 glow
+const CACHE_VERSION = 'td-v13'; // PR-N: 입력 손실 fix + 게임 밸런스 (ZType 리서치)
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋

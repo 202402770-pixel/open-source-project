@@ -61,7 +61,10 @@ class Game {
         this.lockedWordId = null;     // 사용자 입력 매칭 잠금
         this._nextWordId = 0;
         this._lastUpdateAt = Date.now();
-        this._lastSpawnAt = 0;
+        // PR-N: 시작 후 SPAWN_INITIAL_DELAY 만큼 첫 spawn 지연 (사용자 준비 시간).
+        // 이전엔 _lastSpawnAt=0이라 update() 첫 호출에 즉시 spawn → panic.
+        const initialDelay = (CONFIG.CORE && CONFIG.CORE.SPAWN_INITIAL_DELAY) || 1500;
+        this._lastSpawnAt = Date.now() - (CONFIG.CORE.SPAWN_INTERVAL_BASE || 3500) + initialDelay;
         this.bossKills = 0;
 
         Achievements.init();

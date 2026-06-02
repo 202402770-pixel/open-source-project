@@ -23,23 +23,27 @@ const CONFIG = {
     PLAY_AREA_TOP_PADDING: 0,        // 단어 spawn 시작 y (px)
     MISS_DAMAGE: 1,                  // 단어 미스 시 HP 감소량 (기획서 -1, 박태준 추가 결정 2026-05-23)
     // PR-K: 정통 타이핑 디펜스 — 단어 낙하 시스템
-    FALL_SPEED_BASE: 8,              // 기본 낙하 속도 (% per second, 0~100 좌표계)
-    FALL_FLOOR_RATIO: 0.92,          // 바닥 도달 임계값 (y >= 92%면 expire + takeDamage)
-    SPAWN_INTERVAL_BASE: 2000,       // 기본 spawn 주기 (ms)
-    SPAWN_MAX_ACTIVE: 6,             // 동시 활성 단어 최대 개수
-    SPAWN_X_MIN: 8,                  // spawn x 위치 최소 (%)
-    SPAWN_X_MAX: 88,                 // spawn x 위치 최대 (%)
-    WORD_DANGER_RATIO: 0.70,         // PR-K: 낙하 70% 이상 → danger (붉은 외곽)
-    WORD_CRITICAL_RATIO: 0.85,       // PR-K: 낙하 85% 이상 → critical (펄스)
+    // PR-N: 리서치 기반 밸런스 재조정 (ZType / Flow Theory)
+    //   첫 사용자 즉사 방지 — 첫 30초 안에 첫 성공 경험 보장
+    FALL_SPEED_BASE: 6,              // 기본 낙하 속도 (% per second). 8 → 6
+    FALL_FLOOR_RATIO: 0.92,          // 바닥 도달 임계값
+    SPAWN_INTERVAL_BASE: 3500,       // 기본 spawn 주기 (ms). 2000 → 3500
+    SPAWN_INITIAL_DELAY: 1500,       // PR-N: 게임 시작 후 첫 spawn까지 grace period (ms)
+    SPAWN_MAX_ACTIVE: 4,             // 동시 활성 단어 최대. 6 → 4
+    SPAWN_X_MIN: 8,
+    SPAWN_X_MAX: 88,
+    WORD_DANGER_RATIO: 0.70,
+    WORD_CRITICAL_RATIO: 0.85,
   },
 
   /* ────────────────────────────────────────────────────────────────────
    * Difficulty Multipliers (Easy / Normal / Hard)
    * ──────────────────────────────────────────────────────────────────── */
   DIFFICULTY: {
-    easy:   { speedMult: 0.7, spawnMult: 1.4, startHP: 7 },
-    normal: { speedMult: 1.0, spawnMult: 1.0, startHP: 5 },
-    hard:   { speedMult: 1.4, spawnMult: 0.6, startHP: 3 },
+    // PR-N: ZType 리서치 기반 — easy 진입 장벽 낮춤. speedMult 작을수록 천천히 낙하.
+    easy:   { speedMult: 0.45, spawnMult: 1.0, startHP: 7 },
+    normal: { speedMult: 0.70, spawnMult: 0.85, startHP: 5 },
+    hard:   { speedMult: 1.00, spawnMult: 0.65, startHP: 3 },
   },
 
   /* ────────────────────────────────────────────────────────────────────

@@ -87,13 +87,16 @@ async function start(mode = 'classic', difficulty = 'easy') {
     Input.init(
         (val) => {
             if (!game || game.isGameOver || game.isPaused) return;
+            // PR-N: 늘어난 모든 글자 차례로 처리 (이전엔 slice(-1)로 1글자만 → 빠른
+            // 타이핑 / IME / autocomplete 시 손실. 박태준 dogfood로 발견)
             if (val.length > Input.lastValLength) {
-                const inputChar = val.slice(-1);
-                Sound.play('chalk', 0.4);
-                game.handleCharInput(inputChar);
+                const newChars = val.slice(Input.lastValLength);
+                for (const c of newChars) {
+                    Sound.play('chalk', 0.4);
+                    game.handleCharInput(c);
+                }
             }
             Input.lastValLength = val.length;
-            // PR-K: 입력 필드는 시각 X. 길어지면 reset.
             if (val.length > 30) {
                 const el = document.getElementById('hidden-input');
                 if (el) el.value = '';
