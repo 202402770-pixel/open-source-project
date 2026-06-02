@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v5'; // PR-G: word placeholder + achievement 토스트 강화
+const CACHE_VERSION = 'td-v6'; // PR-H: placeholder color fix + sw controllerchange listener
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋

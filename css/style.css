@@ -143,10 +143,14 @@ body.component-page {
   color: var(--color-untyped);
 }
 
-/* PR-G: 입력 전 placeholder — 사용자가 무엇을 입력해야 할지 시각적으로 안내 */
+/* PR-G: 입력 전 placeholder — 사용자가 무엇을 입력해야 할지 시각적으로 안내
+   PR-G hotfix: color를 text-mute(베이지)에서 untyped(chalk)로 변경.
+   word-display가 짙은 녹색 칠판 위에 있어서 베이지/갈색 + opacity 0.4면
+   대비 거의 0이라 박태준 dogfood에서 단어가 안 보임. chalk 색 + opacity로
+   "dimmed but readable" 처리. */
 .text-placeholder {
-  color: var(--color-text-mute);
-  opacity: 0.4;
+  color: var(--color-chalk-dim, var(--color-untyped));
+  opacity: 0.75;
 }
 
 .text-typed {
