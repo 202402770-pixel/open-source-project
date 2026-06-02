@@ -119,6 +119,7 @@ function gameLoop() {
         if (typeof game.update === 'function') game.update();  // PR-K: 낙하 + spawn + 충돌
         if (typeof UI.renderFallingWords === 'function') UI.renderFallingWords(game);
         if (typeof UI.updateWordDanger === 'function') UI.updateWordDanger(game);
+        if (typeof UI.updateTypingStatus === 'function') UI.updateTypingStatus(game);
         UI.updateHUD(game);
     }
     requestAnimationFrame(gameLoop);

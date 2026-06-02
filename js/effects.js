@@ -144,7 +144,9 @@ const Effects = {
      *   glow-combo30 (콤보 30+)   — 액센트 색 + 최대 글로우
      */
     toggleGlow(active, arg) {
-        const notebook = document.querySelector('.notebook-input');
+        // PR-L: 셀렉터 우선순위 — typing-status (PR-K 입력 cue) → .notebook-input (호환)
+        const notebook = document.getElementById('typing-status')
+            || document.querySelector('.notebook-input');
         if (!notebook) return;
         notebook.classList.remove('glow-combo5', 'glow-combo10', 'glow-combo20', 'glow-combo30');
         if (!active) return;
