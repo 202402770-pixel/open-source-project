@@ -360,7 +360,7 @@ const UI = {
 
     if (this.tutorialNextBtn) {
       const isLastSlide = this.tutorialIndex === this.tutorialSlides.length - 1;
-      this.tutorialNextBtn.textContent = isLastSlide ? '반격할게요' : '다음';
+      this.tutorialNextBtn.textContent = isLastSlide ? '게임 시작' : '다음';
     }
   },
 
