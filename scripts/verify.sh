@@ -22,8 +22,8 @@ echo "[1/2] Lighthouse 측정"
 bash scripts/verify-lighthouse.sh
 
 echo ""
-echo "[2/2] Playwright E2E (전체 검증 12 스펙)"
-npx playwright test scripts/verify-e2e.spec.js scripts/verify-mobile.spec.js scripts/verify-rotate.spec.js scripts/verify-settings.spec.js scripts/verify-feedback.spec.js scripts/verify-lifetime.spec.js scripts/verify-hotfix.spec.js scripts/verify-full-viewport.spec.js scripts/verify-polish.spec.js scripts/verify-placeholder-contrast.spec.js scripts/verify-word-field.spec.js scripts/verify-modes.spec.js --reporter=list
+echo "[2/2] Playwright E2E (전체 검증 13 스펙)"
+npx playwright test scripts/verify-e2e.spec.js scripts/verify-mobile.spec.js scripts/verify-rotate.spec.js scripts/verify-settings.spec.js scripts/verify-feedback.spec.js scripts/verify-lifetime.spec.js scripts/verify-hotfix.spec.js scripts/verify-full-viewport.spec.js scripts/verify-polish.spec.js scripts/verify-placeholder-contrast.spec.js scripts/verify-word-field.spec.js scripts/verify-modes.spec.js scripts/verify-comprehensive.spec.js --reporter=list
 
 echo ""
 echo "════════════════════════════════════════════"
