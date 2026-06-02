@@ -3120,22 +3120,37 @@ body.boss-shake {
     padding: 14px;
   }
 
+  /* PR-H2: word-field flex-shrink 0 (blackboard 안에서 강제 보존, 압축 방지) */
   .play-scene.is-active .word-field {
-    height: clamp(100px, 18vh, 200px);
-    margin-top: 10px;
+    flex-shrink: 0;
+    height: clamp(90px, 16vh, 180px);
+    margin-top: 8px;
   }
 
+  /* PR-H2: 22vh → 14vh (HUD/blackboard 보장) */
   .play-scene.is-active .classroom-illustration {
-    max-height: 22vh;
-    padding: 10px;
-    gap: 10px;
+    max-height: 14vh;
+    padding: 8px;
+    gap: 8px;
     overflow: hidden;
   }
 
+  /* PR-H2: 30vh → 22vh (notebook 컴팩트) */
   .play-scene.is-active .notebook-panel {
-    max-height: 30vh;
-    padding: 12px 14px;
+    max-height: 22vh;
+    padding: 10px 14px;
     overflow: hidden;
+  }
+
+  /* PR-H2: HUD 컴팩트 — 모바일 좁은 폭에서 wrap 4줄 → 2줄 */
+  .play-scene.is-active .play-hud {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .play-scene.is-active .play-hud .hud-pill,
+  .play-scene.is-active .play-hud .hp-panel {
+    padding: 4px 10px;
+    font-size: 12px;
   }
 
   /* notebook-lines (빈 종이 줄) — 모바일 dead space 제거 */
@@ -3168,22 +3183,28 @@ body.boss-shake {
     padding: 18px;
   }
 
+  /* PR-H2: word-field는 flex shrink 0 (blackboard 안에서 강제 보존).
+     단어 placeholder/실 단어가 보이지 않던 4px 압축 버그 fix.
+     height clamp 줄여서 칠판 안에 자연스럽게 들어가도록. */
   .play-scene.is-active .word-field {
-    height: clamp(160px, 28vh, 320px);
-    margin-top: 16px;
+    flex-shrink: 0;
+    height: clamp(120px, 22vh, 240px);
+    margin-top: 12px;
   }
 
-  /* 시안 E의 강의실 ambient — viewport에 맞춰 컴팩트하게 */
+  /* 시안 E의 강의실 ambient — viewport에 맞춰 컴팩트하게.
+     PR-H2: 22vh → 16vh (blackboard 공간 확보). */
   .play-scene.is-active .classroom-illustration {
-    padding: 16px;
-    gap: 16px;
-    max-height: 22vh;
+    padding: 14px;
+    gap: 12px;
+    max-height: 16vh;
     overflow: hidden;
   }
 
+  /* PR-H2: 30vh → 24vh (notebook 컴팩트, stage 영역 확장). */
   .play-scene.is-active .notebook-panel {
-    padding: 16px 20px;
-    max-height: 30vh;
+    padding: 14px 20px;
+    max-height: 24vh;
     overflow: hidden;
   }
 
