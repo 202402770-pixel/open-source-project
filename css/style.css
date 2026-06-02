@@ -1473,10 +1473,38 @@ html[data-motion="reduced"] #board-timer-value.is-urgent {
   box-shadow: var(--shadow-soft);
 }
 
-/* PR-E: 큰 데스크톱 viewport(≥1400px)에서 Start 카드 광활 dead space 줄임 */
+/* PR-E: 큰 데스크톱 viewport(≥1600px)에서 Start 카드 광활 dead space 줄임 */
 @media (min-width: 1600px) {
   .start-card {
     width: min(1100px, 92vw);
+  }
+}
+
+/* PR-J: 작은 세로 viewport(<=700px)에서 Start 카드 컴팩트 (netbook 등) */
+@media (max-height: 700px) {
+  .scene {
+    padding: 16px;
+  }
+  .start-card {
+    padding: 24px 32px;
+  }
+  .start-card h1 {
+    margin-bottom: 8px;
+    font-size: clamp(32px, 5vh, 48px);
+  }
+  .start-description {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .start-options {
+    gap: 8px;
+  }
+  .start-options .option-label {
+    margin-bottom: 4px;
+  }
+  .home-actions {
+    gap: 8px;
+    margin-top: 12px;
   }
 }
 
