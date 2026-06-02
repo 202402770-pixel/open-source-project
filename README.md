@@ -1,8 +1,10 @@
 # Type Defender
 
-> 교수님이 칠판에 적는 핵심 단어를 빠르게 받아 적어 학점을 지켜내는 타이핑 디펜스 게임.
+> 위에서 떨어지는 단어를 키보드로 타이핑해 라인을 방어하는 **정통 타이핑 디펜스 게임** (ZType 스타일).
 
-한국외대 오픈소스SW 수업 팀 프로젝트. 시안 E "강의 필기" 메타포로 디자인.
+한국외대 오픈소스SW 수업 팀 프로젝트.
+
+> **메타포 변경 이력**: W1~W5는 시안 E "강의 필기" 받아쓰기 메타포로 진행. 사용성 개선 시리즈(PR-A~N)에서 박태준 dogfood로 정통 타이핑 디펜스로 본질 전환.
 
 ## 🎮 데모
 
@@ -17,16 +19,28 @@
 
 ## 🎯 게임 방법
 
-1. **모드 선택** — Classic / Time Attack / Zen / Daily 4가지
-2. **난이도 선택** — Easy / Normal / Hard (시작 HP 7 / 5 / 3, 단어 시간 제한 12s / 8s / 5.6s)
-3. **단어 받아쓰기** — 칠판에 표시되는 placeholder 단어를 정확히 입력 (Enter 제출)
-4. **시간 제한** — 단어가 1.5초 시차로 spawn. 만료 임박 시 노트 빨간색 경고 (65%) → 펄스 (85%) → HP -1
-5. **콤보 유지** — 10 / 20 / 30 단계별 노트 글로우 (강도 점진). 미스 시 콤보 초기화 + 화면 떨림
-6. **레벨업** — 단어 모두 처치 시 다음 단원, 칠판 wipe 트랜지션
-7. **보스 단어** — Lv 3+ 5% 확률 등장 (종소리 + 화면 흔들림 + +200 보너스)
-8. **Game Over / Clear** — 학점 도장(A+/A/A-/B/C/F) + 통계 표시 + 재시작 (페이지 리로드 없이)
+1. **모드 선택** — Classic / Time Attack (120s) / Zen (HP 무한, 180s) / Daily (시드 단어)
+2. **난이도 선택** — Easy / Normal / Hard (시작 HP 7 / 5 / 3, 낙하 속도 0.45×/0.7×/1.0×)
+3. **게임 시작** → 1.5초 grace period 후 첫 단어 spawn
+4. **단어 낙하** — 칠판 위쪽에서 영어 단어가 다양한 위치에서 spawn되어 천천히 아래로 떨어짐
+5. **첫 글자 lock** — 떨어지는 단어 중 하나의 첫 글자를 키보드로 입력하면 그 단어가 노란 테두리로 잠김 (ZType 패턴)
+6. **글자별 진행** — 잠긴 단어의 남은 글자를 차례로 입력. 노트북 panel에 "**mou**|se" 큰 글씨로 진행 표시
+7. **자동 처치** — 마지막 글자 입력 시 자동 처치 + chalkDust + 점수 + 콤보 (Enter 키 불필요)
+8. **바닥 도달 시** — HP -1 + 화면 떨림 + 콤보 끊김. 임박 시 칠판 빨간 경고 (70%+) → 펄스 (85%+)
+9. **콤보 단계화** — 10 / 20 / 30 단계별 글로우 (강도 점진)
+10. **보스 단어** — Lv 3+ 5% 확률 등장. 액센트 색 + glow-pulse + 종소리. 처치 시 +200 보너스
+11. **레벨업** — 단어 풀 비고 활성 단어 없으면 다음 레벨. 칠판 wipe 트랜지션 + "레벨 업!" 토스트
+12. **Game Over** — 학점 도장 (A+/A/A-/B/C/F, 학점별 box-shadow glow) + 통계 → 다시 도전 / 메뉴로
 
-설정에서 **테마 5종** (Classroom/Neon/Retro/Cyber/Minimal), **폰트 크기 3단계**, **모션 줄이기**, **고대비**, **사운드 볼륨**, **Custom Words** (직접 입력한 단어로 플레이) 즉시 적용 가능.
+**설정** (즉시 적용): 테마 5종, 폰트 크기 3단계, 모션 줄이기, 고대비, 사운드 볼륨, **Custom Words** (직접 입력한 단어로 플레이).
+
+**모드 시각 차이**:
+| 모드 | HUD 배지 | HP | 타이머 |
+|---|---|---|---|
+| Classic | 갈색 | 7/5/3 | TIME 경과 |
+| Time Attack | 빨강 | 7/5/3 | TIME LEFT 카운트다운 (120s) |
+| Zen | 녹색 | ∞ (숨김) | ZEN 카운트다운 (180s) |
+| Daily | 보라 | 7/5/3 | DAILY 경과 + 출석 모달 |
 
 ## 🧱 기술 스택
 
@@ -82,7 +96,7 @@ npm run verify
 **현재 점수**:
 - Lighthouse desktop **Performance 100** / Accessibility 90 / Best Practices 96 / SEO 100
 - Lighthouse mobile **Performance 98** / Accessibility 90
-- Playwright **60건 통과** (PWA / 모달 / 모바일 / 학점 / Settings / Feedback / Lifetime / Hotfix / Viewport)
+- Playwright **79건 통과** (PWA / 모달 / 모바일 / 학점 / Settings / Feedback / Falling / Modes / Comprehensive / Typing Status / Hotfix)
 
 결과 파일:
 - `lighthouse-reports/desktop.report.html` · `mobile.report.html`
