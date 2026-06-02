@@ -1013,21 +1013,67 @@ const UI = {
     if (this.score) this.score.textContent = `SCORE: ${state.score}`;
     if (this.level) this.level.textContent = `LV.${state.level}`;
     if (this.missed) this.missed.textContent = `MISSED: ${state.missed}`;
-    
+
     if (this.wpmDisplay) {
         this.wpmDisplay.textContent = `WPM: ${state.wpm}`;
     }
 
-    // Zen 모드일 경우 HP 등 불필요한 HUD 숨김 처리
+    // PR-I: 모드 배지 — 현재 모드를 HUD에 시각 표시
+    const modeBadge = document.getElementById('mode-badge');
+    if (modeBadge) {
+      const modeLabels = { classic: 'CLASSIC', timeattack: 'TIME ATTACK', zen: 'ZEN', daily: 'DAILY' };
+      modeBadge.textContent = modeLabels[state.mode] || state.mode.toUpperCase();
+      modeBadge.dataset.mode = state.mode;
+    }
+
+    // PR-I: Zen 모드 HP 숨김 — .hp-panel 전체 (이전엔 .hp-meter만 숨겨졌음)
+    const hpPanel = document.getElementById('hp-panel');
     if (state.mode === 'zen') {
-        if (this.hpFill && this.hpFill.parentElement) {
-            this.hpFill.parentElement.style.display = 'none';
-        }
+      if (hpPanel) hpPanel.style.display = 'none';
     } else {
-        if (this.hpFill && this.hpFill.parentElement) {
-            this.hpFill.parentElement.style.display = 'block'; // 일반 모드 노출
-        }
-        this.updateHPBar(state.currentHP, state.maxHP || 100);
+      if (hpPanel) hpPanel.style.display = '';
+      this.updateHPBar(state.currentHP, state.maxHP || 100);
+    }
+
+    // PR-I: 칠판 타이머 실시간 갱신 + 모드별 표시
+    this.updateBoardTimer(state);
+  },
+
+  /**
+   * PR-I: 모드별 board-timer 갱신.
+   * - Time Attack / Zen: timeLimit에서 경과 시간 차감 (남은 시간 카운트다운)
+   * - Classic: 경과 시간 (mm:ss) — 끝없이 증가
+   * - Daily: "DAILY" + 경과 시간 (오늘의 도전 표시)
+   */
+  updateBoardTimer(state) {
+    const valueEl = document.getElementById('board-timer-value');
+    const labelEl = document.getElementById('board-timer-label');
+    if (!valueEl || !labelEl) return;
+
+    const fmt = (sec) => {
+      const s = Math.max(0, Math.floor(sec));
+      const mm = String(Math.floor(s / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      return `${mm}:${ss}`;
+    };
+
+    const elapsedSec = state.startTime ? (Date.now() - state.startTime) / 1000 : 0;
+
+    if (state.mode === 'timeattack' || state.mode === 'zen') {
+      // 카운트다운: 남은 시간
+      const remaining = (state.timeLimit || 0) - elapsedSec;
+      labelEl.textContent = state.mode === 'zen' ? 'ZEN' : 'TIME LEFT';
+      valueEl.textContent = fmt(remaining);
+      valueEl.classList.toggle('is-urgent', remaining <= 10 && remaining > 0);
+    } else if (state.mode === 'daily') {
+      labelEl.textContent = 'DAILY';
+      valueEl.textContent = fmt(elapsedSec);
+      valueEl.classList.remove('is-urgent');
+    } else {
+      // classic
+      labelEl.textContent = 'TIME';
+      valueEl.textContent = fmt(elapsedSec);
+      valueEl.classList.remove('is-urgent');
     }
   },
 

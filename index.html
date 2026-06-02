@@ -109,13 +109,14 @@
     <section class="scene play-scene" data-scene="play">
       <header class="play-hud">
         <div class="hud-stats">
+          <span id="mode-badge" class="hud-pill hud-pill--mode" data-mode="classic">CLASSIC</span>
           <span id="score" class="hud-pill">SCORE: 0</span>
           <span id="level" class="hud-pill">LV.1</span>
           <span id="missed" class="hud-pill">MISSED: 0</span>
           <span id="wpm" class="hud-pill">WPM: 0</span>
         </div>
 
-        <div class="hp-panel" aria-label="체력">
+        <div id="hp-panel" class="hp-panel" aria-label="체력">
           <span class="hp-label">HP</span>
           <div class="hp-meter">
             <div id="hp-fill" class="hp-fill ok" style="width: 100%;"></div>
@@ -132,9 +133,9 @@
               <h2>자료구조 핵심 키워드</h2>
             </div>
 
-            <div class="board-timer">
-              <span>TIME</span>
-              <strong>01:24</strong>
+            <div class="board-timer" id="board-timer">
+              <span id="board-timer-label">TIME</span>
+              <strong id="board-timer-value">--:--</strong>
             </div>
           </div>
 

@@ -1047,6 +1047,48 @@ html[data-motion="reduced"] .toast.toast--achievement {
     animation: slide-in-right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+/* PR-I: 모드 배지 — Classic/Time Attack/Zen/Daily 시각 구분 */
+.hud-pill--mode {
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    border: 2px solid currentColor;
+}
+
+.hud-pill--mode[data-mode="classic"] {
+    color: var(--color-accent-deep, #b87a00);
+    background: rgba(184, 122, 0, 0.08);
+}
+
+.hud-pill--mode[data-mode="timeattack"] {
+    color: #b91c1c;
+    background: rgba(185, 28, 28, 0.1);
+}
+
+.hud-pill--mode[data-mode="zen"] {
+    color: #15803d;
+    background: rgba(21, 128, 61, 0.1);
+}
+
+.hud-pill--mode[data-mode="daily"] {
+    color: #6d28d9;
+    background: rgba(109, 40, 217, 0.1);
+}
+
+/* PR-I: 타이머 위급 상태 (10초 이하) — 빨간 펄스 */
+#board-timer-value.is-urgent {
+    color: #fca5a5;
+    animation: timer-urgent 0.6s infinite alternate;
+}
+
+@keyframes timer-urgent {
+    from { opacity: 0.7; }
+    to { opacity: 1; transform: scale(1.08); }
+}
+
+html[data-motion="reduced"] #board-timer-value.is-urgent {
+    animation: none;
+}
+
 .toast-accent {
     width: 4px;
     height: 44px;

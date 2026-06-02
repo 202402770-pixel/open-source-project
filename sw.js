@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v7'; // PR-H2: word-field flex-shrink + 모바일 HUD 컴팩트
+const CACHE_VERSION = 'td-v8'; // PR-I: 모드 배지 + 타이머 실시간 + Zen HP 숨김
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋

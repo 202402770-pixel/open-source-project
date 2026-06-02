@@ -46,8 +46,10 @@ test.describe('Placeholder Contrast Hotfix — PR-H', () => {
     expect(html).toMatch(/_swRefreshing/);
   });
 
-  test('CACHE_VERSION td-v6 갱신', async ({ page }) => {
+  test('CACHE_VERSION 갱신 — td-v6 이상', async ({ page }) => {
     const swText = await page.evaluate(() => fetch('/sw.js').then(r => r.text()));
-    expect(swText).toMatch(/CACHE_VERSION = 'td-v6'/);
+    const match = swText.match(/CACHE_VERSION = 'td-v(\d+)'/);
+    expect(match).not.toBeNull();
+    expect(parseInt(match[1], 10)).toBeGreaterThanOrEqual(6);
   });
 });
