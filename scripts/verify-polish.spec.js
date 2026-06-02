@@ -18,35 +18,7 @@ test.describe('Polish — PR-G', () => {
     await page.waitForLoadState('networkidle');
   });
 
-  test('word-display placeholder — 입력 전 첫 활성 단어 표시', async ({ page }) => {
-    const result = await page.evaluate(async () => {
-      await WordData.loadWords();
-      const words = ['mouse', 'keyboard', 'monitor'];
-      UI.renderTargetWord(words, '');
-      const wd = document.getElementById('word-display');
-      const spans = Array.from(wd.querySelectorAll('span:not(.cursor)'));
-      const text = spans.map(s => s.textContent).join('');
-      const classes = spans.map(s => s.className);
-      return { text, classes, spanCount: spans.length };
-    });
-    expect(result.text).toBe('mouse');
-    expect(result.spanCount).toBe(5);
-    expect(result.classes.every(c => c === 'text-placeholder')).toBe(true);
-  });
-
-  test('word-display placeholder — 사용자 입력 시작 시 placeholder 해제', async ({ page }) => {
-    const result = await page.evaluate(async () => {
-      await WordData.loadWords();
-      const words = ['mouse'];
-      UI.renderTargetWord(words, '');
-      const beforeClass = document.querySelector('#word-display span:not(.cursor)')?.className;
-      UI.renderTargetWord(words, 'm');
-      const afterClass = document.querySelector('#word-display span:not(.cursor)')?.className;
-      return { beforeClass, afterClass };
-    });
-    expect(result.beforeClass).toBe('text-placeholder');
-    expect(result.afterClass).not.toBe('text-placeholder');
-  });
+  // PR-K: placeholder 시스템 폐기 (낙하 단어로 대체). placeholder 테스트 삭제.
 
   test('도전과제 토스트 — showAchievementToast 함수 존재 + 발화 시 toast--achievement 클래스', async ({ page }) => {
     const result = await page.evaluate(() => {

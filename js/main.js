@@ -1,12 +1,11 @@
 let game;
-let selectedMode = 'classic';        // 기본 모드 (시작 화면 active)
+let selectedMode = 'classic';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. 게임 모드 선택 버튼 연동
+    // 모드 선택
     const modeGroup = document.querySelector('[aria-label="게임 모드 선택"]');
     if (modeGroup) {
-        const modeButtons = modeGroup.querySelectorAll('.td-toggle');
-        modeButtons.forEach(btn => {
+        modeGroup.querySelectorAll('.td-toggle').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const modeText = e.target.textContent.trim().toUpperCase();
                 if (modeText === 'CLASSIC') selectedMode = 'classic';
@@ -17,11 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. 난이도 선택 버튼 연동 (이슈 #35) — Settings와 양방향 동기화
+    // 난이도 선택 — Settings와 양방향 동기화
     const difficultyGroup = document.querySelector('[aria-label="난이도 선택"]');
     if (difficultyGroup) {
-        const difficultyButtons = difficultyGroup.querySelectorAll('.td-toggle');
-        difficultyButtons.forEach(btn => {
+        difficultyGroup.querySelectorAll('.td-toggle').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const txt = e.target.textContent.trim().toUpperCase();
                 const value = txt === 'NORMAL' ? 'normal' : txt === 'HARD' ? 'hard' : 'easy';
@@ -32,18 +30,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. '받아적을게요' (플레이) 버튼 — 선택된 모드/난이도로 게임 시작
+    // Play 버튼
     const playBtn = document.querySelector('[data-go="play"]');
     if (playBtn) {
         playBtn.addEventListener('click', () => {
             const difficulty = typeof UI !== 'undefined' && typeof UI.getActiveDifficulty === 'function'
-                ? UI.getActiveDifficulty()
-                : 'easy';
+                ? UI.getActiveDifficulty() : 'easy';
             start(selectedMode, difficulty);
         });
     }
 
-    // PR-E: 페이지 가시성 변화 시 게임 자동 일시정지 (탭 전환 / 백그라운드 등)
+    // PR-E: 페이지 가시성 변화 자동 일시정지
     document.addEventListener('visibilitychange', () => {
         if (!game || game.isGameOver) return;
         if (document.hidden) {
@@ -53,15 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. 재시작 버튼 — PR-B: 페이지 리로드 제거. 같은 모드/난이도로 즉시 새 게임.
+    // 재시작
     const restartBtn = document.getElementById('restart-btn');
     if (restartBtn) {
         restartBtn.addEventListener('click', async () => {
-            if (game) game.isGameOver = true; // 기존 gameLoop 중단
+            if (game) game.isGameOver = true;
             game = null;
             const difficulty = typeof UI !== 'undefined' && typeof UI.getActiveDifficulty === 'function'
-                ? UI.getActiveDifficulty()
-                : 'easy';
+                ? UI.getActiveDifficulty() : 'easy';
             await start(selectedMode, difficulty);
             UI.showScene('play');
         });
@@ -72,32 +68,32 @@ async function start(mode = 'classic', difficulty = 'easy') {
     Sound.init();
     await WordData.loadWords();
     game = new Game(mode, difficulty);
-    if (typeof window !== 'undefined') window.game = game; // PR-E: UI/softPause용 노출
+    if (typeof window !== 'undefined') window.game = game;
 
+    // PR-K: 글자 단위 입력 → game.handleCharInput
+    // hidden-input의 'input' 이벤트가 새 글자가 추가될 때마다 발화.
+    // 마지막 글자 1개만 추출해서 game에 전달.
     Input.init(
         (val) => {
-            if (game.isGameOver || game.isPaused) return;
-            const inputChar = val.slice(-1);
-            let isCorrect = false;
-            if (val.length > UI.lastInputLength) {
-                Sound.play('chalk', 0.8);
-                const activeWords = game.getActiveWords();
-                const targetWord = activeWords.find(w => w.startsWith(val.slice(0, -1))) || activeWords[0];
-                if (targetWord && targetWord.startsWith(val)) {
-                    isCorrect = true;
-                }
-                if (window.GameAPI) {
-                    if (isCorrect && GameAPI.onCorrectChar) GameAPI.onCorrectChar(inputChar);
-                    if (!isCorrect && GameAPI.onWrongChar) GameAPI.onWrongChar(inputChar);
-                }
+            if (!game || game.isGameOver || game.isPaused) return;
+            if (val.length > Input.lastValLength) {
+                const inputChar = val.slice(-1);
+                Sound.play('chalk', 0.4);
+                game.handleCharInput(inputChar);
             }
-            UI.renderTargetWord(game.getActiveWords(), val);
+            Input.lastValLength = val.length;
+            // PR-K: 입력 필드는 시각 X. 길어지면 reset.
+            if (val.length > 30) {
+                const el = document.getElementById('hidden-input');
+                if (el) el.value = '';
+                Input.lastValLength = 0;
+            }
         },
-        (word) => {
-            if (game.isGameOver || game.isPaused) return;
-
-            game.checkAnswer(word);
-            UI.renderTargetWord(game.getActiveWords(), "");
+        (_word) => {
+            // Enter는 무시 (PR-K는 마지막 글자에 자동 처치)
+            const el = document.getElementById('hidden-input');
+            if (el) el.value = '';
+            Input.lastValLength = 0;
         }
     );
 
@@ -105,15 +101,12 @@ async function start(mode = 'classic', difficulty = 'easy') {
     UI.initPauseControls(game);
 
     const showRankingBtn = document.getElementById('show-ranking-btn');
-
     if (showRankingBtn) {
-        showRankingBtn.addEventListener('click', () => {
-            UI.toggleRankingModal(true);
-        });
+        showRankingBtn.addEventListener('click', () => UI.toggleRankingModal(true));
     }
 
     UI.updateHUD(game);
-    UI.renderTargetWord(game.getActiveWords(), "");
+    if (typeof UI.renderFallingWords === 'function') UI.renderFallingWords(game);
 
     gameLoop();
 }
@@ -122,15 +115,10 @@ function gameLoop() {
     if (!game || game.isGameOver) return;
     if (!game.isPaused) {
         game.calculateWPM();
-        if (typeof game.checkTime === 'function') {
-            game.checkTime();
-        }
-        if (typeof game.checkWordTimeouts === 'function') {
-            game.checkWordTimeouts(); // PR-D: 단어 만료 체크 (+takeDamage)
-        }
-        if (UI && typeof UI.updateWordDanger === 'function') {
-            UI.updateWordDanger(game); // PR-D: 임박 만료 비율을 .notebook-input에 시각 표시
-        }
+        if (typeof game.checkTime === 'function') game.checkTime();
+        if (typeof game.update === 'function') game.update();  // PR-K: 낙하 + spawn + 충돌
+        if (typeof UI.renderFallingWords === 'function') UI.renderFallingWords(game);
+        if (typeof UI.updateWordDanger === 'function') UI.updateWordDanger(game);
         UI.updateHUD(game);
     }
     requestAnimationFrame(gameLoop);

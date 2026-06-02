@@ -892,23 +892,80 @@ const UI = {
   },
 
   /**
-   * PR-D: 활성 단어의 만료 임박 비율을 .notebook-input에 시각 표시.
-   *   65~85%: .danger (붉은 외곽)
-   *   85%+:   .critical (펄스 + 강한 글로우)
-   * Zen 모드 / 만료 없을 시 모든 경고 클래스 제거.
+   * PR-K: 낙하 시스템 — 가장 임박한 단어의 바닥 도달 비율을 word-field에 시각 표시.
+   *   70~85%: .danger (붉은 외곽)
+   *   85%+:   .critical (펄스)
    */
   updateWordDanger(gameInstance) {
     if (!gameInstance || typeof gameInstance.getMostImpendingExpiryRatio !== 'function') return;
-    const notebook = document.querySelector('.notebook-input');
-    if (!notebook) return;
-
+    const wf = document.querySelector('.word-field');
+    if (!wf) return;
     const ratio = gameInstance.getMostImpendingExpiryRatio();
-    const warnRatio = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_LIFETIME_WARN_RATIO) || 0.65;
-    const critRatio = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_LIFETIME_CRITICAL_RATIO) || 0.85;
+    const warn = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_DANGER_RATIO) || 0.70;
+    const crit = (CONFIG && CONFIG.CORE && CONFIG.CORE.WORD_CRITICAL_RATIO) || 0.85;
+    wf.classList.remove('danger', 'critical');
+    if (ratio >= crit) wf.classList.add('critical');
+    else if (ratio >= warn) wf.classList.add('danger');
+  },
 
-    notebook.classList.remove('danger', 'critical');
-    if (ratio >= critRatio) notebook.classList.add('critical');
-    else if (ratio >= warnRatio) notebook.classList.add('danger');
+  /**
+   * PR-K: 정통 타이핑 디펜스 — 떨어지는 단어들 렌더.
+   * word-field 안에 각 단어를 absolute 위치로 그림. element는 id 기반 재사용.
+   */
+  _fallingWordEls: null,
+  renderFallingWords(game) {
+    const wf = document.querySelector('.word-field');
+    if (!wf) return;
+    if (!this._fallingWordEls) this._fallingWordEls = new Map();
+
+    const activeIds = new Set(game.fallingWords.map(w => w.id));
+
+    // 제거된 element 정리
+    for (const [id, el] of this._fallingWordEls) {
+      if (!activeIds.has(id)) {
+        el.remove();
+        this._fallingWordEls.delete(id);
+      }
+    }
+
+    // 추가/갱신
+    for (const w of game.fallingWords) {
+      let el = this._fallingWordEls.get(w.id);
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'falling-word';
+        wf.appendChild(el);
+        this._fallingWordEls.set(w.id, el);
+      }
+      el.style.left = `${w.x}%`;
+      el.style.top = `${w.y}%`;
+      el.classList.toggle('is-locked', game.lockedWordId === w.id);
+      el.classList.toggle('is-boss', !!w.isBoss);
+
+      // 글자 spans 재구성 (text length가 바뀔 일은 없음)
+      if (el.children.length !== w.text.length) {
+        el.innerHTML = '';
+        for (let i = 0; i < w.text.length; i++) {
+          const span = document.createElement('span');
+          span.textContent = w.text[i];
+          el.appendChild(span);
+        }
+      }
+      for (let i = 0; i < w.text.length; i++) {
+        const span = el.children[i];
+        if (i < w.typedIndex) {
+          if (span.className !== 'fw-typed') span.className = 'fw-typed';
+        } else {
+          if (span.className !== 'fw-untyped') span.className = 'fw-untyped';
+        }
+      }
+    }
+  },
+
+  /** PR-K: chalkDust 위치 계산용 */
+  getFallingWordRect(id) {
+    const el = this._fallingWordEls?.get(id);
+    return el ? el.getBoundingClientRect() : null;
   },
 
   renderTargetWord(activeWords, userInput) {
