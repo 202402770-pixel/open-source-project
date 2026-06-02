@@ -18,6 +18,7 @@ const Input = {
     _initialized: false,
     _onInput: null,
     _onEnter: null,
+    lastValLength: 0, // PR-K: 글자 단위 매칭용 (마지막 입력 길이 추적)
 
     init(onInput, onEnter) {
         // PR-B: idempotent 가드 — 재시작 시 두 번째 호출되어도 이벤트 리스너 중복 등록 방지.

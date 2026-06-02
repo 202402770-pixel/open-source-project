@@ -91,15 +91,17 @@ test.describe('Feedback Polish — PR-B', () => {
     expect(cls).toContain('glow-combo10');
   });
 
-  test('handleFailure → triggerErrorShake 발화 (body.shake)', async ({ page }) => {
-    // 게임 시작 → 잘못된 단어 제출
+  test('_expireWord → triggerErrorShake 발화 (body.shake)', async ({ page }) => {
+    // 단어 바닥 도달 시 shake (PR-K: handleFailure 폐기 → _expireWord 사용)
     await page.evaluate(async () => {
       await WordData.loadWords();
       window.game = new Game('classic', 'easy');
-      // handleFailure 직접 호출 (단어 미스 시뮬레이션)
-      window.game.handleFailure();
+      window.game._lastSpawnAt = Date.now() - 9999;
+      window.game.update();
+      const w = window.game.fallingWords[0];
+      w.y = 100;
+      window.game.update();
     });
-    // shake 클래스는 300ms 후 자동 제거됨. 동기 호출 직후엔 적용돼야 함.
     const bodyClass = await page.evaluate(() => document.body.className);
     expect(bodyClass).toContain('shake');
   });
