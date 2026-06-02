@@ -968,6 +968,36 @@ const UI = {
     return el ? el.getBoundingClientRect() : null;
   },
 
+  /**
+   * PR-L: 노트북 panel 안에 lock된 단어 진행 시각화.
+   * - lock 없음: "키보드로 단어를 입력하세요" 안내
+   * - lock 있음: typed (녹색) + cursor + untyped (chalk) 큰 글씨
+   * 사용자가 어디에 입력하는지 인지하지 못하던 박태준 dogfood 피드백 대응.
+   */
+  updateTypingStatus(game) {
+    const empty = document.getElementById('typing-status-empty');
+    const wordEl = document.getElementById('typing-status-word');
+    const typedEl = document.getElementById('ts-typed');
+    const untypedEl = document.getElementById('ts-untyped');
+    if (!empty || !wordEl || !typedEl || !untypedEl) return;
+
+    const locked = game && game.lockedWordId != null
+      ? game.fallingWords.find(w => w.id === game.lockedWordId)
+      : null;
+
+    if (locked) {
+      empty.hidden = true;
+      wordEl.hidden = false;
+      const typed = locked.text.slice(0, locked.typedIndex);
+      const untyped = locked.text.slice(locked.typedIndex);
+      if (typedEl.textContent !== typed) typedEl.textContent = typed;
+      if (untypedEl.textContent !== untyped) untypedEl.textContent = untyped;
+    } else {
+      empty.hidden = false;
+      wordEl.hidden = true;
+    }
+  },
+
   renderTargetWord(activeWords, userInput) {
     if (!this.wordDisplay) return;
 

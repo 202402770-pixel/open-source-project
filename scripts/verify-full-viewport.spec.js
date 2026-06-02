@@ -47,18 +47,7 @@ test.describe('Full Viewport Dogfood — PR-F', () => {
     expect(result.playSceneMaxH).not.toBe('none');
   });
 
-  test('모바일 — notebook-lines 숨김 (dead space 제거)', async ({ page }) => {
-    await page.setViewportSize({ width: 393, height: 851 });
-    await page.evaluate(async () => {
-      document.querySelector('[data-go="play"]').click();
-      await new Promise(r => setTimeout(r, 300));
-    });
-    const display = await page.evaluate(() => {
-      const lines = document.querySelector('.play-scene.is-active .notebook-lines');
-      return lines ? getComputedStyle(lines).display : null;
-    });
-    expect(display).toBe('none');
-  });
+  // PR-L: notebook-lines DOM 자체 제거됨. spec 폐기.
 
   // PR-K: 기존 lifetime/stagger 시스템은 낙하 시스템으로 대체됨. 관련 테스트 폐기.
   // 낙하 검증은 verify-falling.spec.js 참조.

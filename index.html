@@ -170,32 +170,35 @@
         </div>
       </section>
 
-      <section class="notebook-panel">
+      <section class="notebook-panel" id="notebook-panel">
         <div class="notebook-header">
           <div>
-            <span class="notebook-label">NOTEBOOK</span>
-            <label for="hidden-input">받아쓰기 입력</label>
+            <span class="notebook-label">TYPING</span>
+            <label for="hidden-input">키보드 입력 중</label>
           </div>
-          <span class="typing-hint">Enter를 누르면 제출됩니다.</span>
+          <span class="typing-hint">떨어지는 단어를 키보드로 입력</span>
         </div>
 
-        <div class="notebook-input">
-          <input
-            id="hidden-input"
-            type="text"
-            autocomplete="off"
-            spellcheck="false"
-            placeholder="떨어지는 단어를 입력하세요"
-            aria-label="받아쓰기 입력"
-          />
-          <button class="td-btn td-btn--secondary" type="button">Enter</button>
+        <!-- PR-L: 키보드 입력 시각 cue — lock된 단어 진행 / 안내 메시지 -->
+        <div class="typing-status" id="typing-status" role="status" aria-live="polite">
+          <div class="typing-status__empty" id="typing-status-empty">
+            <span class="typing-status__kbd">⌨</span>
+            <span>키보드로 단어를 입력하세요</span>
+          </div>
+          <div class="typing-status__word" id="typing-status-word" hidden>
+            <span class="ts-typed" id="ts-typed"></span><span class="ts-cursor"></span><span class="ts-untyped" id="ts-untyped"></span>
+          </div>
         </div>
 
-        <div class="notebook-lines" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <!-- hidden-input: 키 입력 capture용 (시각 X) -->
+        <input
+          id="hidden-input"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="키보드 입력 영역 (시각 숨김)"
+          tabindex="0"
+        />
       </section>
 
       <div id="toast-container" class="toast-container" aria-live="polite"></div>

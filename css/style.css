@@ -180,7 +180,8 @@ body.component-page {
   animation: pulse-glow 1.5s infinite alternate;
 }
 
-.notebook-input.glow-combo10 {
+.notebook-input.glow-combo10,
+#typing-status.glow-combo10 {
   box-shadow: 0 0 25px var(--color-chalk-yellow),
     0 8px 15px rgba(0, 0, 0, 0.1);
   border-color: var(--color-chalk-yellow);
@@ -188,7 +189,8 @@ body.component-page {
 }
 
 /* PR-B: 콤보 단계화 — 20/30 추가 (점진 강도) */
-.notebook-input.glow-combo20 {
+.notebook-input.glow-combo20,
+#typing-status.glow-combo20 {
   box-shadow: 0 0 38px var(--color-chalk-yellow),
     0 0 12px var(--color-chalk-yellow),
     0 8px 15px rgba(0, 0, 0, 0.12);
@@ -196,7 +198,8 @@ body.component-page {
   animation: pulse-glow-yellow 1.2s infinite alternate;
 }
 
-.notebook-input.glow-combo30 {
+.notebook-input.glow-combo30,
+#typing-status.glow-combo30 {
   box-shadow: 0 0 55px var(--color-accent),
     0 0 22px var(--color-accent),
     0 8px 18px rgba(0, 0, 0, 0.18);
@@ -3360,4 +3363,85 @@ html[data-motion="reduced"] .falling-word.is-boss {
 }
 html[data-motion="reduced"] .word-field.critical {
   animation: none;
+}
+
+/* =========================
+   PR-L: 노트북 panel 안 키보드 입력 시각 cue
+========================= */
+.typing-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 2px dashed var(--color-paper-line, #d8b4fe);
+  border-radius: 14px;
+  margin: 8px 0;
+}
+
+.typing-status__empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-mute, #8a7a62);
+  font-size: clamp(14px, 1.8vh, 18px);
+  font-weight: 700;
+}
+
+.typing-status__kbd {
+  font-size: clamp(20px, 2.4vh, 28px);
+}
+
+.typing-status__word {
+  font-family: "JetBrains Mono", "D2Coding", monospace;
+  font-size: clamp(28px, 4vh, 56px);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.typing-status__word[hidden],
+.typing-status__empty[hidden] {
+  display: none !important;
+}
+
+.ts-typed {
+  color: #15803d;
+}
+
+.ts-untyped {
+  color: var(--color-text-soft, #6b6755);
+  opacity: 0.85;
+}
+
+.ts-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  margin: 0 3px;
+  background: var(--color-accent, #d97706);
+  animation: ts-cursor-blink 0.8s infinite;
+}
+
+@keyframes ts-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+html[data-motion="reduced"] .ts-cursor {
+  animation: none;
+}
+
+/* 모바일에서 typing-status 컴팩트 */
+@media (max-width: 1023px) {
+  .typing-status {
+    min-height: 48px;
+    padding: 6px 12px;
+  }
+  .typing-status__word {
+    font-size: clamp(24px, 3.5vh, 40px);
+  }
 }

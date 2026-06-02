@@ -28,7 +28,7 @@ test.describe('Feedback Polish — PR-B', () => {
   test('콤보 글로우 1단계 (콤보 10~19) → glow-combo10', async ({ page }) => {
     const cls = await page.evaluate(() => {
       Effects.toggleGlow(true, 15);
-      return document.querySelector('.notebook-input').className;
+      return (document.getElementById('typing-status') || document.querySelector('.notebook-input')).className;
     });
     expect(cls).toContain('glow-combo10');
     expect(cls).not.toContain('glow-combo20');
@@ -38,7 +38,7 @@ test.describe('Feedback Polish — PR-B', () => {
   test('콤보 글로우 2단계 (콤보 20~29) → glow-combo20', async ({ page }) => {
     const cls = await page.evaluate(() => {
       Effects.toggleGlow(true, 25);
-      return document.querySelector('.notebook-input').className;
+      return (document.getElementById('typing-status') || document.querySelector('.notebook-input')).className;
     });
     expect(cls).toContain('glow-combo20');
     expect(cls).not.toContain('glow-combo10');
@@ -48,7 +48,7 @@ test.describe('Feedback Polish — PR-B', () => {
   test('콤보 글로우 3단계 (콤보 30+) → glow-combo30', async ({ page }) => {
     const cls = await page.evaluate(() => {
       Effects.toggleGlow(true, 42);
-      return document.querySelector('.notebook-input').className;
+      return (document.getElementById('typing-status') || document.querySelector('.notebook-input')).className;
     });
     expect(cls).toContain('glow-combo30');
     expect(cls).not.toContain('glow-combo20');
@@ -59,14 +59,14 @@ test.describe('Feedback Polish — PR-B', () => {
     const cls = await page.evaluate(() => {
       Effects.toggleGlow(true, 35);
       Effects.toggleGlow(false);
-      return document.querySelector('.notebook-input').className;
+      return (document.getElementById('typing-status') || document.querySelector('.notebook-input')).className;
     });
     expect(cls).not.toMatch(/glow-combo(5|10|20|30)/);
   });
 
   test('단계 전환 시 이전 클래스 제거 (10 → 20 → 30)', async ({ page }) => {
     const classes = await page.evaluate(() => {
-      const el = document.querySelector('.notebook-input');
+      const el = document.getElementById('typing-status') || document.querySelector('.notebook-input');
       Effects.toggleGlow(true, 12);
       const after10 = el.className;
       Effects.toggleGlow(true, 22);
@@ -86,7 +86,7 @@ test.describe('Feedback Polish — PR-B', () => {
   test('문자열 인자 호환 — toggleGlow(true, "combo10")', async ({ page }) => {
     const cls = await page.evaluate(() => {
       Effects.toggleGlow(true, 'combo10');
-      return document.querySelector('.notebook-input').className;
+      return (document.getElementById('typing-status') || document.querySelector('.notebook-input')).className;
     });
     expect(cls).toContain('glow-combo10');
   });

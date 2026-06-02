@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v10'; // PR-K: 정통 타이핑 디펜스 (단어 낙하 + 글자별 lock)
+const CACHE_VERSION = 'td-v11'; // PR-L: 키보드 입력 시각 cue (노트북 panel typing-status)
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋
