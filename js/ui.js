@@ -483,7 +483,7 @@ const UI = {
         this.saveSettings();
         this.applySettings();
         this.closeSettings();
-        this.showToast('설정 저장', '강의실 설정이 저장되었습니다.', 'OK');
+        this.showToast('설정 저장', '설정이 저장되었습니다.', 'OK');
       });
     }
 
