@@ -771,8 +771,14 @@ const UI = {
     this.settingsModal.setAttribute('aria-hidden', 'true');
     this._softResumeGameIfPlaying();
 
-    const hiddenInput = document.getElementById('hidden-input');
-    if (hiddenInput) hiddenInput.focus();
+    setTimeout(() => {
+      const hiddenInput = document.getElementById('hidden-input');
+      if (hiddenInput) {
+          hiddenInput.value = '';
+          if (typeof Input !== 'undefined') Input.lastValLength = 0;
+          hiddenInput.focus();
+      }
+    }, 50);
   },
 
   applySettings() {
@@ -847,6 +853,7 @@ const UI = {
     if (!this.rankingModal) return;
 
     if (show) {
+      this._softPauseGameIfPlaying();
       this.rankingModal.classList.remove('hidden');
       this.renderRanking('all');
 
@@ -858,9 +865,15 @@ const UI = {
       }
     } else {
       this.rankingModal.classList.add('hidden');
-
-      const hiddenInput = document.getElementById('hidden-input');
-      if (hiddenInput) hiddenInput.focus();
+      this._softResumeGameIfPlaying();
+      setTimeout(() => {
+        const hiddenInput = document.getElementById('hidden-input');
+        if (hiddenInput) {
+            hiddenInput.value = '';
+            if (typeof Input !== 'undefined') Input.lastValLength = 0; 
+            hiddenInput.focus();
+        }
+      }, 50);
     }
   },
 
