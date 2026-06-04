@@ -1,5 +1,6 @@
 let game;
 let selectedMode = 'classic';
+let gameLoopId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     // 모드 선택
@@ -58,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
             game = null;
             const difficulty = typeof UI !== 'undefined' && typeof UI.getActiveDifficulty === 'function'
                 ? UI.getActiveDifficulty() : 'easy';
+            if (typeof UI !== 'undefined' && typeof UI.hideGameOver === 'function') { // 결과창 숨기기
+                UI.hideGameOver();
+            }
             await start(selectedMode, difficulty);
             UI.showScene('play');
         });
@@ -70,16 +74,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (game) game.isGameOver = true;
             game = null;
             if (typeof window !== 'undefined') window.game = null;
+            if (typeof UI !== 'undefined' && typeof UI.hideGameOver === 'function') { // 결과창 숨기기
+                UI.hideGameOver();
+            }
             if (typeof UI !== 'undefined' && UI.showScene) UI.showScene('start');
         });
     }
 });
 
 async function start(mode = 'classic', difficulty = 'easy') {
+    if (gameLoopId) {
+        cancelAnimationFrame(gameLoopId);
+        gameLoopId = null;
+    }
     Sound.init();
     await WordData.loadWords();
     game = new Game(mode, difficulty);
     if (typeof window !== 'undefined') window.game = game;
+    const lectureTitle = document.querySelector('.blackboard h2'); // 칠판 레벨 표시 초기화
+    if (lectureTitle) {
+        lectureTitle.textContent = 'LEVEL 1';
+    }
+    Input.lastValLength = 0;
+    const hiddenInput = document.getElementById('hidden-input');
+    if (hiddenInput) {
+        hiddenInput.value = '';
+    }
 
     // PR-K: 글자 단위 입력 → game.handleCharInput
     // hidden-input의 'input' 이벤트가 새 글자가 추가될 때마다 발화.
@@ -136,5 +156,5 @@ function gameLoop() {
         if (typeof UI.updateTypingStatus === 'function') UI.updateTypingStatus(game);
         UI.updateHUD(game);
     }
-    requestAnimationFrame(gameLoop);
+    gameLoopId = requestAnimationFrame(gameLoop);
 }
