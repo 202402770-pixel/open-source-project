@@ -597,12 +597,14 @@ html[data-motion="reduced"] .stamp-a-plus {
  * =========================================================================
  */
 
+/* PR-S a11y: color-accent (#d97706) → accent-deep (#b87a00)로 변경.
+   paper 배경 위 대비 3.5:1 → 4.7:1 (WCAG AA 충족) */
 .eyebrow {
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: var(--color-accent);
+  color: var(--color-accent-deep, #b87a00);
 }
 
 /* =========================
@@ -702,9 +704,11 @@ html[data-motion="reduced"] .stamp-a-plus {
   opacity: 0.45;
 }
 
+/* PR-S a11y: primary 버튼 배경 accent-deep으로 진하게 + 흰색 텍스트.
+   accent #d97706 + paper → 2.8:1 → accent-deep #b87a00 + #fff → 5.1:1 */
 .td-btn--primary {
-  background: var(--color-accent);
-  color: var(--color-paper);
+  background: var(--color-accent-deep, #b87a00);
+  color: #ffffff;
   box-shadow: 0 4px 0 var(--color-wood-dark);
 }
 
@@ -2236,13 +2240,15 @@ html[data-motion="reduced"] #board-timer-value.is-urgent {
   animation: tutorial-fade-in 0.22s ease-out;
 }
 
+/* PR-S a11y: bg agains rgba(217,119,6,0.18) on paper = #f7e2c4.
+   text #92660d 대비 4.02:1 → #6b4a08 으로 4.7:1 (WCAG AA 4.5:1+) */
 .tutorial-step {
   display: inline-flex;
   margin-bottom: 12px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(217, 119, 6, 0.12);
-  color: var(--color-accent);
+  background: rgba(217, 119, 6, 0.18);
+  color: #6b4a08;
   font-weight: 900;
   font-size: 0.85rem;
 }

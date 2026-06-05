@@ -417,8 +417,42 @@ const UI = {
 
     document.addEventListener('keydown', (event) => {
       if (event.key !== 'Escape') return;
-      if (!this.currentGame || this.currentGame.isGameOver) return;
 
+      // PR-S: Esc 통일 — 열려있는 모달 먼저 닫고, 없으면 게임 toggle pause
+      const settings = document.getElementById('settings-modal');
+      const tutorial = document.getElementById('tutorial-modal');
+      const ranking = document.getElementById('ranking-modal');
+      const achievement = document.getElementById('achievement-modal');
+      const attendance = document.getElementById('attendance-modal');
+
+      if (settings && !settings.classList.contains('hidden')) {
+        event.preventDefault();
+        UI.closeSettings();
+        return;
+      }
+      if (tutorial && !tutorial.classList.contains('hidden')) {
+        event.preventDefault();
+        UI.closeTutorial();
+        return;
+      }
+      if (ranking && !ranking.classList.contains('hidden')) {
+        event.preventDefault();
+        UI.toggleRankingModal(false);
+        return;
+      }
+      if (achievement && !achievement.classList.contains('hidden')) {
+        event.preventDefault();
+        UI.toggleAchievementModal(false);
+        return;
+      }
+      if (attendance && !attendance.classList.contains('hidden')) {
+        event.preventDefault();
+        UI.toggleAttendanceModal(false);
+        return;
+      }
+
+      // 모달 없으면 게임 pause toggle (기존 동작)
+      if (!this.currentGame || this.currentGame.isGameOver) return;
       event.preventDefault();
       this.currentGame.togglePause();
     });
