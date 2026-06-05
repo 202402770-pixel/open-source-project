@@ -3430,6 +3430,85 @@ html[data-motion="reduced"] .falling-word.is-boss {
   box-shadow: 0 0 32px rgba(185, 28, 28, 0.7) inset;
   animation: word-field-critical 0.5s infinite alternate;
 }
+
+/* PR-T: 가장 가까운 단어 강조 (chalk-yellow + 약한 펄스) */
+.falling-word.is-closest:not(.is-locked) .fw-untyped {
+  color: var(--color-chalk-yellow, #f6d76a);
+  text-shadow: 0 0 8px var(--color-chalk-yellow, #f6d76a),
+               0 0 4px rgba(246, 215, 106, 0.6),
+               0 2px 0 rgba(0, 0, 0, 0.4);
+  animation: closest-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes closest-pulse {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.18); }
+}
+
+html[data-motion="reduced"] .falling-word.is-closest .fw-untyped {
+  animation: none;
+}
+
+/* PR-T: 시작 카운트다운 overlay (ZType 스타일) */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 8500;
+  pointer-events: none;
+  background: rgba(28, 25, 23, 0.20);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.countdown-overlay.hidden {
+  display: none;
+}
+
+.countdown-value {
+  font-family: "Black Han Sans", "Arial Black", Impact, sans-serif;
+  font-size: clamp(120px, 24vh, 280px);
+  font-weight: 900;
+  color: var(--color-chalk-yellow, #f6d76a);
+  text-shadow: 0 0 32px rgba(246, 215, 106, 0.8),
+               0 0 16px rgba(246, 215, 106, 0.6),
+               0 6px 0 rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  display: inline-block;
+}
+
+.countdown-value.countdown-pop {
+  animation: countdown-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.countdown-value.countdown-go {
+  color: var(--color-accent, #d97706);
+  text-shadow: 0 0 40px rgba(217, 119, 6, 0.9),
+               0 0 18px rgba(217, 119, 6, 0.7),
+               0 6px 0 rgba(0, 0, 0, 0.5);
+  animation: countdown-go 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes countdown-pop {
+  0%   { opacity: 0; transform: scale(0.4); }
+  30%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(0.92); }
+}
+
+@keyframes countdown-go {
+  0%   { opacity: 0; transform: scale(0.5); }
+  30%  { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+html[data-motion="reduced"] .countdown-value.countdown-pop,
+html[data-motion="reduced"] .countdown-value.countdown-go {
+  animation-duration: 0.3s;
+  animation-iteration-count: 1;
+}
+
 @keyframes word-field-critical {
   from { filter: brightness(1); }
   to   { filter: brightness(1.12); }

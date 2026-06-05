@@ -50,6 +50,7 @@ class Game {
         this.isGameOver = false;
         this.isPaused = false;
         this.softPaused = false;
+        this._countdownActive = false; // PR-T: 시작 카운트다운 중 spawn/낙하 정지
 
         this.startTime = Date.now();
         this.totalTypedChars = 0;
@@ -128,8 +129,9 @@ class Game {
      * PR-K: gameLoop마다 호출. 낙하 + spawn + 충돌 + 레벨업.
      */
     update() {
-        if (this.isPaused || this.softPaused || this.isGameOver) {
-            this._lastUpdateAt = Date.now(); // 일시정지 동안 dt 누적 방지
+        if (this.isPaused || this.softPaused || this.isGameOver || this._countdownActive) {
+            this._lastUpdateAt = Date.now(); // 일시정지 / 카운트다운 동안 dt 누적 방지
+            this._lastSpawnAt = Date.now() - this._currentSpawnInterval(); // spawn 미루기
             return;
         }
         const now = Date.now();
