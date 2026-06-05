@@ -4,9 +4,56 @@ Type Defender 변경 이력. [Keep a Changelog](https://keepachangelog.com/ko/1.
 
 ---
 
-## [Unreleased] — 2026-06-02~03 사용성 개선 + 정통 타이핑 디펜스 전환
+## [Unreleased] — 2026-06-02~05 사용성 개선 + 정통 타이핑 디펜스 + polish
 
-W1~W5 5주 프로젝트 마감 후 박태준(Tech Lead) 주도 **15 PR 시리즈**. 시안 E "받아쓰기" 메타포 → 정통 타이핑 디펜스 (ZType 스타일)로 게임 본질 전환.
+W1~W5 5주 프로젝트 마감 후 박태준(Tech Lead) 주도 **21 PR 시리즈** (+ 김지우 #76). 시안 E "받아쓰기" 메타포 → 정통 타이핑 디펜스 (ZType 스타일)로 게임 본질 전환. 이후 a11y / 공유 / 게임플레이 polish.
+
+### [PR-U] 처치 explosion 파티클 + 사운드 polish — `feat/visual-sound-polish` (#80)
+- **Effects.explodeWord(x, y, opts)**: 일반 16 파티클 / 보스 24 파티클. 거리 120/160px. 색 chalk·chalk-yellow·accent 교차. 회전 ±720° + scale 0.4 + glow.
+- **처치 시 사운드**: `Sound.play('bell', isBoss ? 0.8 : 0.35)` — 보스는 크게.
+- **콤보 milestone 사운드**: 10/20/30 도달 시 `Sound.play('levelUp', 0.45)`.
+- `effects-bindings`: `onWordDestroyed`가 `{ isBoss }` opts 전달.
+- prefers-reduced-motion 시 강한 효과 스킵.
+- spec 신규 5건.
+
+### [PR-T] 게임플레이 polish — `feat/gameplay-polish` (#79)
+- **시작 카운트다운 (3 → 2 → 1 → GO!)**: `#countdown-overlay` (fixed inset, blur backdrop, z-8500). `UI.showCountdown(game)`가 game._countdownActive=true로 spawn/낙하 동결. 끝나면 game.startTime / _lastSpawnAt 재설정 (타이머도 카운트다운 후부터).
+- **가장 가까운 단어 강조** (ZType closest): UI.renderFallingWords가 lock 없을 때 y 최대 단어에 `.is-closest` 클래스. chalk-yellow + glow + closest-pulse 1.2s alternate.
+- prefers-reduced-motion 시 애니메이션 스킵.
+- ZType / Typing of the Dead 표준 UX 패턴.
+- spec 신규 5건.
+
+### [PR-S] 접근성 a11y 90→100 — `feat/a11y-improvements` (#78)
+Lighthouse desktop a11y 90점 → **100점**.
+
+진단:
+- aria-prohibited-attr: `<div class="tutorial-dots" aria-label>` role 없이 사용
+- color-contrast 4건 (.eyebrow / .td-btn--primary / .tutorial-step)
+
+해결:
+- .tutorial-dots → `role="group"`
+- .eyebrow color → accent-deep #b87a00 (3.5:1 → 4.7:1)
+- .td-btn--primary bg → #b87a00 + color #fff (2.8:1 → 5.1:1)
+- .tutorial-step color → #6b4a08 (4.7:1)
+- 모달 6개 → `role="dialog"` + `aria-modal="true"` + aria-label
+- **Esc 통일**: Settings/Tutorial/Ranking/Achievement/Attendance 모두 Esc로 닫힘. 없으면 game pause toggle.
+- spec 신규 6건.
+
+### [PR-R] OG / Twitter / favicon + 공유 미리보기 — `feat/og-favicon` (#77)
+카톡 / 디스코드 / LinkedIn 공유 시 미리보기 노출.
+
+자산 생성 (`assets/icons/`):
+- favicon-16/32, apple-touch-icon 180, icon-192/512 (PWA 404 fix), og-image 1200×630, favicon.ico multi-size
+
+`index.html` 메타:
+- Favicon link 4개 / OG 8건 / Twitter Card (summary_large_image)
+- theme-color #1a5c3a → #15803d, description 정리
+
+`manifest.json` description / `sw.js` PRECACHE_URLS 갱신.
+- spec 신규 5건.
+
+### [김지우 #76] 결과창 오류 + Ranking softPause + startTime 보정
+박태준 시리즈 보완. game.softResume에 `startTime += elapsed` (PR-I에서 누락했던 정답). `toggleRankingModal` softPause/Resume (PR-E에서 누락). `gameLoopId` + `cancelAnimationFrame`. 재시작 시 칠판 LEVEL 1 / Input reset. 모달 backdrop blur + ranking-card 신규.
 
 ### [PR-N] 입력 손실 fix + 게임 밸런스 (ZType 리서치) — `feat/balance-input-fix` (#72)
 박태준 첫 방문자 시뮬레이션 — **3.5초 만에 즉사** (HP 7→0, score 0).
@@ -144,13 +191,14 @@ W1~W5 5주 프로젝트 마감 후 박태준(Tech Lead) 주도 **15 PR 시리즈
 - **라이브 미리보기 통일**: 모션/대비/사운드 토글 즉시 `applySettings + saveSettings` (테마/폰트와 일관).
 - spec 신규 10건.
 
-### 누적 수치 (PR-A ~ PR-N, 15 PR)
-- **diff**: +2,800 / −1,300 (28 files)
-- **Playwright**: 79건 통과 (PR-A~G 32 + PR-K~N 신규 + PR-D~F 폐기·갱신)
-- **Lighthouse**: desktop 100 / mobile 98
+### 누적 수치 (PR-A ~ PR-U, 21 PR + 김지우 #76)
+- **diff**: +3,800 / −1,400 (40+ files)
+- **Playwright**: **96건 통과** (직렬 실행, PR-A~U 시리즈 누적)
+- **Lighthouse**: desktop **a11y 100 / best-practices 100 / SEO 100 / perf 100** (mobile perf 98)
 - **회귀**: 0건
-- **PWA cache**: td-v1 (W5) → td-v13 (PR-N)
+- **PWA cache**: td-v1 (W5) → td-v17 (PR-U)
 - **라이브**: https://open-source-project-virid.vercel.app
+- **공유 미리보기**: https://www.opengraph.xyz/url/https%3A%2F%2Fopen-source-project-virid.vercel.app%2F (PR-R 후 OG 정상)
 
 ### 시리즈 흐름 (메타 회고)
 
@@ -171,6 +219,14 @@ W1~W5 5주 프로젝트 마감 후 박태준(Tech Lead) 주도 **15 PR 시리즈
 - PR-N: 빠른 입력 손실 + 즉사 밸런스
 
 **ZType 리서치 적용** (PR-N): SPAWN_INITIAL_DELAY, easy speedMult 0.45, SPAWN_MAX_ACTIVE 4 — Flow Theory + Bushnell's Law 기반.
+
+**ZType UX 패턴 적용** (PR-T): "READY?" 카운트다운 + 가장 가까운 단어 색 강조. 첫 사용자 panic 방지 + 어떤 단어 먼저 처치할지 즉시 인지.
+
+**시리즈 polish 단계** (PR-R ~ PR-U):
+- PR-R: 외부 공유 (OG / Twitter Card / favicon)
+- PR-S: 접근성 (Lighthouse a11y 100)
+- PR-T: 게임플레이 (카운트다운 + closest)
+- PR-U: 시각·사운드 (explosion + 처치/콤보 SFX)
 
 ---
 
