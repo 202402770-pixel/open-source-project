@@ -94,9 +94,9 @@ npm run verify
 ```
 
 **현재 점수**:
-- Lighthouse desktop **Performance 100** / Accessibility 90 / Best Practices 96 / SEO 100
-- Lighthouse mobile **Performance 98** / Accessibility 90
-- Playwright **79건 통과** (PWA / 모달 / 모바일 / 학점 / Settings / Feedback / Falling / Modes / Comprehensive / Typing Status / Hotfix)
+- Lighthouse desktop **Performance 100** / **Accessibility 100** / **Best Practices 100** / **SEO 100**
+- Lighthouse mobile **Performance 98** / Accessibility 100
+- Playwright **96건 통과** (PWA / 모달 / 모바일 / 학점 / Settings / Feedback / Falling / Modes / Comprehensive / Typing Status / Hotfix / Meta / **A11y** / **Gameplay** / **Effects**)
 
 결과 파일:
 - `lighthouse-reports/desktop.report.html` · `mobile.report.html`
