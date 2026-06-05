@@ -345,6 +345,9 @@ class Game {
         const elapsed = Date.now() - (this._softPauseStart || Date.now());
         this._lastSpawnAt += elapsed; // 일시정지 동안 spawn 카운트 안 흐름
         this._lastUpdateAt = Date.now();
+        if (this.startTime) { // 시간 정지 로직 추가
+            this.startTime += elapsed;
+        }
         this._softPauseStart = null;
     }
 
