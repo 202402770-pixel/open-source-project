@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v16'; // PR-T: READY 카운트다운 + closest 단어 강조
+const CACHE_VERSION = 'td-v17'; // PR-U: explosion 파티클 + 처치/콤보 사운드
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋

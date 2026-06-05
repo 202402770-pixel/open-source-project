@@ -267,15 +267,21 @@ class Game {
             Achievements.check(ACHIEVEMENT_IDS.BOSS_HUNTER, this.bossKills);
         }
 
-        // chalkDust at word position
+        // PR-U: explodeWord at word position (보스면 더 강한 파티클)
         if (window.GameAPI && window.GameAPI.onWordDestroyed) {
             const rect = (typeof UI !== 'undefined' && UI.getFallingWordRect)
                 ? UI.getFallingWordRect(word.id) : null;
+            const opts = { isBoss: !!word.isBoss };
             if (rect) {
-                GameAPI.onWordDestroyed(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                GameAPI.onWordDestroyed(rect.left + rect.width / 2, rect.top + rect.height / 2, opts);
             } else {
-                GameAPI.onWordDestroyed(0, 0);
+                GameAPI.onWordDestroyed(0, 0, opts);
             }
+        }
+
+        // PR-U: 처치 사운드 — 일반 단어는 bell 작게, 보스는 크게
+        if (typeof Sound !== 'undefined' && Sound.play) {
+            Sound.play('bell', word.isBoss ? 0.8 : 0.35);
         }
 
         Achievements.check(ACHIEVEMENT_IDS.FIRST_WORD, 1);
@@ -289,6 +295,11 @@ class Game {
             Achievements.check(ACHIEVEMENT_IDS.COMBO_50, this.combo);
             if (this.combo >= CONFIG.SCORING.COMBO_GLOW_THRESHOLD) {
                 Effects.toggleGlow(true, this.combo);
+            }
+            // PR-U: 콤보 milestone 사운드 (10/20/30)
+            const tiers = (CONFIG.SCORING && CONFIG.SCORING.COMBO_GLOW_TIERS) || [10, 20, 30];
+            if (tiers.includes(this.combo) && typeof Sound !== 'undefined' && Sound.play) {
+                Sound.play('levelUp', 0.45);
             }
             if (window.GameAPI && typeof GameAPI.onComboChange === 'function') {
                 GameAPI.onComboChange(this.combo);
