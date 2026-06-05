@@ -86,6 +86,75 @@ const Effects = {
   },
 
   /**
+   * PR-U: 단어 처치 시 강한 폭발 파티클 (chalkDust 강화판).
+   * 16 파티클 × 2 색 (chalk + chalk-yellow), 더 멀리 (120px), 회전 추가.
+   *
+   * @param {number} x 처치 위치 x
+   * @param {number} y 처치 위치 y
+   * @param {object} opts { isBoss?: boolean, container?: HTMLElement }
+   */
+  explodeWord(x, y, opts = {}) {
+    if (Effects._reducedMotion()) {
+      // 모션 줄이기 시 짧은 1회 펄스만
+      Effects.chalkDust(x, y, opts.container);
+      return;
+    }
+
+    const container = opts.container || document.body;
+    const isBoss = !!opts.isBoss;
+    const count = isBoss ? 24 : 16;
+    const duration = isBoss ? 600 : 480;
+    const distance = isBoss ? 160 : 120;
+
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+      const power = 0.6 + Math.random() * 0.7;
+      const dx = Math.cos(angle) * distance * power;
+      const dy = Math.sin(angle) * distance * power - 12; // 약간 위로 (중력처럼)
+      const rot = (Math.random() - 0.5) * 720;
+
+      // 색상 교차 — chalk / chalk-yellow / accent (boss)
+      let color = 'var(--color-chalk, #f4f4eb)';
+      if (isBoss) {
+        color = i % 3 === 0 ? 'var(--color-accent, #d97706)' :
+                i % 3 === 1 ? 'var(--color-chalk-yellow, #f6d76a)' :
+                              'var(--color-chalk, #f4f4eb)';
+      } else if (i % 4 === 0) {
+        color = 'var(--color-chalk-yellow, #f6d76a)';
+      }
+
+      const size = isBoss ? 9 : 7;
+      const particle = document.createElement('div');
+      particle.className = 'td-explode-particle';
+      particle.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%) rotate(0deg);
+        transition: transform ${duration}ms cubic-bezier(0.16, 1, 0.3, 1),
+                    opacity ${duration}ms ease-out;
+        will-change: transform, opacity;
+        box-shadow: 0 0 4px ${color};
+      `;
+      container.appendChild(particle);
+
+      requestAnimationFrame(() => {
+        particle.style.transform =
+          `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${rot}deg) scale(0.4)`;
+        particle.style.opacity = '0';
+      });
+
+      setTimeout(() => particle.remove(), duration + 50);
+    }
+  },
+
+  /**
    * 정타 시 입력 노트가 살짝 펄스(scale 1.02 → 1)한다.
    * CSS: .notebook-input.typed-pulse 키프레임
    * @param {HTMLElement} [element] - 대상 요소 (기본: .notebook-input)

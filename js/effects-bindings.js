@@ -42,7 +42,12 @@
     Effects.errorFlash();
   };
 
-  GameAPI.onWordDestroyed = function (x, y) {
-    Effects.chalkDust(x, y);
+  GameAPI.onWordDestroyed = function (x, y, opts) {
+    // PR-U: 처치 시 강한 explosion 파티클 (chalkDust 대신).
+    if (typeof Effects.explodeWord === 'function') {
+      Effects.explodeWord(x, y, opts || {});
+    } else {
+      Effects.chalkDust(x, y);
+    }
   };
 })();
