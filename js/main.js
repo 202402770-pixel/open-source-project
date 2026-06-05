@@ -143,6 +143,11 @@ async function start(mode = 'classic', difficulty = 'easy') {
     if (typeof UI.renderFallingWords === 'function') UI.renderFallingWords(game);
 
     gameLoop();
+
+    // PR-T: ZType 스타일 시작 카운트다운 (3 → 2 → 1 → GO!)
+    if (typeof UI.showCountdown === 'function') {
+        UI.showCountdown(game);
+    }
 }
 
 function gameLoop() {

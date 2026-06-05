@@ -975,6 +975,15 @@ const UI = {
       }
     }
 
+    // PR-T: 가장 가까운(y 가장 큰 = 바닥에 임박한, lock 안 된) 단어 ID 계산
+    let closestId = null;
+    if (game.lockedWordId === null) {
+      let maxY = -Infinity;
+      for (const w of game.fallingWords) {
+        if (w.typedIndex === 0 && w.y > maxY) { maxY = w.y; closestId = w.id; }
+      }
+    }
+
     // 추가/갱신
     for (const w of game.fallingWords) {
       let el = this._fallingWordEls.get(w.id);
@@ -988,6 +997,7 @@ const UI = {
       el.style.top = `${w.y}%`;
       el.classList.toggle('is-locked', game.lockedWordId === w.id);
       el.classList.toggle('is-boss', !!w.isBoss);
+      el.classList.toggle('is-closest', w.id === closestId);
 
       // 글자 spans 재구성 (text length가 바뀔 일은 없음)
       if (el.children.length !== w.text.length) {
@@ -1013,6 +1023,48 @@ const UI = {
   getFallingWordRect(id) {
     const el = this._fallingWordEls?.get(id);
     return el ? el.getBoundingClientRect() : null;
+  },
+
+  /**
+   * PR-T: ZType 스타일 시작 카운트다운 "3 → 2 → 1 → GO!"
+   * game._countdownActive를 set하여 spawn/낙하 동결.
+   * @returns Promise<void> — 카운트다운 종료 시 resolve
+   */
+  showCountdown(game) {
+    return new Promise((resolve) => {
+      const overlay = document.getElementById('countdown-overlay');
+      const value = document.getElementById('countdown-value');
+      if (!overlay || !value) { resolve(); return; }
+
+      if (game) game._countdownActive = true;
+      overlay.classList.remove('hidden');
+
+      const steps = ['3', '2', '1', 'GO!'];
+      let idx = 0;
+      const tick = () => {
+        if (idx >= steps.length) {
+          overlay.classList.add('hidden');
+          value.classList.remove('countdown-go');
+          if (game) {
+            game._countdownActive = false;
+            game._lastUpdateAt = Date.now();
+            game._lastSpawnAt = Date.now() - (CONFIG.CORE.SPAWN_INTERVAL_BASE || 3500) +
+              (CONFIG.CORE.SPAWN_INITIAL_DELAY || 1500);
+            game.startTime = Date.now(); // 타이머도 카운트다운 후부터
+          }
+          resolve();
+          return;
+        }
+        value.textContent = steps[idx];
+        value.classList.remove('countdown-pop', 'countdown-go');
+        // reflow trigger
+        void value.offsetWidth;
+        value.classList.add(idx === steps.length - 1 ? 'countdown-go' : 'countdown-pop');
+        idx++;
+        setTimeout(tick, idx === steps.length ? 500 : 800);
+      };
+      tick();
+    });
   },
 
   /**
