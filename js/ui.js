@@ -372,7 +372,16 @@ const UI = {
     if (isLastSlide) {
       localStorage.setItem(this.tutorialDoneKey, 'true');
       this.closeTutorial();
-      this.showScene('play');
+      // 이미 게임이 진행 중이면 (플레이 중 도움말을 본 경우) 화면만 복귀한다.
+      // 아직 시작 전이면 (첫 방문 튜토리얼 완료) 실제 게임을 시작해야 한다 —
+      // start()가 호출되지 않으면 game이 null이라 빈 플레이 화면에서 입력이 먹지 않는다.
+      if (window.game && !window.game.isGameOver) {
+        this.showScene('play');
+      } else {
+        const startBtn = document.querySelector('[data-go="play"]');
+        if (startBtn) startBtn.click(); // start() + showScene('play') 정식 시작 경로 재사용
+        else this.showScene('play');
+      }
       return;
     }
 
