@@ -11,7 +11,7 @@
  * W4 박태준 — PWA 인프라
  */
 
-const CACHE_VERSION = 'td-v17'; // PR-U: explosion 파티클 + 처치/콤보 사운드
+const CACHE_VERSION = 'td-v18'; // PR-W: 튜토리얼 완료 시 게임 시작 누락 수정 (캐시 무효화 필수)
 const CACHE_NAME = `type-defender-${CACHE_VERSION}`;
 
 // install 시점에 캐시할 핵심 리소스 — 오프라인 첫 실행을 위한 최소 셋
